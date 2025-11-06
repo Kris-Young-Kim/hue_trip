@@ -23,6 +23,8 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useClerkSupabaseClient } from "@/lib/supabase/clerk-client";
+import { trackBookmarkAttempt } from "@/lib/utils/metrics";
+import { toast } from "sonner";
 
 interface BookmarkButtonProps {
   contentId: string;
@@ -147,6 +149,9 @@ export function BookmarkButton({ contentId, className }: BookmarkButtonProps) {
 
           if (error) throw error;
           console.log("[BookmarkButton] 북마크 제거 완료");
+          trackBookmarkAttempt(true); // 성공 추적
+          setIsBookmarked(false);
+          toast.success("북마크가 해제되었습니다.");
         } else {
           // 북마크 추가
           const { error } = await supabase
@@ -158,9 +163,10 @@ export function BookmarkButton({ contentId, className }: BookmarkButtonProps) {
 
           if (error) throw error;
           console.log("[BookmarkButton] 북마크 추가 완료");
+          trackBookmarkAttempt(true); // 성공 추적
+          setIsBookmarked(true);
+          toast.success("북마크에 추가되었습니다.");
         }
-
-        setIsBookmarked(!isBookmarked);
       } else {
         // 비인증 사용자: localStorage에 저장
         console.log("[BookmarkButton] localStorage에 북마크 저장/삭제");
@@ -170,8 +176,12 @@ export function BookmarkButton({ contentId, className }: BookmarkButtonProps) {
 
         if (isBookmarked) {
           bookmarks = bookmarks.filter((id) => id !== contentId);
+          trackBookmarkAttempt(true); // 성공 추적
+          toast.success("북마크가 해제되었습니다.");
         } else {
           bookmarks.push(contentId);
+          trackBookmarkAttempt(true); // 성공 추적
+          toast.success("북마크에 추가되었습니다.");
         }
 
         localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify(bookmarks));
@@ -180,7 +190,8 @@ export function BookmarkButton({ contentId, className }: BookmarkButtonProps) {
       }
     } catch (err) {
       console.error("[BookmarkButton] 북마크 토글 오류:", err);
-      alert(
+      trackBookmarkAttempt(false); // 실패 추적
+      toast.error(
         err instanceof Error
           ? err.message
           : "북마크 처리 중 오류가 발생했습니다"

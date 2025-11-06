@@ -20,6 +20,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Share2, Check } from "lucide-react";
+import { trackUrlCopyAttempt } from "@/lib/utils/metrics";
 
 interface ShareButtonProps {
   contentId: string;
@@ -46,6 +47,7 @@ export function ShareButton({ contentId, className }: ShareButtonProps) {
 
       console.log("[ShareButton] 클립보드 복사 성공");
       setCopied(true);
+      trackUrlCopyAttempt(true); // 성공 추적
 
       // Toast 알림 표시
       toast.success("링크가 복사되었습니다", {
@@ -58,6 +60,7 @@ export function ShareButton({ contentId, className }: ShareButtonProps) {
       }, 2000);
     } catch (err) {
       console.error("[ShareButton] 클립보드 복사 실패:", err);
+      trackUrlCopyAttempt(false); // 실패 추적
 
       // Toast 에러 알림 표시
       toast.error("복사 실패", {

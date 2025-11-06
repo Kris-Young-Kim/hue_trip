@@ -270,12 +270,76 @@
 
 ## [Phase 5] 배포·운영·사업성 검증
 
-- [ ] Vercel/클라우드 배포·CD, 실 운영 환경 점검
-- [ ] 핵심 기능 검증 체크리스트 작성(MVP 4개)
-- [ ] 즐겨찾기·URL복사·API 응답 성공률·데이터 정확도 측정
-- [ ] CS/고객 피드백 수집, 반영 플랜 수립
+- [x] Vercel/클라우드 배포·CD, 실 운영 환경 점검
+- [x] 핵심 기능 검증 체크리스트 작성(MVP 4개)
+- [x] 즐겨찾기·URL복사·API 응답 성공률·데이터 정확도 측정
+- [x] CS/고객 피드백 수집, 반영 플랜 수립
 - [ ] 투자/사업자 대상 서비스 데모·랜딩페이지 공유
 - [ ] 국내 캠핑 진흥/파트너십/마케팅 협력 구조 논의
+
+### Phase 5 완료 상세
+
+- [x] Vercel 배포 설정 (`vercel.json`)
+  - 빌드/설치 명령어 설정
+  - 리전 설정 (icn1)
+  - 프로덕션 환경 변수 설정 가이드
+- [x] CI/CD 파이프라인 구성 (`.github/workflows/deploy.yml`)
+  - GitHub Actions 워크플로우 설정
+  - 빌드 전 체크: lint, type-check, build
+  - 자동 배포 준비 완료
+- [x] 배포 체크리스트 문서 (`docs/DEPLOYMENT_CHECKLIST.md`)
+  - 환경 변수 체크리스트
+  - 빌드 및 코드 품질 확인
+  - 데이터베이스 및 외부 서비스 연동 확인
+  - 기능 동작 확인 체크리스트
+  - 성능 및 보안 확인
+  - 롤백 절차 문서화
+- [x] MVP 기능 검증 체크리스트 (`docs/MVP_FEATURE_CHECKLIST.md`)
+  - 캠핑장 목록 + 필터 검증 항목
+  - 네이버 지도 연동 검증 항목
+  - 키워드 검색 검증 항목
+  - 상세페이지 검증 항목
+  - 반응형 및 브라우저 호환성 테스트 항목
+  - 성능 및 접근성 테스트 항목
+- [x] 메트릭 측정 시스템 (`lib/utils/metrics.ts`)
+  - 북마크 성공률 추적 함수
+  - URL 복사 성공률 추적 함수
+  - API 응답 성공률 및 응답 시간 추적 함수
+  - 데이터 정확도 검증 함수
+  - 전체 메트릭 계산 함수
+- [x] 메트릭 추적 통합
+  - `components/camping-detail/share-button.tsx`: URL 복사 성공/실패 추적 추가
+  - `components/camping-detail/bookmark-button.tsx`: 북마크 성공/실패 추적 추가
+  - `lib/api/camping-api.ts`: API 요청 성공/실패 및 응답 시간 추적 추가
+- [x] 관리자 분석 페이지 (`app/admin/analytics/page.tsx`)
+  - 기능별 성공률 표시 (북마크, URL 복사, API 응답)
+  - 평균 API 응답 시간 표시
+  - 데이터 정확도 및 에러 발생률 표시
+  - 관리자 권한 확인 통합
+- [x] 분석 데이터 조회 (`actions/get-analytics.ts`)
+  - 서비스 메트릭 조회 Server Action
+  - 관리자 권한 확인
+  - 기본 통계 데이터 반환 (향후 확장 가능)
+- [x] 피드백 저장 테이블 (`supabase/migrations/20251106150000_create_feedback_table.sql`)
+  - 피드백 유형 (bug, feature, improvement, other)
+  - 우선순위 및 상태 관리
+  - 연락처 이메일 및 페이지 URL 저장
+  - 인덱스 및 트리거 설정
+- [x] 피드백 제출 기능 (`actions/submit-feedback.ts`)
+  - 피드백 저장 Server Action
+  - 인증/비인증 사용자 모두 지원
+  - 현재 페이지 URL 및 브라우저 정보 자동 포함
+- [x] 피드백 폼 컴포넌트 (`components/feedback-form.tsx`)
+  - 피드백 유형 선택 (Select)
+  - 제목 및 상세 설명 입력 (Textarea)
+  - 연락처 이메일 입력 (선택 사항)
+  - React Hook Form + Zod 유효성 검사
+  - 접근성 속성 적용 (ARIA, 포커스 스타일)
+- [x] 피드백 페이지 (`app/feedback/page.tsx`)
+  - 피드백 폼 표시
+  - 피드백 유형 안내
+  - 처리 시간 안내
+  - 연락처 정보 안내
 
 ---
 

@@ -23,6 +23,7 @@ import type {
 } from "@/types/camping";
 import { measureApiResponse } from "@/lib/utils/performance";
 import { logError, logInfo } from "@/lib/utils/logger";
+import { trackApiRequest } from "@/lib/utils/metrics";
 
 /**
  * 고캠핑 API 클라이언트 클래스
@@ -78,6 +79,8 @@ export class CampingApiClient {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
+    const startTime = Date.now();
+
     try {
       const response = await measureApiResponse(
         () =>
@@ -95,7 +98,10 @@ export class CampingApiClient {
 
       clearTimeout(timeoutId);
 
+      const responseTime = Date.now() - startTime;
+
       if (!response.ok) {
+        trackApiRequest(false, responseTime); // 실패 추적
         throw new Error(
           `API 요청 실패: ${response.status} ${response.statusText}`
         );
@@ -105,16 +111,20 @@ export class CampingApiClient {
 
       // 응답 검증
       if (data.response?.header?.resultCode !== "0000") {
+        trackApiRequest(false, responseTime); // 실패 추적
         const errorMsg =
           data.response?.header?.resultMsg || "알 수 없는 API 오류";
         logError(`API 오류 (${data.response?.header?.resultCode})`, new Error(errorMsg), { endpoint, params });
         throw new Error(`API 오류 (${data.response?.header?.resultCode}): ${errorMsg}`);
       }
 
+      trackApiRequest(true, responseTime); // 성공 추적
       logInfo(`API 요청 성공: ${endpoint}`, { params });
       return data as T;
     } catch (error) {
       clearTimeout(timeoutId);
+      const responseTime = Date.now() - startTime;
+      trackApiRequest(false, responseTime); // 실패 추적
 
       if (error instanceof Error && error.name === "AbortError") {
         logError("[CampingApiClient] API 요청 시간 초과", error, { endpoint });
