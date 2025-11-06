@@ -104,10 +104,14 @@ export default function RootLayout({
               <header className="flex justify-end items-center p-4 gap-4 h-16">
                 <ThemeToggle />
                 <SignedOut>
-                  <SignInButton />
+                  <SignInButton>
+                    <button className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
+                      로그인
+                    </button>
+                  </SignInButton>
                   <SignUpButton>
-                    <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-                      Sign Up
+                    <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:bg-[#5a3ae6] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
+                      회원가입
                     </button>
                   </SignUpButton>
                 </SignedOut>
