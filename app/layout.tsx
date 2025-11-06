@@ -100,7 +100,9 @@ export default function RootLayout({
               </a>
 
               <Navbar />
-              <main id="main-content" className="min-h-[calc(100vh-4rem)]">{children}</main>
+              <main id="main-content" className="min-h-[calc(100vh-4rem)]">
+                {children}
+              </main>
               <FooterNav />
               <AccessibilityToolbar />
               <Toaster />

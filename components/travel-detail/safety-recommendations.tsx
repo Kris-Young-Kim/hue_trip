@@ -17,6 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, AlertTriangle } from "lucide-react";
 import { SafetyCard } from "@/components/safety/safety-card";
@@ -100,12 +101,12 @@ export function SafetyRecommendations({ travel }: SafetyRecommendationsProps) {
               <p className="text-gray-600 dark:text-gray-400 text-sm">
                 {error || "이 지역에 대한 여행 안전 정보가 아직 준비되지 않았습니다."}
               </p>
-              <a
+              <Link
                 href="/safety"
                 className="text-blue-600 dark:text-blue-400 hover:underline text-sm mt-2 inline-block"
               >
                 전체 여행 안전 정보 보기 →
-              </a>
+              </Link>
             </div>
           </div>
         </CardContent>
@@ -129,12 +130,12 @@ export function SafetyRecommendations({ travel }: SafetyRecommendationsProps) {
             <SafetyCard key={guideline.id} guideline={guideline} />
           ))}
         </div>
-        <a
+        <Link
           href="/safety"
           className="text-blue-600 dark:text-blue-400 hover:underline text-sm inline-block"
         >
           전체 여행 안전 정보 보기 →
-        </a>
+        </Link>
       </CardContent>
     </Card>
   );

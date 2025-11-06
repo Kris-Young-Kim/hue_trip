@@ -21,9 +21,6 @@ import {
   Search,
   FileText,
   ArrowRight,
-  Filter,
-  Star,
-  Share2,
 } from "lucide-react";
 
 const features = [

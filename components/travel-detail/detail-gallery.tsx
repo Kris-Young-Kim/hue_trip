@@ -129,6 +129,7 @@ export function DetailGallery({ travel }: DetailGalleryProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, selectedImageIndex, images.length]);
 
   // 이미지가 없는 경우

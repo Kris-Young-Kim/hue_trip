@@ -33,7 +33,7 @@ interface WeatherWidgetProps {
 /**
  * 날씨 아이콘 컴포넌트
  */
-function WeatherIcon({ icon, size = 24 }: { icon: string; size?: number }) {
+function WeatherIcon({ icon }: { icon: string }) {
   // OpenWeatherMap 아이콘 코드에 따라 적절한 아이콘 반환
   // 아이콘 코드: https://openweathermap.org/weather-conditions
   if (icon.includes("01")) {

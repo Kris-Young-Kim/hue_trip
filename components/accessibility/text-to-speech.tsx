@@ -14,7 +14,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, Play, Pause, Square } from "lucide-react";
+import { Volume2, Play, Pause, Square } from "lucide-react";
 
 interface TextToSpeechProps {
   className?: string;

@@ -63,7 +63,6 @@ export function AdBanner({
   className = "",
 }: AdBannerProps) {
   const [isAdSenseLoaded, setIsAdSenseLoaded] = useState(false);
-  const [isAdSenseReady, setIsAdSenseReady] = useState(false);
 
   // 환경 변수에서 AdSense 클라이언트 ID 가져오기
   const clientId =
@@ -77,7 +76,6 @@ export function AdBanner({
       try {
         // AdSense 초기화
         ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-        setIsAdSenseReady(true);
         console.log("[AdBanner] AdSense 초기화 완료");
       } catch (error) {
         console.error("[AdBanner] AdSense 초기화 오류:", error);

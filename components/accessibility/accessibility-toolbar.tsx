@@ -25,7 +25,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Accessibility, X } from "lucide-react";
+import { Accessibility } from "lucide-react";
 import { ZoomControl } from "./zoom-control";
 import { TextToSpeech } from "./text-to-speech";
 
