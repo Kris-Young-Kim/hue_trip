@@ -1,4 +1,4 @@
-# Mermaid.md – Hue Trip 프로젝트 시각화
+# Mermaid.md – Pitch Camping 프로젝트 시각화
 
 ---
 
@@ -6,7 +6,7 @@
 
 ```mermaid
 gantt
-    title My Trip 사업화 프로젝트 타임라인
+    title Pitch Camping 사업화 프로젝트 타임라인
     dateFormat YYYY-MM-DD
 
     section Phase 1
@@ -275,7 +275,7 @@ graph LR
 
 ```mermaid
 timeline
-    title My Trip 사업화 마일스톤
+    title Pitch Camping 사업화 마일스톤
 
     section 개발 기반
     M1_셋업 : 기본 구조 완성 : TypeScript 타입 정의 : API 연동 시작

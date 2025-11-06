@@ -1,7 +1,7 @@
 -- =====================================================
--- 마이그레이션: My Trip 데이터베이스 스키마
+-- 마이그레이션: Pitch Camping 데이터베이스 스키마
 -- 작성일: 2025-11-05
--- 설명: My Trip 프로젝트의 전체 데이터베이스 스키마
+-- 설명: Pitch Camping 프로젝트의 전체 데이터베이스 스키마
 --       - Clerk 인증 연동 (users.clerk_id)
 --       - RLS 비활성화 (개발 환경)
 --       - PRD 2.4.5 북마크 기능 구현
@@ -78,7 +78,7 @@ COMMENT ON COLUMN public.bookmarks.content_id IS '한국관광공사 API content
 -- =====================================================
 DO $$
 BEGIN
-    RAISE NOTICE '✅ My Trip 데이터베이스 마이그레이션 완료!';
+    RAISE NOTICE '✅ Pitch Camping 데이터베이스 마이그레이션 완료!';
     RAISE NOTICE '';
     RAISE NOTICE '📊 생성된 테이블:';
     RAISE NOTICE '   1. users (Clerk 연동)';

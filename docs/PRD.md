@@ -1,4 +1,4 @@
-# PRD: 한국 관광지 정보 서비스 (Hue Trip)
+# PRD: 한국 관광지 정보 서비스 (Pitch Camping)
 
 ---
 
@@ -339,7 +339,7 @@ https://apis.data.go.kr/B551011/KorService2
 
 - `serviceKey`: 인증키 (환경변수)
 - `MobileOS`: "ETC"
-- `MobileApp`: "MyTrip"
+- `MobileApp`: "PitchCamping"
 - `_type`: "json"
 - `numOfRows`: 10-20 (목록 조회 시)
 - `pageNo`: 1, 2, 3... (페이지네이션)

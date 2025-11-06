@@ -1,4 +1,4 @@
-# TODO.md – 한국 관광지 정보 서비스(Hue Trip)
+# TODO.md – 한국 관광지 정보 서비스(Pitch Camping)
 
 ---
 
