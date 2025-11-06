@@ -6,20 +6,20 @@
  *
  * 주요 기능:
  * 1. 총 사용자 수, 조회 수, 북마크 수, 리뷰 수 표시
- * 2. 인기 캠핑장 TOP 10 표시
+ * 2. 인기 여행지 TOP 10 표시
  * 3. 관리자 권한 확인
  *
  * @dependencies
  * - actions/admin-stats.ts: getAdminStats Server Action
  * - components/admin/stats-card.tsx: StatsCard 컴포넌트
- * - components/admin/popular-campings.tsx: PopularCampings 컴포넌트
+ * - components/admin/popular-travels.tsx: PopularTravels 컴포넌트
  */
 
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getAdminStats } from "@/actions/admin-stats";
 import { StatsCard } from "@/components/admin/stats-card";
-import { PopularCampings } from "@/components/admin/popular-campings";
+import { PopularTravels } from "@/components/admin/popular-travels";
 import { Users, Eye, Bookmark, MessageSquare } from "lucide-react";
 
 export default async function AdminDashboardPage() {
@@ -95,7 +95,7 @@ export default async function AdminDashboardPage() {
           <StatsCard
             title="총 조회 수"
             value={stats.totalViews}
-            description="캠핑장 조회 총합"
+            description="여행지 조회 총합"
             icon={Eye}
           />
           <StatsCard
@@ -112,9 +112,9 @@ export default async function AdminDashboardPage() {
           />
         </div>
 
-        {/* 인기 캠핑장 목록 */}
+        {/* 인기 여행지 목록 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PopularCampings campings={stats.popularCampings} />
+          <PopularTravels travels={stats.popularTravels} />
         </div>
       </div>
     </main>

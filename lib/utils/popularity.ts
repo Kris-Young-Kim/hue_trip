@@ -2,7 +2,7 @@
  * @file popularity.ts
  * @description 인기도 점수 계산 유틸리티
  *
- * 캠핑장의 인기도 점수를 계산하는 순수 함수
+ * 여행지의 인기도 점수를 계산하는 순수 함수
  * 클라이언트/서버 양쪽에서 사용 가능
  *
  * @dependencies

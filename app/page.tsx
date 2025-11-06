@@ -195,6 +195,19 @@ function HomeContent() {
                   onMarkerClick={handleTravelClick}
                   selectedTravelId={selectedTravelId}
                   className="h-full"
+                  showFilterOverlay={true}
+                  onFilterChange={(newFilter) => {
+                    // 지도 내 필터 변경 시 URL 업데이트
+                    const params = new URLSearchParams(searchParams.toString());
+                    if (newFilter.keyword) {
+                      params.set("keyword", newFilter.keyword);
+                    } else {
+                      params.delete("keyword");
+                    }
+                    window.history.pushState({}, "", `?${params.toString()}`);
+                    handleFilterChange({ ...filter, keyword: newFilter.keyword });
+                  }}
+                  currentFilter={{ keyword: filter.keyword }}
                 />
               </div>
             </div>
@@ -208,12 +221,25 @@ function HomeContent() {
                   onTravelsChange={handleTravelListUpdate}
                 />
               ) : (
-                <div className="h-[600px]">
+                <div className="h-[600px] md:h-[800px] relative">
                   <NaverMap
                     travels={travels}
                     onMarkerClick={handleTravelClick}
                     selectedTravelId={selectedTravelId}
                     className="h-full"
+                    showFilterOverlay={true}
+                    onFilterChange={(newFilter) => {
+                      // 지도 내 필터 변경 시 URL 업데이트
+                      const params = new URLSearchParams(searchParams.toString());
+                      if (newFilter.keyword) {
+                        params.set("keyword", newFilter.keyword);
+                      } else {
+                        params.delete("keyword");
+                      }
+                      window.history.pushState({}, "", `?${params.toString()}`);
+                      handleFilterChange({ ...filter, keyword: newFilter.keyword });
+                    }}
+                    currentFilter={{ keyword: filter.keyword }}
                   />
                 </div>
               )}

@@ -2,10 +2,10 @@
  * @file analytics.ts
  * @description 분석 및 통계 추적 유틸리티
  *
- * 캠핑장 조회수, 사용자 활동 등을 추적하는 함수들
+ * 여행지 조회수, 사용자 활동 등을 추적하는 함수들
  *
  * 주요 기능:
- * 1. 캠핑장 조회수 증가
+ * 1. 여행지 조회수 증가
  * 2. 사용자 활동 기록
  * 3. 통계 데이터 조회
  *
@@ -19,8 +19,8 @@
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 
 /**
- * 캠핑장 조회수 증가
- * @param contentId 고캠핑 API contentId
+ * 여행지 조회수 증가
+ * @param contentId TourAPI의 contentid
  */
 export async function trackView(contentId: string): Promise<void> {
   console.group(`[Analytics] 조회수 추적: ${contentId}`);
@@ -28,7 +28,7 @@ export async function trackView(contentId: string): Promise<void> {
   try {
     const supabase = await createClerkSupabaseClient();
 
-    // camping_stats 테이블에 조회수 증가
+    // travel_stats 테이블에 조회수 증가
     const { error: statsError } = await supabase.rpc("increment_view_count", {
       p_content_id: contentId,
     });
@@ -38,7 +38,7 @@ export async function trackView(contentId: string): Promise<void> {
       console.log("[Analytics] RPC 함수 없음, 직접 업데이트 시도");
       
       const { error: upsertError } = await supabase
-        .from("camping_stats")
+        .from("travel_stats")
         .upsert(
           {
             content_id: contentId,
@@ -54,7 +54,7 @@ export async function trackView(contentId: string): Promise<void> {
       if (upsertError) {
         // 레코드가 없으면 INSERT, 있으면 UPDATE
         const { data: existing } = await supabase
-          .from("camping_stats")
+          .from("travel_stats")
           .select("view_count")
           .eq("content_id", contentId)
           .single();
@@ -62,7 +62,7 @@ export async function trackView(contentId: string): Promise<void> {
         if (existing) {
           // 기존 레코드 업데이트
           const { error: updateError } = await supabase
-            .from("camping_stats")
+            .from("travel_stats")
             .update({
               view_count: (existing.view_count || 0) + 1,
               last_viewed_at: new Date().toISOString(),
@@ -76,7 +76,7 @@ export async function trackView(contentId: string): Promise<void> {
         } else {
           // 새 레코드 생성
           const { error: insertError } = await supabase
-            .from("camping_stats")
+            .from("travel_stats")
             .insert({
               content_id: contentId,
               view_count: 1,
@@ -102,7 +102,7 @@ export async function trackView(contentId: string): Promise<void> {
 
 /**
  * 사용자 활동 기록
- * @param contentId 고캠핑 API contentId
+ * @param contentId TourAPI의 contentid
  * @param activityType 활동 유형 ('view', 'bookmark', 'share')
  * @param userId 사용자 ID (선택적, 비인증 사용자는 null)
  */
@@ -135,18 +135,18 @@ export async function trackActivity(
 }
 
 /**
- * 캠핑장 통계 조회
- * @param contentId 고캠핑 API contentId
+ * 여행지 통계 조회
+ * @param contentId TourAPI의 contentid
  * @returns 통계 데이터 또는 null
  */
-export async function getCampingStats(contentId: string) {
+export async function getTravelStats(contentId: string) {
   console.log(`[Analytics] 통계 조회: ${contentId}`);
 
   try {
     const supabase = await createClerkSupabaseClient();
 
     const { data, error } = await supabase
-      .from("camping_stats")
+      .from("travel_stats")
       .select("*")
       .eq("content_id", contentId)
       .single();
@@ -161,5 +161,13 @@ export async function getCampingStats(contentId: string) {
     console.error("[Analytics] 통계 조회 오류:", error);
     return null;
   }
+}
+
+/**
+ * @deprecated getCampingStats 대신 getTravelStats 사용
+ * 호환성을 위해 유지
+ */
+export async function getCampingStats(contentId: string) {
+  return getTravelStats(contentId);
 }
 

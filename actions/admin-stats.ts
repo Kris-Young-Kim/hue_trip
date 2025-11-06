@@ -6,10 +6,10 @@
  *
  * 주요 기능:
  * 1. 총 사용자 수 조회
- * 2. 총 캠핑장 조회 수 조회
+ * 2. 총 여행지 조회 수 조회
  * 3. 총 북마크 수 조회
  * 4. 총 리뷰 수 조회
- * 5. 인기 캠핑장 TOP 10 조회
+ * 5. 인기 여행지 TOP 10 조회
  *
  * @dependencies
  * - lib/supabase/server.ts: createClerkSupabaseClient
@@ -26,7 +26,14 @@ export interface AdminStats {
   totalViews: number;
   totalBookmarks: number;
   totalReviews: number;
-  popularCampings: {
+  popularTravels: {
+    contentId: string;
+    viewCount: number;
+    bookmarkCount: number;
+    shareCount: number;
+  }[];
+  // 호환성을 위해 유지
+  popularCampings?: {
     contentId: string;
     viewCount: number;
     bookmarkCount: number;
@@ -92,9 +99,9 @@ export async function getAdminStats(): Promise<AdminStats | null> {
       console.error("[AdminStats] 사용자 수 조회 실패:", usersError);
     }
 
-    // 총 조회 수 조회
+    // 총 조회 수 조회 (travel_stats 테이블 사용)
     const { data: viewsData, error: viewsError } = await supabase
-      .from("camping_stats")
+      .from("travel_stats")
       .select("view_count");
 
     const totalViews =
@@ -122,30 +129,34 @@ export async function getAdminStats(): Promise<AdminStats | null> {
       console.error("[AdminStats] 리뷰 수 조회 실패:", reviewsError);
     }
 
-    // 인기 캠핑장 TOP 10 조회
+    // 인기 여행지 TOP 10 조회
     const { data: popularData, error: popularError } = await supabase
-      .from("camping_stats")
+      .from("travel_stats")
       .select("*")
       .order("bookmark_count", { ascending: false })
       .order("view_count", { ascending: false })
       .limit(10);
 
     if (popularError) {
-      console.error("[AdminStats] 인기 캠핑장 조회 실패:", popularError);
+      console.error("[AdminStats] 인기 여행지 조회 실패:", popularError);
     }
+
+    const popularTravels =
+      popularData?.map((stat) => ({
+        contentId: stat.content_id,
+        viewCount: stat.view_count || 0,
+        bookmarkCount: stat.bookmark_count || 0,
+        shareCount: stat.share_count || 0,
+      })) || [];
 
     const stats: AdminStats = {
       totalUsers: totalUsers || 0,
       totalViews: totalViews,
       totalBookmarks: totalBookmarks || 0,
       totalReviews: totalReviews || 0,
-      popularCampings:
-        popularData?.map((stat) => ({
-          contentId: stat.content_id,
-          viewCount: stat.view_count || 0,
-          bookmarkCount: stat.bookmark_count || 0,
-          shareCount: stat.share_count || 0,
-        })) || [],
+      popularTravels,
+      // 호환성을 위해 유지
+      popularCampings: popularTravels,
     };
 
     console.log("[AdminStats] 통계 조회 완료:", {
@@ -153,7 +164,7 @@ export async function getAdminStats(): Promise<AdminStats | null> {
       totalViews: stats.totalViews,
       totalBookmarks: stats.totalBookmarks,
       totalReviews: stats.totalReviews,
-      popularCount: stats.popularCampings.length,
+      popularCount: stats.popularTravels.length,
     });
 
     return stats;

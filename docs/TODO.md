@@ -47,79 +47,77 @@
 
 ### 2.1 여행지 목록
 
-- [ ] 시/도·시군구·여행지 타입(관광지/문화시설/축제/숙박 등)·카테고리·정렬·페이지네이션 등 필터 기능 구현
-- [ ] 반응형 카드/그리드 UI: 모바일→데스크톱 최적화
-- [ ] API 데이터 캐싱 전략 수립 (성능·비용 고려) - [캐싱 전략 문서](./CACHING_STRATEGY.md) 참고
-- [ ] 오류·빈값 graceful UX 처리
-- [ ] 목록 썸네일·카테고리 아이콘·타입 뱃지 표시, SEO/마크업 접근성 보장
+- [x] 시/도·시군구·여행지 타입(관광지/문화시설/축제/숙박 등)·카테고리·정렬·페이지네이션 등 필터 기능 구현
+- [x] 반응형 카드/그리드 UI: 모바일→데스크톱 최적화
+- [x] 오류·빈값 graceful UX 처리
+- [x] 목록 썸네일·카테고리 아이콘·타입 뱃지 표시, SEO/마크업 접근성 보장
 
 ### 2.2 지도 연동
 
-- [ ] Naver Maps v3 지도 연동·최적화 (좌표계 변환 포함)
-- [ ] 지역·여행지 중심 좌표 설정, 타입별 마커 디자인
-- [ ] 리스트-지도 상호연동 및 반응형 UI 구성
-- [ ] 지도 내 검색·필터·정렬 경험 개선
-- [ ] 마커 인포윈도우, 길찾기/현재위치 UX
+- [x] Naver Maps v3 지도 연동·최적화 (좌표계 변환 포함)
+- [x] 지역·여행지 중심 좌표 설정, 타입별 마커 디자인
+- [x] 리스트-지도 상호연동 및 반응형 UI 구성
+- [x] 지도 내 검색·필터·정렬 경험 개선
+- [x] 마커 인포윈도우, 길찾기/현재위치 UX
 
 ### 2.3 키워드 검색
 
-- [ ] 검색창·자동완성 도입, 사용자 행동 데이터 로깅
-- [ ] 검색 API 연동, 성능 튜닝 (응답지연 대비 UX)
-- [ ] 결과 없음·에러 메시지/로딩 스피너
-- [ ] 필터+검색 복합 결과 UX
-- [ ] API 데이터 캐싱 전략 수립 - [캐싱 전략 문서](./CACHING_STRATEGY.md) 참고
+- [x] 검색창·자동완성 도입, 사용자 행동 데이터 로깅
+- [x] 검색 API 연동, 성능 튜닝 (응답지연 대비 UX)
+- [x] 결과 없음·에러 메시지/로딩 스피너
+- [x] 필터+검색 복합 결과 UX
 
 ### 2.4 상세페이지
 
-- [ ] 기본 정보/운영/갤러리/지도/공유·북마크 섹션별 컨포넌트화
-- [ ] 주소 복사, 전화걸기, 홈페이지 링크 등 사용자 행동 흐름 설계
-- [ ] 이미지 목록·대표 썸네일·슬라이드 모달 UX
-- [ ] Open Graph 메타태그 동적 구성, SNS/카카오·네이버 공유 테스트
-- [ ] 북마크 기능: Supabase와 인증 폴백 구조(localStorage)
-- [ ] 즐겨찾기 테이블 설계, 로그인 UX 개선
+- [x] 기본 정보/운영/갤러리/지도/공유·북마크 섹션별 컨포넌트화
+- [x] 주소 복사, 전화걸기, 홈페이지 링크 등 사용자 행동 흐름 설계
+- [x] 이미지 목록·대표 썸네일·슬라이드 모달 UX
+- [x] Open Graph 메타태그 동적 구성, SNS/카카오·네이버 공유 테스트
+- [x] 북마크 기능: Supabase와 인증 폴백 구조(localStorage)
+- [x] 즐겨찾기 테이블 설계, 로그인 UX 개선
 
 ### Phase 2 진행 예정
 
-- [ ] 필터 컴포넌트 (`components/travel-filters.tsx`)
+- [x] 필터 컴포넌트 (`components/travel-filters.tsx`)
   - 지역, 여행지 타입(관광지/문화시설/축제/숙박), 카테고리 필터 및 정렬 옵션 구현
   - URL 쿼리 파라미터 연동
-- [ ] 여행지 카드 컴포넌트 (`components/travel-card.tsx`)
+- [x] 여행지 카드 컴포넌트 (`components/travel-card.tsx`)
   - 썸네일 이미지, 여행지명, 주소, 타입 뱃지, 카테고리 아이콘 표시
   - 반응형 디자인, 클릭 시 상세페이지 이동
-- [ ] 여행지 목록 컴포넌트 (`components/travel-list.tsx`)
+- [x] 여행지 목록 컴포넌트 (`components/travel-list.tsx`)
   - 그리드 레이아웃 (반응형), TourAPI 연동
   - 로딩 상태 (Skeleton UI), 에러 처리, 빈 결과 처리
   - 페이지네이션 구현
-- [ ] 홈페이지 통합 (`app/page.tsx`)
+- [x] 홈페이지 통합 (`app/page.tsx`)
   - 필터와 목록 컴포넌트 통합
   - URL 쿼리 파라미터 기반 필터 상태 관리
-- [ ] 검색 컴포넌트 (`components/travel-search.tsx`)
+- [x] 검색 컴포넌트 (`components/travel-search.tsx`)
   - 검색창, 엔터 키 또는 버튼으로 검색 실행
   - 검색어 초기화 기능
-- [ ] 검색 기능 통합
+- [x] 검색 기능 통합
   - 홈페이지에 검색창 통합, 필터와 검색 조합
-- [ ] 상세페이지 기본 구조 (`app/travels/[contentId]/page.tsx`)
+- [x] 상세페이지 기본 구조 (`app/travels/[contentId]/page.tsx`)
   - 동적 라우팅, TourAPI 상세 정보 조회
   - 기본 정보 표시 (이름, 이미지, 주소, 전화번호, 홈페이지, 소개)
   - 동적 메타데이터 생성 (Open Graph 포함)
-- [ ] 네이버 지도 연동 (`components/naver-map.tsx`)
+- [x] 네이버 지도 연동 (`components/naver-map.tsx`)
   - Naver Maps JavaScript API v3 (NCP) 연동
   - 좌표 변환 (필요 시)
   - 여행지 마커 표시 및 인포윈도우
   - 리스트-지도 상호연동 (카드 클릭 시 지도 이동)
   - 반응형 레이아웃 (데스크톱: 분할, 모바일: 탭 전환)
-- [ ] 이미지 갤러리 (`components/travel-detail/detail-gallery.tsx`)
+- [x] 이미지 갤러리 (`components/travel-detail/detail-gallery.tsx`)
   - 대표 이미지 및 서브 이미지 썸네일 표시
   - 이미지 클릭 시 전체화면 모달
   - 이미지 슬라이드 기능 (이전/다음 버튼)
-- [ ] 공유 버튼 (`components/travel-detail/share-button.tsx`)
+- [x] 공유 버튼 (`components/travel-detail/share-button.tsx`)
   - URL 클립보드 복사 기능
   - 복사 완료 상태 표시
-- [ ] 북마크 버튼 (`components/travel-detail/bookmark-button.tsx`)
+- [x] 북마크 버튼 (`components/travel-detail/bookmark-button.tsx`)
   - 인증된 사용자: Supabase bookmarks 테이블에 저장
   - 비인증 사용자: localStorage에 임시 저장
   - 북마크 상태 표시 (별 아이콘)
-- [ ] 상세페이지 통합 (`app/travels/[contentId]/page.tsx`)
+- [x] 상세페이지 통합 (`app/travels/[contentId]/page.tsx`)
   - 이미지 갤러리, 공유 버튼, 북마크 버튼 통합
 
 ---
@@ -135,21 +133,24 @@
 
 ### Phase 3 완료 상세
 
-- [ ] 통계 테이블 생성 (`supabase/migrations/20251106140000_create_statistics_tables.sql`)
-  - travel_stats: 여행지별 통계 (조회수, 북마크 수, 공유 수) - 테이블명 및 스키마 수정 필요
-  - user_activity: 사용자 활동 기록 (조회, 북마크, 공유)
+- [x] 통계 테이블 생성 (`supabase/migrations/20251106210358_create_travel_stats_table.sql`)
+  - travel_stats: 여행지별 통계 (조회수, 북마크 수, 공유 수)
+  - user_activity: 사용자 활동 기록 (조회, 북마크, 공유) - 주석 업데이트 완료
   - 북마크 트리거로 bookmark_count 자동 업데이트
 - [x] RLS 보안 정책 설계 (`supabase/migrations/20251106140001_design_rls_policies.sql`)
   - users, bookmarks, camping_stats, user_activity 테이블 RLS 정책 설계
   - 프로덕션 배포 전 적용 준비 완료
-- [ ] 조회수 추적 시스템 (`lib/api/analytics.ts`)
-  - trackView(): 여행지 상세페이지 조회수 증가
+- [x] 조회수 추적 시스템 (`lib/api/analytics.ts`)
+  - trackView(): 여행지 상세페이지 조회수 증가 (travel_stats 사용)
   - trackActivity(): 사용자 활동 기록
   - getTravelStats(): 통계 데이터 조회
-- [ ] 인기도/랭킹 계산 시스템 (`lib/utils/ranking.ts`)
-  - calculatePopularityScore(): 인기도 점수 계산
+  - getCampingStats(): 호환성을 위해 유지 (deprecated)
+- [x] 인기도/랭킹 계산 시스템 (`lib/utils/ranking.ts`)
+  - calculatePopularityScore(): 인기도 점수 계산 (popularity.ts)
   - getPopularTravels(): 인기 여행지 목록 조회
-  - 지역별/타입별 필터링 준비
+  - getPopularTravelsByRegion(): 지역별 인기 여행지 조회
+  - getPopularTravelsByType(): 타입별 인기 여행지 조회
+  - 호환성 함수 유지 (getPopularCampings 등)
 - [x] 리뷰 테이블 생성 (`supabase/migrations/20251106140002_create_reviews_table.sql`)
   - reviews: 리뷰 및 평점 (1-5점)
   - review_helpful: 리뷰 도움됨 표시
@@ -167,11 +168,11 @@
   - API 실패 시 캐시된 데이터 반환
   - 오프라인 상태 감지
   - 사용자 친화적 에러 메시지
-- [ ] 관리자 KPI 대시보드 (`app/admin/dashboard/page.tsx`)
+- [x] 관리자 KPI 대시보드 (`app/admin/dashboard/page.tsx`)
   - 관리자 권한 확인 (환경변수 ADMIN_USER_IDS)
   - 주요 지표 표시 (사용자 수, 조회 수, 북마크 수, 리뷰 수)
-  - 인기 여행지 TOP 10 테이블
-  - 통계 카드 컴포넌트 (재사용 가능)
+  - 인기 여행지 TOP 10 테이블 (`components/admin/popular-travels.tsx`)
+  - 통계 카드 컴포넌트 (재사용 가능, `components/admin/stats-card.tsx`)
 - [x] 로깅 시스템 (`lib/utils/logger.ts`)
   - 구조화된 로깅 (info, warn, error, debug)
   - 프로덕션 환경 JSON 포맷, 개발 환경 콘솔 출력
@@ -181,9 +182,9 @@
   - 페이지 로드 시간 추적
   - 메모리 사용량 측정
   - 성능 임계값 체크 및 경고
-- [ ] Next.js fetch 캐싱 적용
-  - 여행지 상세: 6시간 캐시
-  - 여행지 목록: 1시간 캐시
+- [x] Next.js fetch 캐싱 적용 (`lib/api/travel-api.ts`)
+  - 여행지 상세: 6시간 캐시 (detailCommon)
+  - 여행지 목록: 1시간 캐시 (areaBasedList, searchKeyword)
 - [x] 비용 추적 문서 (`docs/COST_TRACKING.md`)
   - 서비스별 비용 구조 및 예상 비용
   - 비용 모니터링 방법

@@ -37,6 +37,10 @@ interface NaverMapProps {
   onMarkerClick?: (travel: TravelSite) => void;
   selectedTravelId?: string;
   className?: string;
+  // 지도 내 검색·필터·정렬 기능
+  showFilterOverlay?: boolean;
+  onFilterChange?: (filter: { keyword?: string; type?: string }) => void;
+  currentFilter?: { keyword?: string; type?: string };
 }
 
 export function NaverMap({
@@ -46,6 +50,9 @@ export function NaverMap({
   onMarkerClick,
   selectedTravelId,
   className = "",
+  showFilterOverlay = false,
+  onFilterChange,
+  currentFilter,
 }: NaverMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -299,6 +306,49 @@ export function NaverMap({
   return (
     <div className={`relative w-full h-full min-h-[400px] md:min-h-[600px] ${className}`} role="application" aria-label="네이버 지도">
       <div ref={mapRef} className="w-full h-full rounded-lg" aria-hidden={!isLoaded} />
+      
+      {/* 지도 내 필터/검색 오버레이 (선택적) */}
+      {showFilterOverlay && onFilterChange && (
+        <div className="absolute top-4 left-4 z-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 min-w-[280px] max-w-[320px]">
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              지도에서 검색
+            </h3>
+            
+            {/* 검색 입력 */}
+            <div>
+              <label htmlFor="map-search" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                키워드 검색
+              </label>
+              <input
+                id="map-search"
+                type="text"
+                placeholder="여행지명, 주소 검색..."
+                value={currentFilter?.keyword || ""}
+                onChange={(e) => {
+                  onFilterChange({ ...currentFilter, keyword: e.target.value });
+                }}
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* 마커 개수 표시 */}
+            <div className="text-xs text-gray-600 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
+              표시된 여행지: <span className="font-semibold">{travels.length}개</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 마커 개수 표시 (오버레이 없을 때) */}
+      {!showFilterOverlay && travels.length > 0 && (
+        <div className="absolute top-4 right-4 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md px-3 py-2">
+          <span className="text-sm font-medium text-gray-900 dark:text-white">
+            {travels.length}개 여행지
+          </span>
+        </div>
+      )}
+
       {!isLoaded && <MapSkeleton />}
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg" role="alert">
