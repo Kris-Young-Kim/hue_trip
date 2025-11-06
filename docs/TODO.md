@@ -437,6 +437,13 @@
   - 사이드바 광고 컴포넌트 생성
   - 목록 페이지 및 상세페이지에 광고 통합
   - 광고 연동 계획 문서 작성 (`docs/ADS_INTEGRATION_PLAN.md`)
+- [x] 교통 정보 연동 프로토타입 (`components/travel-detail/transport-info.tsx`)
+  - 네이버 지도 경로 안내 링크 제공 (자동차/대중교통)
+  - 카카오맵 경로 안내 링크 제공 (자동차/대중교통)
+  - 주소 복사 기능
+  - 사용자 위치 기반 경로 안내 (선택 사항)
+  - 상세페이지에 교통 정보 컴포넌트 통합
+  - 교통 정보 연동 계획 문서 작성 (`docs/TRANSPORT_INTEGRATION_PLAN.md`)
 
 ### 여행 안전 정보 제공 기능
 
@@ -446,33 +453,33 @@
 
 **작업 내용**:
 
-- [ ] 여행 안전 정보 테이블 생성 (`supabase/migrations/20251106160000_create_safety_guidelines_table.sql`)
+- [x] 여행 안전 정보 테이블 생성 (`supabase/migrations/20251106160000_create_travel_safety_guidelines_table.sql`)
   - 여행 유형별 안전 정보 카테고리 (국내여행, 해외여행, 자유여행, 패키지여행 등)
   - 주제별 안전 정보 분류 (교통안전, 건강, 자연재해, 범죄예방 등)
   - 안전 정보 제목, 내용, 이미지, 동영상 링크 저장
   - 조회수 추적 및 우선순위 관리
-- [ ] 여행 안전 정보 API 함수 생성 (`lib/api/safety-guidelines.ts`)
+- [x] 여행 안전 정보 API 함수 생성 (`lib/api/safety-guidelines.ts`)
   - 여행 유형별 안전 정보 조회
   - 주제별 안전 정보 조회
   - 안전 정보 검색 기능
   - 지역/국가별 추천 기능
   - 조회수 증가 함수
-- [ ] 여행 안전 정보 API 라우트 생성 (`app/api/safety-guidelines/route.ts`)
+- [x] 여행 안전 정보 API 라우트 생성 (`app/api/safety-guidelines/route.ts`)
   - 클라이언트 사이드에서 안전 정보 조회 API
-- [ ] 여행 안전 정보 컴포넌트 생성 (`components/safety/`)
-  - `safety-card.tsx`: 안전 정보 카드 컴포넌트
-  - `safety-guidelines.tsx`: 안전 정보 목록 및 필터링 컴포넌트
-  - `safety-video.tsx`: 안전 정보 동영상 컴포넌트
-  - `safety-recommendations.tsx`: 안전 정보 추천 컴포넌트
-- [ ] 여행 안전 정보 페이지 생성 (`app/safety/page.tsx`, `app/safety/[id]/page.tsx`)
-  - 안전 정보 메인 페이지 (목록, 검색, 필터링)
-  - 안전 정보 상세 페이지
+- [x] 여행 안전 정보 컴포넌트 생성 (`components/safety/`)
+  - `safety-card.tsx`: 안전 정보 카드 컴포넌트 (업데이트 완료)
+  - `safety-guidelines.tsx`: 안전 정보 목록 및 필터링 컴포넌트 (업데이트 완료)
+  - `safety-video.tsx`: 안전 정보 동영상 컴포넌트 (기존 유지)
+  - `safety-recommendations.tsx`: 안전 정보 추천 컴포넌트 (생성 완료)
+- [x] 여행 안전 정보 페이지 생성 (`app/safety/page.tsx`, `app/safety/[id]/page.tsx`)
+  - 안전 정보 메인 페이지 (목록, 검색, 필터링) (업데이트 완료)
+  - 안전 정보 상세 페이지 (업데이트 완료)
   - 여행 유형별/주제별 탭 분류
   - 동영상 링크 통합
-- [ ] 상세페이지에 안전 정보 통합 (`app/travels/[contentId]/page.tsx`)
+- [x] 상세페이지에 안전 정보 통합 (`app/travels/[contentId]/page.tsx`)
   - 여행지 상세페이지에 관련 안전 정보 추천 추가
   - 지역/국가별 안전 정보 추천
-- [ ] 여행 안전 정보 문서 작성 (`docs/SAFETY_GUIDELINES_PLAN.md`)
+- [x] 여행 안전 정보 문서 작성 (`docs/TRAVEL_SAFETY_GUIDELINES_PLAN.md`)
 
   - 안전 수칙 수집 계획
   - 데이터 구조 설계

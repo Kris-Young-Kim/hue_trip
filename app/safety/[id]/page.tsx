@@ -1,31 +1,31 @@
 /**
  * @file [id]/page.tsx
- * @description 안전 수칙 상세 페이지
+ * @description 여행 안전 정보 상세 페이지
  *
- * 개별 안전 수칙의 상세 내용을 표시하는 페이지
+ * 개별 여행 안전 정보의 상세 내용을 표시하는 페이지
  *
  * 주요 기능:
- * 1. 안전 수칙 상세 내용 표시
+ * 1. 여행 안전 정보 상세 내용 표시
  * 2. 이미지 및 동영상 표시
- * 3. 관련 안전 수칙 추천
+ * 3. 관련 여행 안전 정보 추천
  * 4. 조회수 추적
  *
  * @dependencies
- * - lib/api/safety-guidelines.ts: getSafetyGuidelineById, incrementSafetyGuidelineView 함수
+ * - lib/api/safety-guidelines.ts: getTravelSafetyGuidelineById, incrementTravelSafetyGuidelineView 함수
  * - components/safety/safety-video.tsx: SafetyVideo 컴포넌트
  */
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Shield, Calendar, Tag, ExternalLink } from "lucide-react";
+import { ArrowLeft, Shield, Plane, Tag, ExternalLink, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  getSafetyGuidelineById,
-  incrementSafetyGuidelineView,
-  getRecommendedSafetyGuidelines,
+  getTravelSafetyGuidelineById,
+  incrementTravelSafetyGuidelineView,
+  getRecommendedTravelSafetyGuidelines,
 } from "@/lib/api/safety-guidelines";
 import { SafetyVideo } from "@/components/safety/safety-video";
 import { SafetyCard } from "@/components/safety/safety-card";
@@ -34,25 +34,26 @@ interface SafetyDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-const SEASON_LABELS: Record<string, string> = {
-  spring: "봄",
-  summer: "여름",
-  autumn: "가을",
-  winter: "겨울",
+const TRAVEL_TYPE_LABELS: Record<string, string> = {
+  domestic: "국내여행",
+  overseas: "해외여행",
+  free: "자유여행",
+  package: "패키지여행",
   all: "전체",
 };
 
 const TOPIC_LABELS: Record<string, string> = {
-  food_poisoning: "식중독",
-  water_play: "물놀이",
-  insects: "벌레",
-  wildlife: "야생동물",
-  weather: "이상기후",
-  heat: "폭염",
-  heater: "난로",
-  gas: "가스",
-  co: "일산화탄소",
-  preparation: "준비사항",
+  transportation: "교통안전",
+  health: "건강",
+  natural_disaster: "자연재해",
+  crime_prevention: "범죄예방",
+  travel_insurance: "여행보험",
+  emergency_contact: "비상연락처",
+  food_safety: "식품안전",
+  accommodation: "숙박안전",
+  money: "금융/환전",
+  communication: "통신",
+  culture: "문화/예의",
   general: "일반",
 };
 
@@ -61,24 +62,24 @@ export default async function SafetyDetailPage({ params }: SafetyDetailPageProps
 
   console.group(`[SafetyDetailPage] 페이지 로드: ${id}`);
 
-  const guideline = await getSafetyGuidelineById(id);
+  const guideline = await getTravelSafetyGuidelineById(id);
 
   if (!guideline) {
-    console.warn("[SafetyDetailPage] 안전 수칙 없음");
+    console.warn("[SafetyDetailPage] 여행 안전 정보 없음");
     notFound();
   }
 
   // 조회수 증가 (비동기, 에러 발생해도 페이지 렌더링 계속)
-  incrementSafetyGuidelineView(id).catch((err) => {
+  incrementTravelSafetyGuidelineView(id).catch((err) => {
     console.error("[SafetyDetailPage] 조회수 추적 오류:", err);
   });
 
-  // 관련 안전 수칙 추천
-  const recommendedGuidelines = await getRecommendedSafetyGuidelines(3);
+  // 관련 여행 안전 정보 추천
+  const recommendedGuidelines = await getRecommendedTravelSafetyGuidelines(3, guideline.region || undefined);
 
   console.groupEnd();
 
-  const seasonLabel = guideline.season ? SEASON_LABELS[guideline.season] : null;
+  const travelTypeLabel = guideline.travel_type ? TRAVEL_TYPE_LABELS[guideline.travel_type] : null;
   const topicLabel = TOPIC_LABELS[guideline.topic] || guideline.topic;
 
   return (
@@ -88,7 +89,7 @@ export default async function SafetyDetailPage({ params }: SafetyDetailPageProps
         <Link href="/safety">
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            안전 수칙 목록으로
+            여행 안전 정보 목록으로
           </Button>
         </Link>
 
@@ -97,17 +98,23 @@ export default async function SafetyDetailPage({ params }: SafetyDetailPageProps
           <CardHeader>
             <div className="flex items-start justify-between gap-4">
               <CardTitle className="text-2xl">{guideline.title}</CardTitle>
-              <div className="flex gap-2 flex-shrink-0">
-                {seasonLabel && (
+              <div className="flex gap-2 flex-shrink-0 flex-wrap">
+                {travelTypeLabel && (
                   <Badge variant="secondary" className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" aria-hidden="true" />
-                    {seasonLabel}
+                    <Plane className="w-3 h-3" aria-hidden="true" />
+                    {travelTypeLabel}
                   </Badge>
                 )}
                 <Badge variant="outline" className="flex items-center gap-1">
                   <Tag className="w-3 h-3" aria-hidden="true" />
                   {topicLabel}
                 </Badge>
+                {guideline.region && (
+                  <Badge variant="outline" className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3" aria-hidden="true" />
+                    {guideline.region}
+                  </Badge>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -154,9 +161,9 @@ export default async function SafetyDetailPage({ params }: SafetyDetailPageProps
                     href={guideline.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-green-600 dark:text-green-400 hover:underline flex items-center gap-1"
+                    className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                   >
-                    고캠핑 사이트
+                    {guideline.source_name || "출처 링크"}
                     <ExternalLink className="w-3 h-3" aria-hidden="true" />
                   </a>
                 </p>
@@ -165,12 +172,12 @@ export default async function SafetyDetailPage({ params }: SafetyDetailPageProps
           </CardContent>
         </Card>
 
-        {/* 관련 안전 수칙 추천 */}
+        {/* 관련 여행 안전 정보 추천 */}
         {recommendedGuidelines.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Shield className="w-5 h-5" aria-hidden="true" />
-              관련 안전 수칙
+              관련 여행 안전 정보
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {recommendedGuidelines

@@ -26,6 +26,8 @@ import { ShareButton } from "@/components/travel-detail/share-button";
 import { BookmarkButton } from "@/components/travel-detail/bookmark-button";
 import { ContactButton } from "@/components/travel-detail/contact-button";
 import { WeatherWidget } from "@/components/travel-detail/weather-widget";
+import { TransportInfo } from "@/components/travel-detail/transport-info";
+import { SafetyRecommendations } from "@/components/travel-detail/safety-recommendations";
 import { AdSidebar } from "@/components/ads/ad-sidebar";
 import { LocalNav } from "@/components/navigation/local-nav";
 import { SideNav } from "@/components/navigation/side-nav";
@@ -384,6 +386,12 @@ export default async function TravelDetailPage({
           <div className="lg:col-span-1 space-y-6">
             {/* 날씨 위젯 */}
             <WeatherWidget travel={detail} />
+
+            {/* 교통 정보 */}
+            <TransportInfo travel={detail} />
+
+            {/* 여행 안전 정보 */}
+            <SafetyRecommendations travel={detail} />
 
             {/* 사이드바 광고 */}
             <AdSidebar sticky={false} />
