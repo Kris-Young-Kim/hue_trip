@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { koKR } from "@clerk/localizations";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { ThemeProvider } from "next-themes";
 import { SyncUserProvider } from "@/components/providers/sync-user-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { WebVitals } from "@/components/web-vitals";
+import Navbar from "@/components/Navbar";
+import { FooterNav } from "@/components/navigation/footer-nav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -96,30 +90,14 @@ export default function RootLayout({
               {/* Skip to content 링크 (접근성) */}
               <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-green-600 focus:text-white focus:rounded-md focus:font-medium focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
               >
                 메인 콘텐츠로 건너뛰기
               </a>
 
-              <header className="flex justify-end items-center p-4 gap-4 h-16">
-                <ThemeToggle />
-                <SignedOut>
-                  <SignInButton>
-                    <button className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
-                      로그인
-                    </button>
-                  </SignInButton>
-                  <SignUpButton>
-                    <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:bg-[#5a3ae6] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
-                      회원가입
-                    </button>
-                  </SignUpButton>
-                </SignedOut>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-              </header>
-              <main id="main-content">{children}</main>
+              <Navbar />
+              <main id="main-content" className="min-h-[calc(100vh-4rem)]">{children}</main>
+              <FooterNav />
               <Toaster />
               <WebVitals />
             </SyncUserProvider>

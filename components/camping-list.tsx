@@ -153,15 +153,20 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
   // 에러 상태
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4">
-        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-full mb-6">
+          <AlertCircle className="w-12 h-12 text-red-600 dark:text-red-400" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
           오류가 발생했습니다
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 text-center max-w-md">
           {error}
         </p>
-        <Button onClick={handleRetry} variant="outline">
+        <Button 
+          onClick={handleRetry} 
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
           <RefreshCw className="w-4 h-4 mr-2" />
           다시 시도
         </Button>
@@ -172,13 +177,15 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
   // 빈 결과 상태
   if (campings.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4">
-        <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full mb-6">
+          <AlertCircle className="w-12 h-12 text-gray-400 dark:text-gray-500" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
           캠핑장을 찾을 수 없습니다
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-          검색 조건을 변경해보세요.
+        <p className="text-sm text-gray-600 dark:text-gray-400 text-center max-w-md">
+          검색 조건을 변경하거나 필터를 초기화해보세요.
         </p>
       </div>
     );
@@ -187,12 +194,14 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
   return (
     <div className="space-y-6" role="region" aria-label="캠핑장 목록">
       {/* 결과 개수 표시 */}
-      <div className="text-sm text-gray-600 dark:text-gray-400" aria-live="polite">
-        총 <span className="font-semibold">{totalCount.toLocaleString()}</span>개의 캠핑장이 있습니다
+      <div className="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-700" aria-live="polite">
+        <div className="text-base font-semibold text-gray-900 dark:text-white">
+          총 <span className="text-green-600 dark:text-green-400">{totalCount.toLocaleString()}</span>개의 캠핑장
+        </div>
       </div>
 
       {/* 캠핑장 그리드 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" role="list">
         {campings.map((camping) => (
           <div key={camping.contentId} role="listitem">
             <CampingCard 
@@ -205,14 +214,14 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
 
       {/* 페이지네이션 */}
       {totalPages > 1 && (
-        <nav aria-label="페이지 네비게이션" className="flex items-center justify-center gap-2 pt-4">
+        <nav aria-label="페이지 네비게이션" className="flex items-center justify-center gap-2 pt-8 border-t border-gray-200 dark:border-gray-700">
           <Button
             variant="outline"
             size="sm"
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 1}
             aria-label="이전 페이지"
-            className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
           >
             이전
           </Button>
@@ -238,7 +247,11 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
                   onClick={() => handlePageChange(pageNum)}
                   aria-label={`${pageNum}페이지로 이동`}
                   aria-current={page === pageNum ? "page" : undefined}
-                  className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  className={`focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+                    page === pageNum 
+                      ? "bg-green-600 hover:bg-green-700 text-white border-green-600" 
+                      : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                  }`}
                 >
                   {pageNum}
                 </Button>
@@ -252,7 +265,7 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
             onClick={() => handlePageChange(page + 1)}
             disabled={page === totalPages}
             aria-label="다음 페이지"
-            className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
           >
             다음
           </Button>

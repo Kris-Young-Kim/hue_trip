@@ -19,7 +19,6 @@
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { campingApi } from "@/lib/api/camping-api";
 import { normalizeItems } from "@/lib/utils/camping";
@@ -29,7 +28,10 @@ import { BookmarkButton } from "@/components/camping-detail/bookmark-button";
 import { ReviewSection } from "@/components/camping-detail/review-section";
 import { ReservationButton } from "@/components/camping-detail/reservation-button";
 import { SafetyRecommendations } from "@/components/safety/safety-recommendations";
+import { LocalNav } from "@/components/navigation/local-nav";
+import { SideNav } from "@/components/navigation/side-nav";
 import { trackView } from "@/lib/api/analytics";
+import { Home, Shield, MessageSquare } from "lucide-react";
 import type { CampingSiteDetail } from "@/types/camping";
 import type { Metadata } from "next";
 
@@ -148,107 +150,163 @@ export default async function CampingDetailPage({
   });
 
   return (
-    <main className="min-h-[calc(100vh-80px)] py-8 px-4">
-      <div className="max-w-5xl mx-auto">
-        {/* 뒤로가기 버튼 */}
-        <Link href="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            목록으로 돌아가기
-          </Button>
-        </Link>
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* LNB: 브레드크럼 네비게이션 */}
+      <LocalNav className="sticky top-16 z-40">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-3">
+          <nav className="flex items-center gap-2 text-sm" aria-label="브레드크럼">
+            <Link
+              href="/"
+              className="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-md"
+            >
+              홈
+            </Link>
+            <span className="text-gray-400 dark:text-gray-600" aria-hidden="true">
+              /
+            </span>
+            <span className="text-gray-900 dark:text-white font-medium">{detail.facltNm}</span>
+          </nav>
+        </div>
+      </LocalNav>
 
-        {/* 기본 정보 섹션 */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
-          <div className="flex items-start justify-between mb-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {detail.facltNm}
-            </h1>
-            <div className="flex gap-2">
-              <ShareButton contentId={contentId} />
-              <BookmarkButton contentId={contentId} />
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
 
-          {/* 이미지 갤러리 */}
+        {/* Hero Section - 이미지 갤러리 */}
+        <div className="mb-8">
           <DetailGallery camping={detail} />
-
-          {/* 예약 버튼 (눈에 띄는 위치) */}
-          <div className="mt-6 mb-6">
-            <ReservationButton camping={detail} />
-          </div>
-
-          <div className="space-y-4 mt-6">
-            {detail.addr1 && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                  주소
-                </h3>
-                <p className="text-gray-900 dark:text-white">
-                  {detail.addr1} {detail.addr2 || ""}
-                </p>
-              </div>
-            )}
-
-            {detail.tel && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                  전화번호
-                </h3>
-                <a
-                  href={`tel:${detail.tel}`}
-                  className="text-green-600 dark:text-green-400 hover:underline"
-                >
-                  {detail.tel}
-                </a>
-              </div>
-            )}
-
-            {detail.homepage && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                  홈페이지
-                </h3>
-                <a
-                  href={detail.homepage}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-green-600 dark:text-green-400 hover:underline"
-                >
-                  {detail.homepage}
-                </a>
-              </div>
-            )}
-
-            {detail.intro && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  소개
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                  {detail.intro}
-                </p>
-              </div>
-            )}
-
-            {detail.sbrsCl && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  시설
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  {detail.sbrsCl}
-                </p>
-              </div>
-            )}
-          </div>
         </div>
 
-        {/* 리뷰 섹션 */}
-        <ReviewSection contentId={contentId} />
+        {/* 메인 콘텐츠 그리드 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* 좌측 컬럼 - 메인 정보 (2/3) */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* 제목 및 액션 버튼 */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+                <div className="flex-1">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+                    {detail.facltNm}
+                  </h1>
+                  {detail.induty && (
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="px-3 py-1.5 text-sm font-semibold bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full">
+                        {detail.induty}
+                      </span>
+                      {detail.doNm && (
+                        <span className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-full">
+                          📍 {detail.doNm} {detail.sigunguNm || ""}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <ShareButton contentId={contentId} />
+                  <BookmarkButton contentId={contentId} />
+                </div>
+              </div>
 
-        {/* 안전 수칙 추천 */}
-        <SafetyRecommendations campingType={detail.induty} />
+              {/* 기본 정보 */}
+              <div className="space-y-5 pt-6 border-t border-gray-200 dark:border-gray-700">
+                {detail.addr1 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                      📍 주소
+                    </h3>
+                    <p className="text-gray-900 dark:text-white text-base">
+                      {detail.addr1} {detail.addr2 || ""}
+                    </p>
+                  </div>
+                )}
+
+                {detail.tel && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                      📞 전화번호
+                    </h3>
+                    <a
+                      href={`tel:${detail.tel}`}
+                      className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 text-base font-medium hover:underline transition-colors"
+                    >
+                      {detail.tel}
+                    </a>
+                  </div>
+                )}
+
+                {detail.homepage && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                      🌐 홈페이지
+                    </h3>
+                    <a
+                      href={detail.homepage}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 text-base font-medium hover:underline transition-colors break-all"
+                    >
+                      {detail.homepage}
+                    </a>
+                  </div>
+                )}
+
+                {detail.intro && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                      📝 소개
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed text-base">
+                      {detail.intro}
+                    </p>
+                  </div>
+                )}
+
+                {detail.sbrsCl && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                      🔧 시설
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {detail.sbrsCl.split(",").map((facility, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-full"
+                        >
+                          {facility.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 리뷰 섹션 */}
+            <ReviewSection contentId={contentId} />
+
+            {/* 안전 수칙 추천 */}
+            <SafetyRecommendations campingType={detail.induty} />
+          </div>
+
+          {/* 우측 컬럼 - 사이드바 (1/3) */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* SNB: 빠른 링크 */}
+            <SideNav
+              title="빠른 링크"
+              items={[
+                { href: "/", label: "홈", icon: <Home className="w-4 h-4" /> },
+                { href: "/safety", label: "안전 수칙", icon: <Shield className="w-4 h-4" /> },
+                { href: "/feedback", label: "피드백", icon: <MessageSquare className="w-4 h-4" /> },
+              ]}
+            />
+
+            {/* 예약 버튼 - Sticky */}
+            <div className="lg:sticky lg:top-24">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <ReservationButton camping={detail} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

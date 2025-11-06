@@ -103,7 +103,7 @@ export function CampingSearch({
         캠핑장 검색
       </label>
       <div className="relative flex items-center">
-        <Search className="absolute left-3 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden="true" />
+        <Search className="absolute left-4 w-5 h-5 text-gray-400 dark:text-gray-500 pointer-events-none z-10" aria-hidden="true" />
         <Input
           id="camping-search-input"
           type="text"
@@ -111,7 +111,7 @@ export function CampingSearch({
           onChange={(e) => setKeyword(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="pl-10 pr-10 h-12 text-base focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          className="pl-12 pr-12 h-14 text-base bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
           disabled={isSearching}
           aria-label="캠핑장 검색"
           aria-describedby={isSearching ? "search-loading" : undefined}
@@ -122,7 +122,7 @@ export function CampingSearch({
             variant="ghost"
             size="sm"
             onClick={handleClear}
-            className="absolute right-1 h-8 w-8 p-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="absolute right-2 h-9 w-9 p-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
             disabled={isSearching}
             aria-label="검색어 지우기"
           >
@@ -130,13 +130,13 @@ export function CampingSearch({
             <span className="sr-only">검색어 지우기</span>
           </Button>
         )}
+        {isSearching && !keyword && (
+          <div id="search-loading" className="absolute right-4 top-1/2 -translate-y-1/2" role="status" aria-live="polite">
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-green-600 border-t-transparent" aria-hidden="true"></div>
+            <span className="sr-only">검색 중...</span>
+          </div>
+        )}
       </div>
-      {isSearching && (
-        <div id="search-loading" className="absolute right-3 top-1/2 -translate-y-1/2" role="status" aria-live="polite">
-          <div className="animate-spin rounded-full h-4 w-4 border-2 border-green-600 border-t-transparent" aria-hidden="true"></div>
-          <span className="sr-only">검색 중...</span>
-        </div>
-      )}
     </div>
   );
 }

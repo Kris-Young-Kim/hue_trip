@@ -144,18 +144,20 @@ export function CampingFilters({ onFilterChange }: CampingFiltersProps) {
     sortOrder !== SORT_OPTIONS.NAME;
 
   return (
-    <div className="space-y-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md" role="region" aria-label="캠핑장 필터">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-green-600 dark:text-green-400" aria-hidden="true" />
-          <h2 className="text-lg font-semibold">필터</h2>
+    <div className="space-y-5 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700" role="region" aria-label="캠핑장 필터">
+      <div className="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+            <Filter className="w-5 h-5 text-green-600 dark:text-green-400" aria-hidden="true" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">필터</h2>
         </div>
         {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
             onClick={resetFilters}
-            className="text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
             aria-label="필터 초기화"
           >
             <X className="w-4 h-4 mr-1" aria-hidden="true" />
@@ -165,10 +167,10 @@ export function CampingFilters({ onFilterChange }: CampingFiltersProps) {
       </div>
 
       {/* 지역 필터 */}
-      <div className="space-y-2">
-        <Label htmlFor="region">지역</Label>
+      <div className="space-y-2.5">
+        <Label htmlFor="region" className="text-sm font-semibold text-gray-900 dark:text-white">지역</Label>
         <Select value={region} onValueChange={setRegion}>
-          <SelectTrigger id="region">
+          <SelectTrigger id="region" className="h-11">
             <SelectValue placeholder="지역 선택" />
           </SelectTrigger>
           <SelectContent>
@@ -183,10 +185,10 @@ export function CampingFilters({ onFilterChange }: CampingFiltersProps) {
       </div>
 
       {/* 캠핑 타입 필터 */}
-      <div className="space-y-2">
-        <Label htmlFor="type">캠핑 타입</Label>
+      <div className="space-y-2.5">
+        <Label htmlFor="type" className="text-sm font-semibold text-gray-900 dark:text-white">캠핑 타입</Label>
         <Select value={campingType} onValueChange={setCampingType}>
-          <SelectTrigger id="type">
+          <SelectTrigger id="type" className="h-11">
             <SelectValue placeholder="캠핑 타입 선택" />
           </SelectTrigger>
           <SelectContent>
@@ -201,20 +203,21 @@ export function CampingFilters({ onFilterChange }: CampingFiltersProps) {
       </div>
 
       {/* 시설 필터 */}
-      <div className="space-y-2">
-        <Label id="facilities-label">시설</Label>
-        <div className="grid grid-cols-2 gap-2" role="group" aria-labelledby="facilities-label">
+      <div className="space-y-2.5">
+        <Label id="facilities-label" className="text-sm font-semibold text-gray-900 dark:text-white">시설</Label>
+        <div className="grid grid-cols-2 gap-2.5" role="group" aria-labelledby="facilities-label">
           {FACILITY_LIST.slice(0, 8).map((facility) => (
-            <div key={facility} className="flex items-center space-x-2">
+            <div key={facility} className="flex items-center space-x-2.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
               <Checkbox
                 id={`facility-${facility}`}
                 checked={selectedFacilities.includes(facility)}
                 onCheckedChange={() => toggleFacility(facility)}
                 aria-label={`${facility} 시설 ${selectedFacilities.includes(facility) ? "선택됨" : "선택 안됨"}`}
+                className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
               />
               <Label
                 htmlFor={`facility-${facility}`}
-                className="text-sm cursor-pointer"
+                className="text-sm cursor-pointer text-gray-700 dark:text-gray-300 font-medium"
               >
                 {facility}
               </Label>
@@ -224,10 +227,10 @@ export function CampingFilters({ onFilterChange }: CampingFiltersProps) {
       </div>
 
       {/* 정렬 옵션 */}
-      <div className="space-y-2">
-        <Label htmlFor="sort">정렬</Label>
+      <div className="space-y-2.5">
+        <Label htmlFor="sort" className="text-sm font-semibold text-gray-900 dark:text-white">정렬</Label>
         <Select value={sortOrder} onValueChange={setSortOrder}>
-          <SelectTrigger id="sort">
+          <SelectTrigger id="sort" className="h-11">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -242,24 +245,24 @@ export function CampingFilters({ onFilterChange }: CampingFiltersProps) {
 
       {/* 활성 필터 표시 */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2 pt-2 border-t">
+        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
           {region !== REGIONS.ALL && (
-            <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 rounded">
+            <span className="px-3 py-1.5 text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full border border-green-200 dark:border-green-800">
               지역: {region}
             </span>
           )}
           {campingType !== CAMPING_TYPES.ALL && (
-            <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 rounded">
+            <span className="px-3 py-1.5 text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full border border-green-200 dark:border-green-800">
               타입: {campingType}
             </span>
           )}
           {selectedFacilities.length > 0 && (
-            <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 rounded">
+            <span className="px-3 py-1.5 text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full border border-green-200 dark:border-green-800">
               시설: {selectedFacilities.length}개
             </span>
           )}
           {sortOrder !== SORT_OPTIONS.NAME && (
-            <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 rounded">
+            <span className="px-3 py-1.5 text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full border border-green-200 dark:border-green-800">
               {SORT_OPTION_LABELS[sortOrder as keyof typeof SORT_OPTION_LABELS]}
             </span>
           )}

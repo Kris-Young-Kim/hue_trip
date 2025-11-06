@@ -44,26 +44,28 @@ export function CampingCard({ camping, onCardClick }: CampingCardProps) {
       href={`/campings/${camping.contentId}`}
       onClick={() => {
         handleCardClick();
-        // 지도 연동을 위해 기본 동작은 유지하되, 호버 시에는 지도로만 이동
       }}
-      className="group block bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      className="group block bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
       aria-label={`${camping.facltNm} 캠핑장 상세 정보 보기`}
     >
-      {/* 이미지 영역 */}
-      <div className="relative w-full h-48 overflow-hidden bg-gray-200 dark:bg-gray-700">
+      {/* 이미지 영역 - 16:9 비율 */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
         <Image
           src={getImageUrl(camping.firstImageUrl)}
           alt={`${camping.facltNm} 캠핑장 이미지`}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-200"
+          className="object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority={false}
           loading="lazy"
         />
+        {/* 그라데이션 오버레이 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
         {/* 캠핑 타입 뱃지 */}
         {camping.induty && (
-          <div className="absolute top-2 left-2">
-            <span className="px-2 py-1 text-xs font-semibold bg-green-600 text-white rounded" aria-label={`캠핑 타입: ${camping.induty}`}>
+          <div className="absolute top-3 left-3 z-10">
+            <span className="px-3 py-1.5 text-xs font-semibold bg-green-600/95 backdrop-blur-sm text-white rounded-full shadow-lg" aria-label={`캠핑 타입: ${camping.induty}`}>
               {camping.induty}
             </span>
           </div>
@@ -71,15 +73,15 @@ export function CampingCard({ camping, onCardClick }: CampingCardProps) {
       </div>
 
       {/* 내용 영역 */}
-      <div className="p-4 space-y-3">
+      <div className="p-5 space-y-3">
         {/* 캠핑장명 */}
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white line-clamp-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors min-h-[3rem]">
           {camping.facltNm}
         </h3>
 
         {/* 주소 */}
         <div className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600 dark:text-green-400" />
           <span className="line-clamp-1">
             {formatAddress(camping.addr1, camping.addr2)}
           </span>
@@ -87,41 +89,41 @@ export function CampingCard({ camping, onCardClick }: CampingCardProps) {
 
         {/* 한줄 소개 */}
         {camping.lineIntro && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
             {camping.lineIntro}
           </p>
         )}
 
         {/* 시설 아이콘 */}
         {camping.sbrsCl && (
-          <div className="flex items-center gap-3 flex-wrap" role="list" aria-label="캠핑장 시설">
+          <div className="flex items-center gap-2 flex-wrap pt-2" role="list" aria-label="캠핑장 시설">
             {camping.sbrsCl.includes("화장실") && (
-              <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400" role="listitem">
-                <Droplets className="w-4 h-4" aria-hidden="true" />
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-full" role="listitem">
+                <Droplets className="w-3.5 h-3.5 text-green-600 dark:text-green-400" aria-hidden="true" />
                 <span>화장실</span>
               </div>
             )}
             {camping.sbrsCl.includes("샤워장") && (
-              <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400" role="listitem">
-                <Droplets className="w-4 h-4" aria-hidden="true" />
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-full" role="listitem">
+                <Droplets className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                 <span>샤워장</span>
               </div>
             )}
             {camping.sbrsCl.includes("전기") && (
-              <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400" role="listitem">
-                <Zap className="w-4 h-4" aria-hidden="true" />
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-full" role="listitem">
+                <Zap className="w-3.5 h-3.5 text-yellow-600 dark:text-yellow-400" aria-hidden="true" />
                 <span>전기</span>
               </div>
             )}
             {camping.sbrsCl.includes("와이파이") && (
-              <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400" role="listitem">
-                <Wifi className="w-4 h-4" aria-hidden="true" />
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-full" role="listitem">
+                <Wifi className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
                 <span>와이파이</span>
               </div>
             )}
             {camping.sbrsCl.includes("주차") && (
-              <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400" role="listitem">
-                <Car className="w-4 h-4" aria-hidden="true" />
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-full" role="listitem">
+                <Car className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" aria-hidden="true" />
                 <span>주차</span>
               </div>
             )}
@@ -129,20 +131,22 @@ export function CampingCard({ camping, onCardClick }: CampingCardProps) {
         )}
 
         {/* 연락처 정보 (있는 경우) */}
-        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500 pt-2 border-t border-gray-200 dark:border-gray-700">
-          {camping.tel && (
-            <div className="flex items-center gap-1">
-              <Phone className="w-3 h-3" />
-              <span>{camping.tel}</span>
-            </div>
-          )}
-          {camping.homepage && (
-            <div className="flex items-center gap-1">
-              <Home className="w-3 h-3" />
-              <span>홈페이지</span>
-            </div>
-          )}
-        </div>
+        {(camping.tel || camping.homepage) && (
+          <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-100 dark:border-gray-700">
+            {camping.tel && (
+              <div className="flex items-center gap-1.5 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                <Phone className="w-3.5 h-3.5" />
+                <span>{camping.tel}</span>
+              </div>
+            )}
+            {camping.homepage && (
+              <div className="flex items-center gap-1.5 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                <Home className="w-3.5 h-3.5" />
+                <span>홈페이지</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   );
