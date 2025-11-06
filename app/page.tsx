@@ -29,6 +29,7 @@ import { TravelList } from "@/components/travel-list";
 import { TravelSearch } from "@/components/travel-search";
 import { MapSkeleton } from "@/components/loading/map-skeleton";
 import { LocalNav, LocalNavTabs } from "@/components/navigation/local-nav";
+import { AdSidebar } from "@/components/ads/ad-sidebar";
 import { Map, List } from "lucide-react";
 import type { TravelFilter, TravelSite } from "@/types/travel";
 import { REGIONS, TRAVEL_TYPES, REGION_CODES, TRAVEL_TYPE_CODES } from "@/constants/travel";
@@ -169,9 +170,11 @@ function HomeContent() {
         {/* 필터 및 콘텐츠 레이아웃 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* 필터 사이드바 - Sticky */}
-          <aside className="lg:col-span-3">
-            <div className="lg:sticky lg:top-24">
+          <aside className="lg:col-span-3 space-y-6">
+            <div className="lg:sticky lg:top-24 space-y-6">
               <TravelFilters onFilterChange={handleFilterChange} />
+              {/* 사이드바 광고 */}
+              <AdSidebar sticky={false} />
             </div>
           </aside>
 

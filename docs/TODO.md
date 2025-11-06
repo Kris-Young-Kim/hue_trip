@@ -431,6 +431,12 @@
   - 일주일 예보 표시
   - 상세페이지에 날씨 위젯 통합
   - 날씨 연동 계획 문서 작성 (`docs/WEATHER_INTEGRATION_PLAN.md`)
+- [x] 광고 시스템 연동 프로토타입 (`components/ads/ad-banner.tsx`, `components/ads/ad-sidebar.tsx`)
+  - Google AdSense 연동 준비
+  - 광고 배너 컴포넌트 생성
+  - 사이드바 광고 컴포넌트 생성
+  - 목록 페이지 및 상세페이지에 광고 통합
+  - 광고 연동 계획 문서 작성 (`docs/ADS_INTEGRATION_PLAN.md`)
 
 ### 여행 안전 정보 제공 기능
 
