@@ -579,15 +579,23 @@
 
 **작업 내용**:
 
-- [ ] CORS 문제 해결 (`app/api/travels/route.ts`)
+- [x] CORS 문제 해결 (`app/api/travels/route.ts`)
   - Next.js API Route를 통한 프록시 구현
   - 서버 사이드에서 API 키 관리
   - 클라이언트에서 직접 호출 가능
-- [ ] 유틸리티 함수 리팩토링 (`lib/utils/travel.ts`)
-  - `normalizeItems` 함수를 TravelApiClient에서 분리
-  - 클라이언트/서버 양쪽에서 사용 가능한 순수 함수로 변경
-- [ ] 이미지 최적화 (`next.config.ts`)
+  - CORS 헤더 추가 (Access-Control-Allow-Origin, Access-Control-Allow-Methods)
+  - OPTIONS 요청 처리 (preflight)
+  - 캐싱 전략 적용 (5분 캐시, 10분 stale-while-revalidate)
+- [x] 유틸리티 함수 리팩토링 (`lib/utils/travel.ts`)
+  - `normalizeTravelItems` 함수를 TravelApiClient에서 분리 완료
+  - 클라이언트/서버 양쪽에서 사용 가능한 순수 함수로 변경 완료
+- [x] 이미지 최적화 (`next.config.ts`)
   - TourAPI 이미지 도메인 추가 (한국관광공사 이미지 서버)
+  - `tong.visitkorea.or.kr`, `api.visitkorea.or.kr` 등 도메인 설정
+  - HTTPS 프로토콜 및 pathname 패턴 지정
+  - deviceSizes 및 imageSizes 최적화
+  - AVIF, WebP 포맷 지원
+  - 24시간 캐시 TTL 설정
 
 **우선순위**: High (기능 안정성 및 성능 향상)
 

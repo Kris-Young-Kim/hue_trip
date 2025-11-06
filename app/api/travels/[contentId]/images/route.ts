@@ -18,6 +18,18 @@ interface RouteParams {
   params: Promise<{ contentId: string }>;
 }
 
+// OPTIONS 요청 처리 (CORS preflight)
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}
+
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { contentId } = await params;
   
@@ -46,7 +58,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     console.log("[API] TourAPI 응답 성공");
     console.groupEnd();
     
-    return NextResponse.json(response);
+    // CORS 헤더 추가 및 캐싱 설정
+    return NextResponse.json(response, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Cache-Control": "public, s-maxage=600, stale-while-revalidate=1200", // 10분 캐시, 20분 stale-while-revalidate
+      },
+    });
   } catch (error) {
     console.error("[API] 이미지 목록 조회 오류:", error);
     const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류";
