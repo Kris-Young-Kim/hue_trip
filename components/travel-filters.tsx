@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { X, Filter } from "lucide-react";
+import { X, Filter, Search } from "lucide-react";
 import type { TravelFilter } from "@/types/travel";
 import {
   REGIONS,
@@ -67,9 +67,9 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     searchParams.get("sort") || SORT_OPTIONS.TITLE
   );
 
-  // 필터 변경 시 URL 및 콜백 업데이트
-  useEffect(() => {
-    console.group("[TravelFilters] 필터 상태 변경");
+  // 필터 적용 함수 (검색 버튼 클릭 시 또는 자동 적용)
+  const applyFilters = useCallback(() => {
+    console.group("[TravelFilters] 필터 적용");
     console.log("지역:", region);
     console.log("여행지 타입:", travelType);
     console.log("정렬:", sortOrder);
@@ -109,8 +109,16 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     onFilterChangeRef.current?.(filter);
 
     console.groupEnd();
+  }, [region, travelType, sortOrder, router, searchParams, onFilterChangeRef]);
+
+  // 필터 변경 시 자동 적용 (정렬은 즉시 적용, 지역/타입은 검색 버튼 필요)
+  useEffect(() => {
+    // 정렬만 변경된 경우 즉시 적용
+    if (sortOrder !== (searchParams.get("sort") || SORT_OPTIONS.TITLE)) {
+      applyFilters();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region, travelType, sortOrder, router]);
+  }, [sortOrder]);
 
   // 필터 초기화
   const resetFilters = () => {
@@ -208,6 +216,16 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
           </SelectContent>
         </Select>
       </div>
+
+      {/* 검색 버튼 */}
+      <Button
+        onClick={applyFilters}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-11"
+        aria-label="필터 적용"
+      >
+        <Search className="w-4 h-4 mr-2" aria-hidden="true" />
+        검색
+      </Button>
 
       {/* 활성 필터 표시 */}
       {hasActiveFilters && (
