@@ -237,7 +237,7 @@ export function NaverMap({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initializeMap]); // campings.length는 로그용이므로 의존성에서 제외
+  }, [initializeMap]); // travels.length는 로그용이므로 의존성에서 제외
 
   // 선택된 여행지로 지도 이동
   useEffect(() => {
