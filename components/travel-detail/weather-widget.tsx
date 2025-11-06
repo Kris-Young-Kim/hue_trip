@@ -187,7 +187,7 @@ export function WeatherWidget({ travel, className }: WeatherWidgetProps) {
                         <div className="w-16 text-xs text-gray-600 dark:text-gray-400">
                           {item.dayOfWeek}
                         </div>
-                        <WeatherIcon icon={item.icon} size={20} />
+                        <WeatherIcon icon={item.icon} />
                         <div className="text-sm text-gray-700 dark:text-gray-300 capitalize flex-1">
                           {item.description}
                         </div>
