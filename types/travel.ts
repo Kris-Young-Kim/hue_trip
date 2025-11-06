@@ -67,6 +67,10 @@ export interface TravelSiteDetail {
   chkbabycarriage?: string; // 유모차 대여
   chkpet?: string; // 애완동물 동반
   chkcreditcard?: string; // 신용카드 가능
+  // 카테고리 정보
+  cat1?: string; // 대분류
+  cat2?: string; // 중분류
+  cat3?: string; // 소분류
   // 기타 필드
   [key: string]: unknown;
 }
