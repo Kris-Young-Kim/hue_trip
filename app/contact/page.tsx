@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Mail, MessageSquare } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "문의하기 | Pitch Camping",
-  description: "Pitch Camping에 문의하세요.",
+  title: "문의하기 | Pitch Travel",
+  description: "Pitch Travel에 문의하세요.",
 };
 
 export default function ContactPage() {
@@ -18,7 +18,7 @@ export default function ContactPage() {
           </h1>
           <div className="space-y-6">
             <div className="flex items-start gap-4 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <Mail className="w-6 h-6 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
+              <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   이메일 문의
@@ -27,15 +27,15 @@ export default function ContactPage() {
                   문의사항이 있으시면 아래 이메일로 연락주세요.
                 </p>
                 <a
-                  href="mailto:contact@pitchcamping.com"
-                  className="text-green-600 dark:text-green-400 hover:underline font-medium"
+                  href="mailto:contact@pitchtravel.com"
+                  className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                 >
-                  contact@pitchcamping.com
+                  contact@pitchtravel.com
                 </a>
               </div>
             </div>
             <div className="flex items-start gap-4 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <MessageSquare className="w-6 h-6 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
+              <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   피드백

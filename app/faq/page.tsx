@@ -9,29 +9,29 @@ import {
 } from "@/components/ui/accordion";
 
 export const metadata: Metadata = {
-  title: "자주 묻는 질문 | Pitch Camping",
-  description: "Pitch Camping 자주 묻는 질문입니다.",
+  title: "자주 묻는 질문 | Pitch Travel",
+  description: "Pitch Travel 자주 묻는 질문입니다.",
 };
 
 const faqs = [
   {
-    question: "Pitch Camping은 무료인가요?",
-    answer: "네, Pitch Camping은 완전 무료로 제공되는 서비스입니다.",
+    question: "Pitch Travel은 무료인가요?",
+    answer: "네, Pitch Travel은 완전 무료로 제공되는 서비스입니다.",
   },
   {
-    question: "캠핑장 예약은 어떻게 하나요?",
+    question: "여행지 예약은 어떻게 하나요?",
     answer:
-      "Pitch Camping은 캠핑장 정보를 제공하는 서비스입니다. 예약은 각 캠핑장의 공식 홈페이지나 전화를 통해 진행해주세요.",
+      "Pitch Travel은 여행지 정보를 제공하는 서비스입니다. 예약은 각 여행지의 공식 홈페이지나 전화를 통해 진행해주세요.",
   },
   {
-    question: "캠핑장 정보가 잘못되었어요.",
+    question: "여행지 정보가 잘못되었어요.",
     answer:
-      "캠핑장 정보는 고캠핑 API를 통해 제공됩니다. 정보 수정 요청은 피드백 페이지를 통해 남겨주시면 검토하겠습니다.",
+      "여행지 정보는 한국관광공사 TourAPI를 통해 제공됩니다. 정보 수정 요청은 피드백 페이지를 통해 남겨주시면 검토하겠습니다.",
   },
   {
     question: "회원가입이 필수인가요?",
     answer:
-      "아니요, 회원가입 없이도 캠핑장 정보를 조회할 수 있습니다. 다만 북마크나 리뷰 기능을 사용하려면 회원가입이 필요합니다.",
+      "아니요, 회원가입 없이도 여행지 정보를 조회할 수 있습니다. 다만 북마크나 리뷰 기능을 사용하려면 회원가입이 필요합니다.",
   },
 ];
 

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "개인정보처리방침 | Pitch Camping",
-  description: "Pitch Camping 개인정보처리방침입니다.",
+  title: "개인정보처리방침 | Pitch Travel",
+  description: "Pitch Travel 개인정보처리방침입니다.",
 };
 
 export default function PrivacyPage() {
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
                 1. 개인정보의 처리 목적
               </h2>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                Pitch Camping은 다음의 목적을 위하여 개인정보를 처리합니다:
+                Pitch Travel은 다음의 목적을 위하여 개인정보를 처리합니다:
               </p>
               <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mt-4">
                 <li>서비스 제공 및 계약의 이행</li>
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
                 3. 개인정보의 제3자 제공
               </h2>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                Pitch Camping은 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다.
+                Pitch Travel은 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다.
               </p>
             </section>
             <section>
@@ -50,7 +50,7 @@ export default function PrivacyPage() {
                 4. 개인정보처리 위탁
               </h2>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                Pitch Camping은 서비스 제공을 위해 다음과 같이 개인정보 처리업무를 위탁하고 있습니다:
+                Pitch Travel은 서비스 제공을 위해 다음과 같이 개인정보 처리업무를 위탁하고 있습니다:
               </p>
               <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mt-4">
                 <li>인증 서비스: Clerk (개인정보 처리 위탁)</li>

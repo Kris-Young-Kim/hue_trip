@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "회사 소개 | Pitch Camping",
-  description: "Pitch Camping에 대해 알아보세요.",
+  title: "회사 소개 | Pitch Travel",
+  description: "Pitch Travel에 대해 알아보세요.",
 };
 
 export default function AboutPage() {
@@ -17,14 +17,14 @@ export default function AboutPage() {
           </h1>
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-              Pitch Camping은 전국 캠핑장 정보를 한눈에 확인할 수 있는 서비스입니다.
-              캠핑을 사랑하는 모든 분들에게 최고의 캠핑 경험을 제공하기 위해 노력하고 있습니다.
+              Pitch Travel은 전국 여행지 정보를 한눈에 확인할 수 있는 서비스입니다.
+              여행을 사랑하는 모든 분들에게 최고의 여행 경험을 제공하기 위해 노력하고 있습니다.
             </p>
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">
               우리의 미션
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-              모든 캠핑 애호가가 쉽고 빠르게 원하는 캠핑장을 찾을 수 있도록 돕는 것입니다.
+              모든 여행자가 쉽고 빠르게 원하는 여행지를 찾을 수 있도록 돕는 것입니다.
             </p>
             <div className="mt-8">
               <Link href="/">
