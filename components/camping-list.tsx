@@ -27,7 +27,7 @@ import { CardSkeleton } from "@/components/loading/card-skeleton";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import type { CampingSite, CampingFilter } from "@/types/camping";
-import { campingApi, CampingApiClient } from "@/lib/api/camping-api";
+import { CampingApiClient } from "@/lib/api/camping-api";
 import { PAGINATION_DEFAULTS } from "@/constants/camping";
 
 interface CampingListProps {
@@ -62,23 +62,40 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
           numOfRows: PAGINATION_DEFAULTS.PAGE_SIZE,
         };
 
-        console.log("[CampingList] API 호출 시작");
-        const response = await campingApi.getCampingList(filterWithPage);
+        // Next.js API Route를 통해 서버 사이드에서 호출
+        const params = new URLSearchParams();
+        if (filterWithPage.pageNo) params.set("pageNo", String(filterWithPage.pageNo));
+        if (filterWithPage.numOfRows) params.set("numOfRows", String(filterWithPage.numOfRows));
+        if (filterWithPage.doNm) params.set("doNm", filterWithPage.doNm);
+        if (filterWithPage.sigunguNm) params.set("sigunguNm", filterWithPage.sigunguNm);
+        if (filterWithPage.induty) params.set("induty", filterWithPage.induty);
+        if (filterWithPage.sbrsCl) params.set("sbrsCl", filterWithPage.sbrsCl);
+        if (filterWithPage.keyword) params.set("keyword", filterWithPage.keyword);
+        if (filterWithPage.sortOrder) params.set("sortOrder", filterWithPage.sortOrder);
 
-        console.log("[CampingList] API 응답:", response);
+        console.log("[CampingList] API Route 호출 시작:", `/api/campings?${params.toString()}`);
+        const response = await fetch(`/api/campings?${params.toString()}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `API 요청 실패: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("[CampingList] API 응답:", data);
 
         // 응답 데이터 정규화
         const items = CampingApiClient.normalizeItems(
-          response.response?.body?.items?.item
+          data.response?.body?.items?.item
         );
 
         console.log("[CampingList] 정규화된 데이터:", {
           count: items.length,
-          totalCount: response.response?.body?.totalCount,
+          totalCount: data.response?.body?.totalCount,
         });
 
         setCampings(items);
-        setTotalCount(response.response?.body?.totalCount || 0);
+        setTotalCount(data.response?.body?.totalCount || 0);
         
         // 상위 컴포넌트로 캠핑장 목록 전달
         onCampingsChange?.(items);
