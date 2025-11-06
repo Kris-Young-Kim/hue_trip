@@ -10,14 +10,34 @@
 
 ## [Phase 1] 프로젝트 셋업 및 공통 인프라
 
-- [ ] Next.js 기반 프로젝트 세팅 (버전: 15.x, App Router)
-- [ ] 필수 패키지 설치: React, TypeScript, TailwindCSS(v4), shadcn/ui, lucide-react, Supabase client
-- [ ] 환경변수 관리: .env, 보안 적합성 확인
-- [ ] 공공 API 인증키 적용, API 모듈 구조 설계 (lib/api/camping-api.ts)
-- [ ] Supabase DB 구조 설계 (bookmarks·user·review 등 확장성 반영)
-- [ ] Clerk 연동, 유저 인증 플로우 기본 구현
+- [x] Next.js 기반 프로젝트 세팅 (버전: 15.x, App Router)
+- [x] 필수 패키지 설치: React, TypeScript, TailwindCSS(v4), shadcn/ui, lucide-react, Supabase client
+- [x] 환경변수 관리: .env, 보안 적합성 확인
+- [x] 공공 API 인증키 적용, API 모듈 구조 설계 (lib/api/camping-api.ts)
+- [x] Supabase DB 구조 설계 (bookmarks·user·review 등 확장성 반영)
+- [x] Clerk 연동, 유저 인증 플로우 기본 구현
 - [ ] UI디자인 초안: 직원 및 투자자 대상 피드백 회의
 - [ ] 오너/팀원의 사업 아이디어 피칭 & 최종 비전 검토
+
+### Phase 1 완료 상세
+
+- [x] TypeScript 타입 정의 (`types/camping.ts`)
+  - CampingSite, CampingSiteDetail, CampingFacility, CampingFilter 타입 정의
+- [x] 고캠핑 API 클라이언트 (`lib/api/camping-api.ts`)
+  - CampingApiClient 클래스 구현
+  - getCampingList(), getCampingDetail(), searchCamping() 메서드
+- [x] 캠핑장 관련 상수 정의 (`constants/camping.ts`)
+  - 캠핑 타입, 지역, 시설, 정렬 옵션 상수
+- [x] 유틸리티 함수 (`lib/utils/camping.ts`)
+  - KATEC → WGS84 좌표 변환
+  - 전화번호, 주소, 홈페이지 포맷팅
+  - 필터링 및 검색 유틸리티
+- [x] Supabase 마이그레이션 파일 생성
+  - bookmarks 테이블 스키마 및 주석 업데이트 (캠핑장 기준)
+- [x] 메타데이터 업데이트 (`app/layout.tsx`)
+  - Pitch Camping 서비스명 및 Open Graph 메타데이터 추가
+- [x] 홈페이지 업데이트 (`app/page.tsx`)
+  - 캠핑장 서비스에 맞는 랜딩 페이지로 변경
 
 ---
 

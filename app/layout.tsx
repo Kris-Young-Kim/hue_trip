@@ -24,8 +24,47 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SaaS 템플릿",
-  description: "Next.js + Clerk + Supabase 보일러플레이트",
+  title: {
+    default: "Pitch Camping - 캠핑장 정보 서비스",
+    template: "%s | Pitch Camping",
+  },
+  description:
+    "전국의 캠핑장 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
+  keywords: [
+    "캠핑장",
+    "캠핑",
+    "야영장",
+    "글램핑",
+    "카라반",
+    "캠핑장 검색",
+    "캠핑 정보",
+    "고캠핑",
+  ],
+  authors: [{ name: "Pitch Camping" }],
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "https://pitch-camping.vercel.app",
+    siteName: "Pitch Camping",
+    title: "Pitch Camping - 캠핑장 정보 서비스",
+    description:
+      "전국의 캠핑장 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Pitch Camping",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pitch Camping - 캠핑장 정보 서비스",
+    description:
+      "전국의 캠핑장 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
