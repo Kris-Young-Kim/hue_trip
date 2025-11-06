@@ -1,22 +1,22 @@
 /**
  * @file page.tsx
- * @description Pitch Camping 홈페이지
+ * @description Pitch Travel 홈페이지
  *
- * 캠핑장 목록, 필터, 검색, 지도 기능을 통합한 메인 페이지
+ * 여행지 목록, 필터, 검색, 지도 기능을 통합한 메인 페이지
  *
  * 주요 기능:
- * 1. 필터 컴포넌트 (지역, 타입, 시설, 정렬)
- * 2. 캠핑장 목록 표시
+ * 1. 필터 컴포넌트 (지역, 타입, 정렬)
+ * 2. 여행지 목록 표시
  * 3. 네이버 지도 연동
  * 4. 리스트-지도 상호연동
  * 5. URL 쿼리 파라미터 기반 필터 상태 관리
  *
  * @dependencies
- * - components/camping-filters.tsx: CampingFilters 컴포넌트
- * - components/camping-list.tsx: CampingList 컴포넌트
- * - components/camping-search.tsx: CampingSearch 컴포넌트
+ * - components/travel-filters.tsx: TravelFilters 컴포넌트
+ * - components/travel-list.tsx: TravelList 컴포넌트
+ * - components/travel-search.tsx: TravelSearch 컴포넌트
  * - components/naver-map.tsx: NaverMap 컴포넌트
- * - types/camping.ts: CampingFilter, CampingSite 타입
+ * - types/travel.ts: TravelFilter, TravelSite 타입
  */
 
 "use client";
@@ -24,14 +24,14 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { CampingFilters } from "@/components/camping-filters";
-import { CampingList } from "@/components/camping-list";
-import { CampingSearch } from "@/components/camping-search";
+import { TravelFilters } from "@/components/travel-filters";
+import { TravelList } from "@/components/travel-list";
+import { TravelSearch } from "@/components/travel-search";
 import { MapSkeleton } from "@/components/loading/map-skeleton";
 import { LocalNav, LocalNavTabs } from "@/components/navigation/local-nav";
 import { Map, List } from "lucide-react";
-import type { CampingFilter, CampingSite } from "@/types/camping";
-import { REGIONS, CAMPING_TYPES } from "@/constants/camping";
+import type { TravelFilter, TravelSite } from "@/types/travel";
+import { REGIONS, TRAVEL_TYPES, REGION_CODES, TRAVEL_TYPE_CODES } from "@/constants/travel";
 
 // NaverMap 동적 import (SSR 비활성화, 번들 분리)
 const NaverMap = dynamic(
@@ -45,9 +45,9 @@ const NaverMap = dynamic(
 
 function HomeContent() {
   const searchParams = useSearchParams();
-  const [filter, setFilter] = useState<CampingFilter>({});
-  const [campings, setCampings] = useState<CampingSite[]>([]);
-  const [selectedCampingId, setSelectedCampingId] = useState<
+  const [filter, setFilter] = useState<TravelFilter>({});
+  const [travels, setTravels] = useState<TravelSite[]>([]);
+  const [selectedTravelId, setSelectedTravelId] = useState<
     string | undefined
   >();
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
@@ -57,23 +57,18 @@ function HomeContent() {
     console.group("[Home] 필터 초기화");
     const region = searchParams.get("region");
     const type = searchParams.get("type");
-    const facilities = searchParams.get("facilities");
     const keyword = searchParams.get("keyword");
     const sort = searchParams.get("sort");
     const view = searchParams.get("view") as "list" | "map" | null;
 
-    const initialFilter: CampingFilter = {};
+    const initialFilter: TravelFilter = {};
 
     if (region && region !== REGIONS.ALL) {
-      initialFilter.doNm = region;
+      initialFilter.areaCode = REGION_CODES[region];
     }
 
-    if (type && type !== CAMPING_TYPES.ALL) {
-      initialFilter.induty = type;
-    }
-
-    if (facilities) {
-      initialFilter.sbrsCl = facilities;
+    if (type && type !== TRAVEL_TYPES.ALL) {
+      initialFilter.contentTypeId = TRAVEL_TYPE_CODES[type as keyof typeof TRAVEL_TYPE_CODES];
     }
 
     if (keyword) {
@@ -81,7 +76,7 @@ function HomeContent() {
     }
 
     if (sort) {
-      initialFilter.sortOrder = sort as CampingFilter["sortOrder"];
+      initialFilter.arrange = sort;
     }
 
     if (view === "map") {
@@ -93,44 +88,44 @@ function HomeContent() {
     console.groupEnd();
   }, [searchParams]);
 
-  const handleFilterChange = useCallback((newFilter: CampingFilter) => {
+  const handleFilterChange = useCallback((newFilter: TravelFilter) => {
     console.log("[Home] 필터 변경 콜백:", newFilter);
     setFilter(newFilter);
-    setSelectedCampingId(undefined); // 필터 변경 시 선택 해제
+    setSelectedTravelId(undefined); // 필터 변경 시 선택 해제
   }, []);
 
-  const handleCampingClick = (camping: CampingSite) => {
-    console.log("[Home] 캠핑장 클릭:", camping.facltNm);
-    setSelectedCampingId(camping.contentId);
+  const handleTravelClick = (travel: TravelSite) => {
+    console.log("[Home] 여행지 클릭:", travel.title);
+    setSelectedTravelId(travel.contentid);
   };
 
-  const handleCampingListUpdate = (campings: CampingSite[]) => {
-    console.log("[Home] 캠핑장 목록 업데이트:", campings.length);
-    setCampings(campings);
+  const handleTravelListUpdate = (travels: TravelSite[]) => {
+    console.log("[Home] 여행지 목록 업데이트:", travels.length);
+    setTravels(travels);
   };
 
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 md:py-24 px-4">
+      <section className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 md:py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white tracking-tight">
               한국의 아름다운
               <br />
-              <span className="text-green-600 dark:text-green-400">
-                캠핑장을 탐험하세요
+              <span className="text-blue-600 dark:text-blue-400">
+                여행지를 탐험하세요
               </span>
             </h1>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              전국 캠핑장 정보를 한눈에 확인하고, 나만의 캠핑 여행을
+              전국 여행지 정보를 한눈에 확인하고, 나만의 여행을
               계획해보세요
             </p>
 
             {/* 검색창 - Hero 스타일 */}
             <div className="max-w-3xl mx-auto mt-8">
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-2 border border-gray-200 dark:border-gray-700">
-                <CampingSearch
+                <TravelSearch
                   onSearch={(keyword) => {
                     console.log("[Home] 검색 실행:", keyword);
                     setFilter((prev) => ({
@@ -139,7 +134,7 @@ function HomeContent() {
                       pageNo: 1,
                     }));
                   }}
-                  placeholder="지역, 캠핑장명으로 검색해보세요..."
+                  placeholder="지역, 여행지명으로 검색해보세요..."
                 />
               </div>
             </div>
@@ -176,7 +171,7 @@ function HomeContent() {
           {/* 필터 사이드바 - Sticky */}
           <aside className="lg:col-span-3">
             <div className="lg:sticky lg:top-24">
-              <CampingFilters onFilterChange={handleFilterChange} />
+              <TravelFilters onFilterChange={handleFilterChange} />
             </div>
           </aside>
 
@@ -186,19 +181,19 @@ function HomeContent() {
             <div className="hidden lg:grid lg:grid-cols-2 gap-6">
               {/* 리스트 영역 */}
               <div className="space-y-4">
-                <CampingList
+                <TravelList
                   filter={filter}
-                  onCampingClick={handleCampingClick}
-                  onCampingsChange={handleCampingListUpdate}
+                  onTravelClick={handleTravelClick}
+                  onTravelsChange={handleTravelListUpdate}
                 />
               </div>
 
               {/* 지도 영역 */}
               <div className="sticky top-24 h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
                 <NaverMap
-                  campings={campings}
-                  onMarkerClick={handleCampingClick}
-                  selectedCampingId={selectedCampingId}
+                  travels={travels}
+                  onMarkerClick={handleTravelClick}
+                  selectedTravelId={selectedTravelId}
                   className="h-full"
                 />
               </div>
@@ -207,17 +202,17 @@ function HomeContent() {
             {/* 모바일: 탭 콘텐츠 */}
             <div className="lg:hidden">
               {viewMode === "list" ? (
-                <CampingList
+                <TravelList
                   filter={filter}
-                  onCampingClick={handleCampingClick}
-                  onCampingsChange={handleCampingListUpdate}
+                  onTravelClick={handleTravelClick}
+                  onTravelsChange={handleTravelListUpdate}
                 />
               ) : (
                 <div className="h-[600px]">
                   <NaverMap
-                    campings={campings}
-                    onMarkerClick={handleCampingClick}
-                    selectedCampingId={selectedCampingId}
+                    travels={travels}
+                    onMarkerClick={handleTravelClick}
+                    selectedTravelId={selectedTravelId}
                     className="h-full"
                   />
                 </div>

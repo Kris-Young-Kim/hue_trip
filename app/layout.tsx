@@ -27,44 +27,47 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Pitch Camping - 캠핑장 정보 서비스",
-    template: "%s | Pitch Camping",
+    default: "Pitch Travel - 여행지 정보 서비스",
+    template: "%s | Pitch Travel",
   },
   description:
-    "전국의 캠핑장 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
+    "전국의 여행지 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
   keywords: [
-    "캠핑장",
-    "캠핑",
-    "야영장",
-    "글램핑",
-    "카라반",
-    "캠핑장 검색",
-    "캠핑 정보",
-    "고캠핑",
+    "여행지",
+    "관광지",
+    "문화시설",
+    "축제",
+    "숙박",
+    "음식점",
+    "쇼핑",
+    "여행지 검색",
+    "여행 정보",
+    "한국관광공사",
+    "TourAPI",
   ],
-  authors: [{ name: "Pitch Camping" }],
+  authors: [{ name: "Pitch Travel" }],
   openGraph: {
     type: "website",
     locale: "ko_KR",
-    url: "https://pitch-camping.vercel.app",
-    siteName: "Pitch Camping",
-    title: "Pitch Camping - 캠핑장 정보 서비스",
+    url: "https://pitch-travel.vercel.app",
+    siteName: "Pitch Travel",
+    title: "Pitch Travel - 여행지 정보 서비스",
     description:
-      "전국의 캠핑장 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
+      "전국의 여행지 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Pitch Camping",
+        alt: "Pitch Travel",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pitch Camping - 캠핑장 정보 서비스",
+    title: "Pitch Travel - 여행지 정보 서비스",
     description:
-      "전국의 캠핑장 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
+      "전국의 여행지 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스",
     images: ["/og-image.png"],
   },
 };

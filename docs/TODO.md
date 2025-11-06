@@ -1,10 +1,10 @@
-# TODO.md – 캠핑장 정보 서비스(Pitch Camping)
+# TODO.md – 여행 정보 서비스(Pitch Travel)
 
 ---
 
 ## 목적과 비전
 
-고캠핑 API를 활용한 캠핑장 정보 서비스 사업화 준비를 위한 실전 TODO. 모든 단계는 품질, 사용자 경험, 확장성을 최우선으로 한다. 단순 MVP를 넘어 사업 성공 기반을 마련하는 개발·운영·사업화 실천 계획이다.
+한국관광공사 TourAPI를 활용한 여행지 정보 서비스 사업화 준비를 위한 실전 TODO. 모든 단계는 품질, 사용자 경험, 확장성을 최우선으로 한다. 단순 MVP를 넘어 사업 성공 기반을 마련하는 개발·운영·사업화 실천 계획이다.
 
 ---
 
@@ -13,7 +13,7 @@
 - [x] Next.js 기반 프로젝트 세팅 (버전: 15.x, App Router)
 - [x] 필수 패키지 설치: React, TypeScript, TailwindCSS(v4), shadcn/ui, lucide-react, Supabase client
 - [x] 환경변수 관리: .env, 보안 적합성 확인
-- [x] 공공 API 인증키 적용, API 모듈 구조 설계 (lib/api/camping-api.ts)
+- [x] 공공 API 인증키 적용, API 모듈 구조 설계 (lib/api/travel-api.ts) - 한국관광공사 TourAPI 연동 완료
 - [x] Supabase DB 구조 설계 (bookmarks·user·review 등 확장성 반영)
 - [x] Clerk 연동, 유저 인증 플로우 기본 구현
 - [ ] UI디자인 초안: 직원 및 투자자 대상 피드백 회의
@@ -21,103 +21,105 @@
 
 ### Phase 1 완료 상세
 
-- [x] TypeScript 타입 정의 (`types/camping.ts`)
-  - CampingSite, CampingSiteDetail, CampingFacility, CampingFilter 타입 정의
-- [x] 고캠핑 API 클라이언트 (`lib/api/camping-api.ts`)
-  - CampingApiClient 클래스 구현
-  - getCampingList(), getCampingDetail(), searchCamping() 메서드
-- [x] 캠핑장 관련 상수 정의 (`constants/camping.ts`)
-  - 캠핑 타입, 지역, 시설, 정렬 옵션 상수
-- [x] 유틸리티 함수 (`lib/utils/camping.ts`)
-  - KATEC → WGS84 좌표 변환
+- [x] TypeScript 타입 정의 (`types/travel.ts`)
+  - TravelSite, TravelSiteDetail, TravelFacility, TravelFilter 타입 정의
+  - 한국관광공사 TourAPI 응답 구조에 맞게 재정의 완료
+- [x] 한국관광공사 TourAPI 클라이언트 (`lib/api/travel-api.ts`)
+  - TravelApiClient 클래스 구현
+  - getTravelList(), getTravelDetail(), searchTravel() 메서드
+  - 지역기반 조회, 키워드 검색, 상세정보 조회 API 연동 완료
+- [x] 여행지 관련 상수 정의 (`constants/travel.ts`)
+  - 여행지 타입 (관광지, 문화시설, 축제, 숙박 등), 지역, 카테고리, 정렬 옵션 상수
+- [x] 유틸리티 함수 (`lib/utils/travel.ts`)
+  - 좌표 변환 (필요 시)
   - 전화번호, 주소, 홈페이지 포맷팅
   - 필터링 및 검색 유틸리티
 - [x] Supabase 마이그레이션 파일 생성
-  - bookmarks 테이블 스키마 및 주석 업데이트 (캠핑장 기준)
+  - bookmarks 테이블 스키마 및 주석 업데이트 (여행지 기준으로 변경 완료)
 - [x] 메타데이터 업데이트 (`app/layout.tsx`)
-  - Pitch Camping 서비스명 및 Open Graph 메타데이터 추가
+  - Pitch Travel 서비스명 및 Open Graph 메타데이터 추가 완료
 - [x] 홈페이지 업데이트 (`app/page.tsx`)
-  - 캠핑장 서비스에 맞는 랜딩 페이지로 변경
+  - 여행지 서비스에 맞는 랜딩 페이지로 변경 완료
 
 ---
 
 ## [Phase 2] 핵심 기능 MVP 개발
 
-### 2.1 캠핑장 목록
+### 2.1 여행지 목록
 
-- [x] 시/도·시군구·캠핑 타입·시설·정렬·페이지네이션 등 필터 기능 구현
-- [x] 반응형 카드/그리드 UI: 모바일→데스크톱 최적화
-- [x] API 데이터 캐싱 전략 수립 (성능·비용 고려) - [캐싱 전략 문서](./CACHING_STRATEGY.md) 참고
-- [x] 오류·빈값 graceful UX 처리
-- [x] 목록 썸네일·시설 아이콘·타입 뱃지 표시, SEO/마크업 접근성 보장
+- [ ] 시/도·시군구·여행지 타입(관광지/문화시설/축제/숙박 등)·카테고리·정렬·페이지네이션 등 필터 기능 구현
+- [ ] 반응형 카드/그리드 UI: 모바일→데스크톱 최적화
+- [ ] API 데이터 캐싱 전략 수립 (성능·비용 고려) - [캐싱 전략 문서](./CACHING_STRATEGY.md) 참고
+- [ ] 오류·빈값 graceful UX 처리
+- [ ] 목록 썸네일·카테고리 아이콘·타입 뱃지 표시, SEO/마크업 접근성 보장
 
 ### 2.2 지도 연동
 
-- [x] Naver Maps v3 지도 연동·최적화 (좌표계 변환 포함)
-- [x] 지역·캠핑장 중심 좌표 설정, 타입별 마커 디자인
-- [x] 리스트-지도 상호연동 및 반응형 UI 구성
+- [ ] Naver Maps v3 지도 연동·최적화 (좌표계 변환 포함)
+- [ ] 지역·여행지 중심 좌표 설정, 타입별 마커 디자인
+- [ ] 리스트-지도 상호연동 및 반응형 UI 구성
 - [ ] 지도 내 검색·필터·정렬 경험 개선
-- [x] 마커 인포윈도우, 길찾기/현재위치 UX
+- [ ] 마커 인포윈도우, 길찾기/현재위치 UX
 
 ### 2.3 키워드 검색
 
-- [x] 검색창·자동완성 도입, 사용자 행동 데이터 로깅
-- [x] 검색 API 연동, 성능 튜닝 (응답지연 대비 UX)
-- [x] 결과 없음·에러 메시지/로딩 스피너
-- [x] 필터+검색 복합 결과 UX
-- [x] API 데이터 캐싱 전략 수립 완료 - [캐싱 전략 문서](./CACHING_STRATEGY.md) 참고
+- [ ] 검색창·자동완성 도입, 사용자 행동 데이터 로깅
+- [ ] 검색 API 연동, 성능 튜닝 (응답지연 대비 UX)
+- [ ] 결과 없음·에러 메시지/로딩 스피너
+- [ ] 필터+검색 복합 결과 UX
+- [ ] API 데이터 캐싱 전략 수립 - [캐싱 전략 문서](./CACHING_STRATEGY.md) 참고
 
 ### 2.4 상세페이지
 
-- [x] 기본 정보/운영/갤러리/지도/공유·북마크 섹션별 컨포넌트화
-- [x] 주소 복사, 전화걸기, 홈페이지 링크 등 사용자 행동 흐름 설계
-- [x] 이미지 목록·대표 썸네일·슬라이드 모달 UX
-- [x] Open Graph 메타태그 동적 구성, SNS/카카오·네이버 공유 테스트
-- [x] 북마크 기능: Supabase와 인증 폴백 구조(localStorage)
-- [x] 즐겨찾기 테이블 설계, 로그인 UX 개선
+- [ ] 기본 정보/운영/갤러리/지도/공유·북마크 섹션별 컨포넌트화
+- [ ] 주소 복사, 전화걸기, 홈페이지 링크 등 사용자 행동 흐름 설계
+- [ ] 이미지 목록·대표 썸네일·슬라이드 모달 UX
+- [ ] Open Graph 메타태그 동적 구성, SNS/카카오·네이버 공유 테스트
+- [ ] 북마크 기능: Supabase와 인증 폴백 구조(localStorage)
+- [ ] 즐겨찾기 테이블 설계, 로그인 UX 개선
 
-### Phase 2 완료 상세
+### Phase 2 진행 예정
 
-- [x] 필터 컴포넌트 (`components/camping-filters.tsx`)
-  - 지역, 캠핑 타입, 시설 필터 및 정렬 옵션 구현
+- [ ] 필터 컴포넌트 (`components/travel-filters.tsx`)
+  - 지역, 여행지 타입(관광지/문화시설/축제/숙박), 카테고리 필터 및 정렬 옵션 구현
   - URL 쿼리 파라미터 연동
-- [x] 캠핑장 카드 컴포넌트 (`components/camping-card.tsx`)
-  - 썸네일 이미지, 캠핑장명, 주소, 타입 뱃지, 시설 아이콘 표시
+- [ ] 여행지 카드 컴포넌트 (`components/travel-card.tsx`)
+  - 썸네일 이미지, 여행지명, 주소, 타입 뱃지, 카테고리 아이콘 표시
   - 반응형 디자인, 클릭 시 상세페이지 이동
-- [x] 캠핑장 목록 컴포넌트 (`components/camping-list.tsx`)
-  - 그리드 레이아웃 (반응형), API 연동
+- [ ] 여행지 목록 컴포넌트 (`components/travel-list.tsx`)
+  - 그리드 레이아웃 (반응형), TourAPI 연동
   - 로딩 상태 (Skeleton UI), 에러 처리, 빈 결과 처리
   - 페이지네이션 구현
-- [x] 홈페이지 통합 (`app/page.tsx`)
+- [ ] 홈페이지 통합 (`app/page.tsx`)
   - 필터와 목록 컴포넌트 통합
   - URL 쿼리 파라미터 기반 필터 상태 관리
-- [x] 검색 컴포넌트 (`components/camping-search.tsx`)
+- [ ] 검색 컴포넌트 (`components/travel-search.tsx`)
   - 검색창, 엔터 키 또는 버튼으로 검색 실행
   - 검색어 초기화 기능
-- [x] 검색 기능 통합
+- [ ] 검색 기능 통합
   - 홈페이지에 검색창 통합, 필터와 검색 조합
-- [x] 상세페이지 기본 구조 (`app/campings/[contentId]/page.tsx`)
-  - 동적 라우팅, 고캠핑 API 상세 정보 조회
+- [ ] 상세페이지 기본 구조 (`app/travels/[contentId]/page.tsx`)
+  - 동적 라우팅, TourAPI 상세 정보 조회
   - 기본 정보 표시 (이름, 이미지, 주소, 전화번호, 홈페이지, 소개)
   - 동적 메타데이터 생성 (Open Graph 포함)
-- [x] 네이버 지도 연동 (`components/naver-map.tsx`)
+- [ ] 네이버 지도 연동 (`components/naver-map.tsx`)
   - Naver Maps JavaScript API v3 (NCP) 연동
-  - 좌표 변환 (KATEC → WGS84)
-  - 캠핑장 마커 표시 및 인포윈도우
+  - 좌표 변환 (필요 시)
+  - 여행지 마커 표시 및 인포윈도우
   - 리스트-지도 상호연동 (카드 클릭 시 지도 이동)
   - 반응형 레이아웃 (데스크톱: 분할, 모바일: 탭 전환)
-- [x] 이미지 갤러리 (`components/camping-detail/detail-gallery.tsx`)
+- [ ] 이미지 갤러리 (`components/travel-detail/detail-gallery.tsx`)
   - 대표 이미지 및 서브 이미지 썸네일 표시
   - 이미지 클릭 시 전체화면 모달
   - 이미지 슬라이드 기능 (이전/다음 버튼)
-- [x] 공유 버튼 (`components/camping-detail/share-button.tsx`)
+- [ ] 공유 버튼 (`components/travel-detail/share-button.tsx`)
   - URL 클립보드 복사 기능
   - 복사 완료 상태 표시
-- [x] 북마크 버튼 (`components/camping-detail/bookmark-button.tsx`)
+- [ ] 북마크 버튼 (`components/travel-detail/bookmark-button.tsx`)
   - 인증된 사용자: Supabase bookmarks 테이블에 저장
   - 비인증 사용자: localStorage에 임시 저장
   - 북마크 상태 표시 (별 아이콘)
-- [x] 상세페이지 통합 (`app/campings/[contentId]/page.tsx`)
+- [ ] 상세페이지 통합 (`app/travels/[contentId]/page.tsx`)
   - 이미지 갤러리, 공유 버튼, 북마크 버튼 통합
 
 ---
@@ -133,20 +135,20 @@
 
 ### Phase 3 완료 상세
 
-- [x] 통계 테이블 생성 (`supabase/migrations/20251106140000_create_statistics_tables.sql`)
-  - camping_stats: 캠핑장별 통계 (조회수, 북마크 수, 공유 수)
+- [ ] 통계 테이블 생성 (`supabase/migrations/20251106140000_create_statistics_tables.sql`)
+  - travel_stats: 여행지별 통계 (조회수, 북마크 수, 공유 수) - 테이블명 및 스키마 수정 필요
   - user_activity: 사용자 활동 기록 (조회, 북마크, 공유)
   - 북마크 트리거로 bookmark_count 자동 업데이트
 - [x] RLS 보안 정책 설계 (`supabase/migrations/20251106140001_design_rls_policies.sql`)
   - users, bookmarks, camping_stats, user_activity 테이블 RLS 정책 설계
   - 프로덕션 배포 전 적용 준비 완료
-- [x] 조회수 추적 시스템 (`lib/api/analytics.ts`)
-  - trackView(): 캠핑장 상세페이지 조회수 증가
+- [ ] 조회수 추적 시스템 (`lib/api/analytics.ts`)
+  - trackView(): 여행지 상세페이지 조회수 증가
   - trackActivity(): 사용자 활동 기록
-  - getCampingStats(): 통계 데이터 조회
-- [x] 인기도/랭킹 계산 시스템 (`lib/utils/ranking.ts`)
+  - getTravelStats(): 통계 데이터 조회
+- [ ] 인기도/랭킹 계산 시스템 (`lib/utils/ranking.ts`)
   - calculatePopularityScore(): 인기도 점수 계산
-  - getPopularCampings(): 인기 캠핑장 목록 조회
+  - getPopularTravels(): 인기 여행지 목록 조회
   - 지역별/타입별 필터링 준비
 - [x] 리뷰 테이블 생성 (`supabase/migrations/20251106140002_create_reviews_table.sql`)
   - reviews: 리뷰 및 평점 (1-5점)
@@ -165,10 +167,10 @@
   - API 실패 시 캐시된 데이터 반환
   - 오프라인 상태 감지
   - 사용자 친화적 에러 메시지
-- [x] 관리자 KPI 대시보드 (`app/admin/dashboard/page.tsx`)
+- [ ] 관리자 KPI 대시보드 (`app/admin/dashboard/page.tsx`)
   - 관리자 권한 확인 (환경변수 ADMIN_USER_IDS)
   - 주요 지표 표시 (사용자 수, 조회 수, 북마크 수, 리뷰 수)
-  - 인기 캠핑장 TOP 10 테이블
+  - 인기 여행지 TOP 10 테이블
   - 통계 카드 컴포넌트 (재사용 가능)
 - [x] 로깅 시스템 (`lib/utils/logger.ts`)
   - 구조화된 로깅 (info, warn, error, debug)
@@ -179,9 +181,9 @@
   - 페이지 로드 시간 추적
   - 메모리 사용량 측정
   - 성능 임계값 체크 및 경고
-- [x] Next.js fetch 캐싱 적용
-  - 캠핑장 상세: 6시간 캐시
-  - 캠핑장 목록: 1시간 캐시
+- [ ] Next.js fetch 캐싱 적용
+  - 여행지 상세: 6시간 캐시
+  - 여행지 목록: 1시간 캐시
 - [x] 비용 추적 문서 (`docs/COST_TRACKING.md`)
   - 서비스별 비용 구조 및 예상 비용
   - 비용 모니터링 방법
@@ -241,22 +243,22 @@
   - :focus-visible 전역 스타일 추가
   - .sr-only 유틸리티 클래스 정의
   - focus:not-sr-only 스타일 지원
-- [x] 404 페이지 (`app/not-found.tsx`)
-  - 캠핑 테마 디자인 (Tent 아이콘)
+- [ ] 404 페이지 (`app/not-found.tsx`)
+  - 여행 테마 디자인 (MapPin 또는 Plane 아이콘)
   - 명확한 에러 메시지 및 안내
-  - 홈으로 가기, 캠핑장 검색 링크 제공
+  - 홈으로 가기, 여행지 검색 링크 제공
   - 접근성: 포커스 스타일, aria-label 적용
-- [x] 동적 Sitemap 생성 (`app/sitemap.ts`)
+- [ ] 동적 Sitemap 생성 (`app/sitemap.ts`)
   - Next.js 15 MetadataRoute.Sitemap 활용
-  - 고캠핑 API를 통한 캠핑장 목록 조회
-  - 각 캠핑장 상세페이지 URL 자동 생성
+  - TourAPI를 통한 여행지 목록 조회
+  - 각 여행지 상세페이지 URL 자동 생성
   - changeFrequency 및 priority 설정
 - [x] Robots.txt 생성 (`app/robots.ts`)
   - 모든 검색 엔진 허용 (User-agent: \*)
   - /api/, /admin/ 경로 차단
   - Sitemap URL 지정
-- [x] 성능 최적화 (`next.config.ts`, `app/layout.tsx`, `app/page.tsx`)
-  - 이미지 최적화: WebP/AVIF 포맷 지원, 캐싱 설정, 고캠핑 API 도메인 추가
+- [ ] 성능 최적화 (`next.config.ts`, `app/layout.tsx`, `app/page.tsx`)
+  - 이미지 최적화: WebP/AVIF 포맷 지원, 캐싱 설정, TourAPI 이미지 도메인 추가
   - 폰트 최적화: display: swap 적용, 주요 폰트만 preload
   - 번들 최적화: NaverMap 동적 import, 코드 스플리팅 설정
   - 압축 및 보안 헤더 최적화 (compress: true, poweredByHeader: false)
@@ -268,13 +270,13 @@
   - 측정 방법 안내
   - 최적화 체크리스트
   - 추가 최적화 권장사항
-- [x] 전체 페이지 디자인 개선
+- [ ] 전체 페이지 디자인 개선
   - 홈페이지 Hero 섹션 추가 (그라데이션 배경, 대형 제목, 현대적인 검색창)
-  - 캠핑장 카드 디자인 개선 (16:9 이미지 비율, 호버 효과, 시설 뱃지 스타일)
+  - 여행지 카드 디자인 개선 (16:9 이미지 비율, 호버 효과, 카테고리 뱃지 스타일)
   - 필터 컴포넌트 디자인 개선 (아이콘 배경, 더 큰 입력 필드, 활성 필터 뱃지)
-  - 상세페이지 디자인 개선 (2/3 + 1/3 그리드 레이아웃, 예약 버튼 sticky)
+  - 상세페이지 디자인 개선 (2/3 + 1/3 그리드 레이아웃, 예약/문의 버튼 sticky)
   - Navbar 개선 (backdrop blur, 테마 토글 추가, 반응형)
-  - 전역 스타일 개선 (그린 테마, 포커스 스타일, 타이포그래피)
+  - 전역 스타일 개선 (여행 테마 컬러, 포커스 스타일, 타이포그래피)
 - [x] 네비게이션 구조 개선 (GNB, LNB, SNB, FNB)
   - GlobalNav 컴포넌트 생성 (`components/navigation/global-nav.tsx`)
     - 메인 메뉴 (홈, 안전 수칙, 피드백)
@@ -340,10 +342,10 @@
   - API 응답 성공률 및 응답 시간 추적 함수
   - 데이터 정확도 검증 함수
   - 전체 메트릭 계산 함수
-- [x] 메트릭 추적 통합
-  - `components/camping-detail/share-button.tsx`: URL 복사 성공/실패 추적 추가
-  - `components/camping-detail/bookmark-button.tsx`: 북마크 성공/실패 추적 추가
-  - `lib/api/camping-api.ts`: API 요청 성공/실패 및 응답 시간 추적 추가
+- [ ] 메트릭 추적 통합
+  - `components/travel-detail/share-button.tsx`: URL 복사 성공/실패 추적 추가
+  - `components/travel-detail/bookmark-button.tsx`: 북마크 성공/실패 추적 추가
+  - `lib/api/travel-api.ts`: API 요청 성공/실패 및 응답 시간 추적 추가
 - [x] 관리자 분석 페이지 (`app/admin/analytics/page.tsx`)
   - 기능별 성공률 표시 (북마크, URL 복사, API 응답)
   - 평균 API 응답 시간 표시
@@ -402,47 +404,47 @@
   - 예약, 날씨, 교통, 광고 시스템 연동 전략 문서화
   - API 조사 및 선택 기준 명시
   - 구현 우선순위 정리
-- [x] 예약 시스템 연동 프로토타입 (`components/camping-detail/reservation-button.tsx`)
-  - 홈페이지 링크를 통한 예약 기능
-  - 전화번호를 통한 예약 기능
-  - 예약 가능 여부 표시
-  - 상세페이지에 예약 버튼 통합
+- [ ] 예약/문의 시스템 연동 프로토타입 (`components/travel-detail/contact-button.tsx`)
+  - 홈페이지 링크를 통한 문의 기능
+  - 전화번호를 통한 문의 기능
+  - 예약 가능 여부 표시 (숙박 시설의 경우)
+  - 상세페이지에 문의 버튼 통합
 
-### 캠핑 안전 수칙 정보 제공 기능
+### 여행 안전 정보 제공 기능
 
-**참고**: [고캠핑 안전한캠핑즐기기](https://www.gocamping.or.kr/zboard/list.do?lmCode=campSafe)
+**참고**: 한국관광공사 여행 안전 정보, 외교부 해외여행 안전정보
 
-**목표**: 사용자에게 캠핑 안전 수칙 정보를 제공하여 안전한 캠핑 문화 확산
+**목표**: 사용자에게 여행 안전 정보를 제공하여 안전한 여행 문화 확산
 
 **작업 내용**:
 
-- [x] 안전 수칙 테이블 생성 (`supabase/migrations/20251106160000_create_safety_guidelines_table.sql`)
-  - 계절별 안전 수칙 카테고리 (봄, 여름, 가을, 겨울)
-  - 주제별 안전 수칙 분류 (식중독, 물놀이, 벌레, 야생동물, 이상기후, 난로, 가스 등)
-  - 안전 수칙 제목, 내용, 이미지, 동영상 링크 저장
+- [ ] 여행 안전 정보 테이블 생성 (`supabase/migrations/20251106160000_create_safety_guidelines_table.sql`)
+  - 여행 유형별 안전 정보 카테고리 (국내여행, 해외여행, 자유여행, 패키지여행 등)
+  - 주제별 안전 정보 분류 (교통안전, 건강, 자연재해, 범죄예방 등)
+  - 안전 정보 제목, 내용, 이미지, 동영상 링크 저장
   - 조회수 추적 및 우선순위 관리
-- [x] 안전 수칙 API 함수 생성 (`lib/api/safety-guidelines.ts`)
-  - 계절별 안전 수칙 조회
-  - 주제별 안전 수칙 조회
-  - 안전 수칙 검색 기능
-  - 현재 계절 기반 추천 기능
+- [ ] 여행 안전 정보 API 함수 생성 (`lib/api/safety-guidelines.ts`)
+  - 여행 유형별 안전 정보 조회
+  - 주제별 안전 정보 조회
+  - 안전 정보 검색 기능
+  - 지역/국가별 추천 기능
   - 조회수 증가 함수
-- [x] 안전 수칙 API 라우트 생성 (`app/api/safety-guidelines/route.ts`)
-  - 클라이언트 사이드에서 안전 수칙 조회 API
-- [x] 안전 수칙 컴포넌트 생성 (`components/safety/`)
-  - `safety-card.tsx`: 안전 수칙 카드 컴포넌트
-  - `safety-guidelines.tsx`: 안전 수칙 목록 및 필터링 컴포넌트
-  - `safety-video.tsx`: 안전 수칙 동영상 컴포넌트
-  - `safety-recommendations.tsx`: 안전 수칙 추천 컴포넌트
-- [x] 안전 수칙 페이지 생성 (`app/safety/page.tsx`, `app/safety/[id]/page.tsx`)
-  - 안전 수칙 메인 페이지 (목록, 검색, 필터링)
-  - 안전 수칙 상세 페이지
-  - 계절별/주제별 탭 분류
+- [ ] 여행 안전 정보 API 라우트 생성 (`app/api/safety-guidelines/route.ts`)
+  - 클라이언트 사이드에서 안전 정보 조회 API
+- [ ] 여행 안전 정보 컴포넌트 생성 (`components/safety/`)
+  - `safety-card.tsx`: 안전 정보 카드 컴포넌트
+  - `safety-guidelines.tsx`: 안전 정보 목록 및 필터링 컴포넌트
+  - `safety-video.tsx`: 안전 정보 동영상 컴포넌트
+  - `safety-recommendations.tsx`: 안전 정보 추천 컴포넌트
+- [ ] 여행 안전 정보 페이지 생성 (`app/safety/page.tsx`, `app/safety/[id]/page.tsx`)
+  - 안전 정보 메인 페이지 (목록, 검색, 필터링)
+  - 안전 정보 상세 페이지
+  - 여행 유형별/주제별 탭 분류
   - 동영상 링크 통합
-- [x] 상세페이지에 안전 수칙 통합 (`app/campings/[contentId]/page.tsx`)
-  - 캠핑장 상세페이지에 관련 안전 수칙 추천 추가
-  - 현재 계절 기반 안전 수칙 추천
-- [x] 안전 수칙 문서 작성 (`docs/SAFETY_GUIDELINES_PLAN.md`)
+- [ ] 상세페이지에 안전 정보 통합 (`app/travels/[contentId]/page.tsx`)
+  - 여행지 상세페이지에 관련 안전 정보 추천 추가
+  - 지역/국가별 안전 정보 추천
+- [ ] 여행 안전 정보 문서 작성 (`docs/SAFETY_GUIDELINES_PLAN.md`)
 
   - 안전 수칙 수집 계획
   - 데이터 구조 설계
@@ -541,24 +543,24 @@
 
 **작업 내용**:
 
-- [x] CORS 문제 해결 (`app/api/campings/route.ts`)
+- [ ] CORS 문제 해결 (`app/api/travels/route.ts`)
   - Next.js API Route를 통한 프록시 구현
   - 서버 사이드에서 API 키 관리
   - 클라이언트에서 직접 호출 가능
-- [x] 유틸리티 함수 리팩토링 (`lib/utils/camping.ts`)
-  - `normalizeItems` 함수를 CampingApiClient에서 분리
+- [ ] 유틸리티 함수 리팩토링 (`lib/utils/travel.ts`)
+  - `normalizeItems` 함수를 TravelApiClient에서 분리
   - 클라이언트/서버 양쪽에서 사용 가능한 순수 함수로 변경
-- [x] 이미지 최적화 (`next.config.ts`)
-  - 고캠핑 API 이미지 도메인 추가 (gocamping.or.kr)
+- [ ] 이미지 최적화 (`next.config.ts`)
+  - TourAPI 이미지 도메인 추가 (한국관광공사 이미지 서버)
 
 **우선순위**: High (기능 안정성 및 성능 향상)
 
 **참고 데이터**:
 
-- 고캠핑 안전 수칙 카테고리:
-  - 계절별: 봄, 여름, 가을, 겨울
-  - 주제별: 식중독, 물놀이, 벌레, 야생동물, 이상기후/자연재해, 폭염, 난로, 가스 사고, 일산화탄소 중독 등
-  - 안전 교육: 안전 수칙 동영상, 세이프 캠프 툰
+- 여행 안전 정보 카테고리:
+  - 여행 유형별: 국내여행, 해외여행, 자유여행, 패키지여행
+  - 주제별: 교통안전, 건강, 자연재해, 범죄예방, 여행보험, 비상연락처 등
+  - 안전 교육: 여행 안전 동영상, 여행 가이드
 
 ---
 

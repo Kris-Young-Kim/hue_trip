@@ -6,13 +6,13 @@
  *
  * 주요 기능:
  * 1. 네이버 지도 초기화 및 표시
- * 2. 캠핑장 마커 표시
+ * 2. 여행지 마커 표시
  * 3. 마커 클릭 시 인포윈도우 표시
  * 4. 리스트와 연동 (특정 마커로 이동)
  *
  * @dependencies
- * - types/camping.ts: CampingSite 타입
- * - lib/utils/camping.ts: convertKATECToWGS84 좌표 변환 함수
+ * - types/travel.ts: TravelSite 타입
+ * - lib/utils/travel.ts: parseCoordinates 좌표 파싱 함수
  * - Naver Maps JavaScript API v3 (NCP)
  */
 
@@ -21,8 +21,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { MapPin } from "lucide-react";
 import { MapSkeleton } from "@/components/loading/map-skeleton";
-import type { CampingSite } from "@/types/camping";
-import { convertKATECToWGS84 } from "@/lib/utils/camping";
+import type { TravelSite } from "@/types/travel";
+import { parseCoordinates } from "@/lib/utils/travel";
 
 declare global {
   interface Window {
@@ -31,20 +31,20 @@ declare global {
 }
 
 interface NaverMapProps {
-  campings: CampingSite[];
+  travels: TravelSite[];
   center?: { lat: number; lng: number };
   zoom?: number;
-  onMarkerClick?: (camping: CampingSite) => void;
-  selectedCampingId?: string;
+  onMarkerClick?: (travel: TravelSite) => void;
+  selectedTravelId?: string;
   className?: string;
 }
 
 export function NaverMap({
-  campings,
+  travels,
   center,
   zoom = 10,
   onMarkerClick,
-  selectedCampingId,
+  selectedTravelId,
   className = "",
 }: NaverMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -60,7 +60,7 @@ export function NaverMap({
       return;
     }
 
-    console.log("[NaverMap] 마커 추가 시작:", campings.length);
+    console.log("[NaverMap] 마커 추가 시작:", travels.length);
 
     // 기존 마커 제거
     markersRef.current.forEach((marker) => marker.setMap(null));
@@ -68,21 +68,26 @@ export function NaverMap({
     infoWindowsRef.current.forEach((infoWindow) => infoWindow.close());
     infoWindowsRef.current = [];
 
-    campings.forEach((camping) => {
+    travels.forEach((travel) => {
       try {
-        // 좌표 변환 (KATEC → WGS84)
-        const { lat, lng } = convertKATECToWGS84(camping.mapX, camping.mapY);
+        // 좌표 파싱 (TourAPI는 WGS84 좌표계 사용)
+        const coords = parseCoordinates(travel.mapx, travel.mapy);
+        if (!coords) {
+          console.warn("[NaverMap] 좌표 파싱 실패:", travel);
+          return;
+        }
 
-        const position = new window.naver.maps.LatLng(lat, lng);
+        const position = new window.naver.maps.LatLng(coords.lat, coords.lng);
 
         // 마커 생성 (기본 마커 사용)
         const marker = new window.naver.maps.Marker({
           position: position,
           map: mapInstanceRef.current,
-          title: camping.facltNm,
+          title: travel.title,
         });
 
         // 인포윈도우 생성
+        const overview = travel.overview ? (travel.overview.length > 100 ? travel.overview.substring(0, 100) + "..." : travel.overview) : "";
         const infoWindowContent = `
           <div style="
             padding: 12px;
@@ -94,15 +99,15 @@ export function NaverMap({
               font-weight: bold;
               margin-bottom: 8px;
               color: #111;
-            ">${camping.facltNm}</h3>
-            ${camping.lineIntro ? `<p style="font-size: 14px; color: #666; margin-bottom: 8px;">${camping.lineIntro}</p>` : ""}
+            ">${travel.title}</h3>
+            ${overview ? `<p style="font-size: 14px; color: #666; margin-bottom: 8px;">${overview}</p>` : ""}
             <div style="font-size: 12px; color: #888; margin-bottom: 12px;">
-              ${camping.addr1}
+              ${travel.addr1 || ""}
             </div>
-            <a href="/campings/${camping.contentId}" style="
+            <a href="/travels/${travel.contentid}" style="
               display: inline-block;
               padding: 6px 12px;
-              background-color: #22c55e;
+              background-color: #3b82f6;
               color: white;
               text-decoration: none;
               border-radius: 4px;
@@ -117,7 +122,7 @@ export function NaverMap({
 
         // 마커 클릭 이벤트
         window.naver.maps.Event.addListener(marker, "click", () => {
-          console.log("[NaverMap] 마커 클릭:", camping.facltNm);
+          console.log("[NaverMap] 마커 클릭:", travel.title);
 
           // 다른 인포윈도우 닫기
           infoWindowsRef.current.forEach((iw) => iw.close());
@@ -126,18 +131,18 @@ export function NaverMap({
           infoWindow.open(mapInstanceRef.current, marker);
 
           // 콜백 호출
-          onMarkerClick?.(camping);
+          onMarkerClick?.(travel);
         });
 
         markersRef.current.push(marker);
         infoWindowsRef.current.push(infoWindow);
       } catch (err) {
-        console.error("[NaverMap] 마커 추가 오류:", err, camping);
+        console.error("[NaverMap] 마커 추가 오류:", err, travel);
       }
     });
 
     console.log("[NaverMap] 마커 추가 완료:", markersRef.current.length);
-  }, [campings, onMarkerClick]);
+  }, [travels, onMarkerClick]);
 
   // 지도 초기화 함수
   const initializeMap = useCallback(() => {
@@ -169,19 +174,19 @@ export function NaverMap({
       setIsLoaded(true);
 
       // 마커 표시
-      if (campings.length > 0) {
+      if (travels.length > 0) {
         addMarkers();
       }
     } catch (err) {
       console.error("[NaverMap] 지도 초기화 오류:", err);
       setError("지도를 초기화하는데 실패했습니다.");
     }
-  }, [center, zoom, campings.length, addMarkers]);
+  }, [center, zoom, travels.length, addMarkers]);
 
   // 네이버 지도 스크립트 로드
   useEffect(() => {
     console.group("[NaverMap] 네이버 지도 초기화");
-    console.log("캠핑장 개수:", campings.length);
+    console.log("여행지 개수:", travels.length);
 
     const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
@@ -227,32 +232,33 @@ export function NaverMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initializeMap]); // campings.length는 로그용이므로 의존성에서 제외
 
-  // 선택된 캠핑장으로 지도 이동
+  // 선택된 여행지로 지도 이동
   useEffect(() => {
-    if (!mapInstanceRef.current || !selectedCampingId || !isLoaded) {
+    if (!mapInstanceRef.current || !selectedTravelId || !isLoaded) {
       return;
     }
 
-    const selectedCamping = campings.find(
-      (c) => c.contentId === selectedCampingId
+    const selectedTravel = travels.find(
+      (t) => t.contentid === selectedTravelId
     );
 
-    if (selectedCamping) {
-      console.log("[NaverMap] 선택된 캠핑장으로 이동:", selectedCamping.facltNm);
+    if (selectedTravel) {
+      console.log("[NaverMap] 선택된 여행지로 이동:", selectedTravel.title);
 
-      const { lat, lng } = convertKATECToWGS84(
-        selectedCamping.mapX,
-        selectedCamping.mapY
-      );
+      const coords = parseCoordinates(selectedTravel.mapx, selectedTravel.mapy);
+      if (!coords) {
+        console.warn("[NaverMap] 좌표 파싱 실패:", selectedTravel);
+        return;
+      }
 
-      const position = new window.naver.maps.LatLng(lat, lng);
+      const position = new window.naver.maps.LatLng(coords.lat, coords.lng);
 
       mapInstanceRef.current.setCenter(position);
       mapInstanceRef.current.setZoom(15);
 
       // 해당 마커의 인포윈도우 열기
-      const markerIndex = campings.findIndex(
-        (c) => c.contentId === selectedCampingId
+      const markerIndex = travels.findIndex(
+        (t) => t.contentid === selectedTravelId
       );
       if (markerIndex >= 0 && infoWindowsRef.current[markerIndex]) {
         infoWindowsRef.current.forEach((iw) => iw.close());
@@ -265,26 +271,30 @@ export function NaverMap({
         }
       }
     }
-  }, [selectedCampingId, campings, isLoaded]);
+  }, [selectedTravelId, travels, isLoaded]);
 
-  // 캠핑장 목록이 변경되면 마커 업데이트
+  // 여행지 목록이 변경되면 마커 업데이트
   useEffect(() => {
-    if (isLoaded && campings.length > 0) {
+    if (isLoaded && travels.length > 0) {
       addMarkers();
 
       // 모든 마커를 보기 위해 지도 범위 조정
       if (markersRef.current.length > 0 && mapInstanceRef.current) {
         const bounds = new window.naver.maps.LatLngBounds();
 
-        campings.forEach((camping) => {
-          const { lat, lng } = convertKATECToWGS84(camping.mapX, camping.mapY);
-          bounds.extend(new window.naver.maps.LatLng(lat, lng));
+        travels.forEach((travel) => {
+          const coords = parseCoordinates(travel.mapx, travel.mapy);
+          if (coords) {
+            bounds.extend(new window.naver.maps.LatLng(coords.lat, coords.lng));
+          }
         });
 
-        mapInstanceRef.current.fitBounds(bounds);
+        if (!bounds.isEmpty()) {
+          mapInstanceRef.current.fitBounds(bounds);
+        }
       }
     }
-  }, [campings, isLoaded, addMarkers]);
+  }, [travels, isLoaded, addMarkers]);
 
   return (
     <div className={`relative w-full h-full min-h-[400px] md:min-h-[600px] ${className}`} role="application" aria-label="네이버 지도">

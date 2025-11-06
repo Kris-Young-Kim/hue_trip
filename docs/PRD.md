@@ -1,4 +1,4 @@
-# PRD: 캠핑장 정보 서비스 (Pitch Camping)
+# PRD: 여행 정보 서비스 (Pitch Travel)
 
 ---
 
@@ -6,29 +6,31 @@
 
 ### 1.1 프로젝트 목적
 
-고캠핑 API를 활용하여 사용자가 전국의 캠핑장 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스 개발
+한국관광공사 TourAPI를 활용하여 사용자가 전국의 여행지 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스 개발
 
 ### 1.2 타겟 유저
 
-- 캠핑을 계획하는 사용자
-- 주변 캠핑장을 찾는 사용자
-- 특정 지역의 캠핑 정보가 필요한 사용자
+- 여행을 계획하는 사용자
+- 주변 관광지를 찾는 사용자
+- 특정 지역의 여행 정보가 필요한 사용자
+- 문화시설, 축제, 숙박 등 다양한 여행 정보를 찾는 사용자
 
 ### 1.3 핵심 가치
 
-- **편리성**: 전국 캠핑장 정보를 한 곳에서 검색
+- **편리성**: 전국 여행지 정보를 한 곳에서 검색
 - **시각화**: 네이버 지도 연동으로 위치 기반 정보 제공
 - **상세성**: 운영시간, 요금, 시설 정보, 이미지 등 종합 정보 제공
+- **다양성**: 관광지, 문화시설, 축제, 숙박 등 다양한 여행 정보 제공
 
 ---
 
 ## 2. MVP 핵심 기능
 
-### 2.1 캠핑장 목록 + 지역/타입 필터
+### 2.1 여행지 목록 + 지역/타입 필터
 
 #### 기능 설명
 
-사용자가 지역(시/도)과 캠핑 타입을 선택하여 해당하는 캠핑장 목록을 조회
+사용자가 지역(시/도)과 여행지 타입을 선택하여 해당하는 여행지 목록을 조회
 
 #### 상세 요구사항
 
@@ -38,26 +40,30 @@
   - 시/군/구 단위 선택 (선택 사항)
   - "전체" 옵션 제공
 
-- **캠핑 타입 필터**
+- **여행지 타입 필터**
 
-  - 일반야영장
-  - 자동차야영장
-  - 글램핑
-  - 카라반
+  - 관광지
+  - 문화시설
+  - 축제/행사
+  - 숙박
+  - 음식점
+  - 쇼핑
   - "전체" 옵션 제공
 
-- **시설 필터**
+- **카테고리 필터**
 
-  - 화장실, 샤워장, 전기, 와이파이, 반려동물 동반, 주차 등
+  - 관광지: 자연, 역사, 휴양, 체험 등
+  - 문화시설: 박물관, 미술관, 공연장 등
+  - 축제: 지역축제, 문화축제, 음식축제 등
 
 - **목록 표시 정보**
 
   - 썸네일 이미지 (없으면 기본 이미지)
-  - 캠핑장명
+  - 여행지명
   - 주소
-  - 캠핑 타입 뱃지
-  - 시설 아이콘 (화장실, 샤워장, 전기, 와이파이 등)
-  - 예약 가능 여부 (있는 경우)
+  - 여행지 타입 뱃지
+  - 카테고리 아이콘
+  - 평점/리뷰 수 (있는 경우)
 
 - **페이지네이션**
 
@@ -67,13 +73,14 @@
 - **정렬 옵션**
   - 이름순 (가나다순)
   - 지역순
-  - 인기순 (있는 경우)
+  - 인기순 (조회수/평점 기반)
+  - 거리순 (현재 위치 기준, 선택 사항)
 
 #### 사용 API
 
-- 고캠핑 API: 캠핑장 목록 조회 엔드포인트
-- 지역별 조회 API
-- 키워드 검색 API
+- 한국관광공사 TourAPI: 지역기반 관광정보 조회
+- 한국관광공사 TourAPI: 키워드 검색
+- 한국관광공사 TourAPI: 상세정보 조회
 
 #### UI 요구사항
 
@@ -88,7 +95,7 @@
 
 #### 기능 설명
 
-캠핑장 목록의 위치를 네이버 지도에 마커로 표시하고, 사용자 인터랙션 제공
+여행지 목록의 위치를 네이버 지도에 마커로 표시하고, 사용자 인터랙션 제공
 
 #### 상세 요구사항
 
@@ -96,17 +103,17 @@
 
   - 초기 중심: 선택된 지역의 중심 좌표
   - 줌 레벨: 지역 범위에 따라 자동 조정
-  - 모든 캠핑장을 마커로 표시
+  - 모든 여행지를 마커로 표시
 
 - **마커 기능**
 
-  - 각 캠핑장을 마커로 표시
+  - 각 여행지를 마커로 표시
   - 마커 클릭 시 인포윈도우 표시
-    - 캠핑장명
+    - 여행지명
     - 간단한 설명
-    - 시설 정보 요약
+    - 카테고리 정보 요약
     - "상세보기" 버튼
-  - 마커 색상: 캠핑 타입별로 구분 (선택 사항)
+  - 마커 색상: 여행지 타입별로 구분 (선택 사항)
 
 - **지도-리스트 연동**
 
@@ -124,8 +131,8 @@
   - 네이버 클라우드 플랫폼(NCP) Maps API 사용
   - URL 파라미터: `ncpKeyId` (구 `ncpClientId` 아님)
   - 클러스터링 모듈은 현재 미지원 (일반 마커 사용)
-- **좌표 데이터**: `mapx` (경도), `mapy` (위도)
-  - KATEC 좌표계, 정수형으로 저장 → `10000000`으로 나누어 변환
+- **좌표 데이터**: TourAPI에서 제공하는 좌표 정보 사용
+  - WGS84 좌표계 사용 (필요 시 변환)
 
 #### UI 요구사항
 
@@ -139,7 +146,7 @@
 
 #### 기능 설명
 
-사용자가 입력한 키워드로 캠핑장을 검색하고 결과를 표시
+사용자가 입력한 키워드로 여행지를 검색하고 결과를 표시
 
 #### 상세 요구사항
 
@@ -151,9 +158,10 @@
 
 - **검색 범위**
 
-  - 캠핑장명
+  - 여행지명
   - 주소
   - 설명 내용
+  - 카테고리
 
 - **검색 결과**
 
@@ -164,13 +172,13 @@
 
 - **검색 필터 조합**
   - 키워드 + 지역 필터
-  - 키워드 + 캠핑 타입 필터
-  - 키워드 + 시설 필터
+  - 키워드 + 여행지 타입 필터
+  - 키워드 + 카테고리 필터
   - 모든 필터 동시 적용 가능
 
 #### 사용 API
 
-- 고캠핑 API: 키워드 검색 엔드포인트
+- 한국관광공사 TourAPI: 키워드 검색 엔드포인트
 
 #### UI 요구사항
 
@@ -185,36 +193,36 @@
 
 #### 기능 설명
 
-사용자가 캠핑장을 클릭하면 상세 정보를 보여주는 페이지로 이동
+사용자가 여행지를 클릭하면 상세 정보를 보여주는 페이지로 이동
 
 #### 상세 요구사항
 
 ##### 2.4.1 기본 정보 섹션
 
-- **표시 항목** (고캠핑 API 상세 정보)
-  - 캠핑장명 (대제목)
+- **표시 항목** (TourAPI 상세 정보)
+  - 여행지명 (대제목)
   - 대표 이미지 (크게 표시)
   - 주소 (복사 기능)
   - 전화번호 (클릭 시 전화 연결)
   - 홈페이지 (링크)
   - 개요 (긴 설명문)
-  - 캠핑 타입 및 카테고리
+  - 여행지 타입 및 카테고리
 
 ##### 2.4.2 운영 정보 섹션
 
-- **표시 항목** (고캠핑 API 운영 정보)
+- **표시 항목** (TourAPI 운영 정보)
   - 운영시간 / 개장시간
   - 휴무일
-  - 이용요금
+  - 이용요금 (있는 경우)
   - 주차 가능 여부
-  - 예약 정보 (예약 가능 여부, 예약 URL)
-  - 수용인원
-  - 시설 정보 (화장실, 샤워장, 전기, 와이파이 등)
-  - 반려동물 동반 가능 여부
+  - 예약 정보 (예약 가능 여부, 예약 URL - 숙박 시설의 경우)
+  - 수용인원 (있는 경우)
+  - 시설 정보 (관광지/문화시설별 시설 정보)
+  - 이용 안내
 
 ##### 2.4.3 이미지 갤러리
 
-- **표시 항목** (고캠핑 API 이미지 목록)
+- **표시 항목** (TourAPI 이미지 목록)
   - 대표 이미지 + 서브 이미지들
   - 이미지 클릭 시 전체화면 모달
   - 이미지 슬라이드 기능
@@ -223,8 +231,8 @@
 ##### 2.4.4 지도 섹션
 
 - **표시 항목**
-  - 해당 캠핑장 위치를 네이버 지도에 표시
-  - 마커 1개 (해당 캠핑장)
+  - 해당 여행지 위치를 네이버 지도에 표시
+  - 마커 1개 (해당 여행지)
   - "길찾기" 버튼 → 네이버 지도 앱/웹 연동
   - 좌표 정보 표시 (선택 사항)
 
@@ -252,7 +260,7 @@
   - 로그인하지 않은 경우: 로그인 유도 또는 localStorage 임시 저장
 
 - **북마크 목록 페이지** (`/bookmarks`, 선택 사항)
-  - 사용자가 북마크한 캠핑장 목록
+  - 사용자가 북마크한 여행지 목록
   - 카드 레이아웃 (2.1과 동일)
   - 정렬: 최신순, 이름순, 지역별
   - 일괄 삭제 기능
@@ -267,23 +275,22 @@
 - **Open Graph 메타태그** (SEO 최적화)
   - 동적 메타태그 생성 (Next.js Metadata API)
   - 필수 속성:
-    - `og:title`: 캠핑장명
-    - `og:description`: 캠핑장 설명 (100자 이내)
+    - `og:title`: 여행지명
+    - `og:description`: 여행지 설명 (100자 이내)
     - `og:image`: 대표 이미지 (1200x630 권장)
     - `og:url`: 상세페이지 URL
     - `og:type`: "website"
 
 #### 사용 API
 
-- 고캠핑 API: 캠핑장 상세 정보 조회 엔드포인트
-- 고캠핑 API: 시설 정보 조회 (있는 경우)
-- 고캠핑 API: 이미지 목록 조회
+- 한국관광공사 TourAPI: 여행지 상세 정보 조회 엔드포인트
+- 한국관광공사 TourAPI: 이미지 목록 조회
 
 #### URL 구조
 
 ```
-/campings/[contentId]
-예: /campings/12345
+/travels/[contentId]
+예: /travels/12345
 ```
 
 #### UI 요구사항
@@ -317,7 +324,7 @@
 
 ### 3.4 API
 
-- **고캠핑 API**: 고캠핑 공공 API
+- **한국관광공사 TourAPI**: 한국관광공사 관광정보 API
 
 ---
 
@@ -325,97 +332,92 @@
 
 ### 4.1 사용 API 목록
 
-고캠핑 API 명세서 확인 후 업데이트 필요
+한국관광공사 TourAPI 명세서 확인 후 업데이트 필요
 
 | API              | 엔드포인트  | 용도                | 필수 파라미터                 |
 | ---------------- | ----------- | ------------------- | ----------------------------- |
-| 캠핑장 목록 조회 | (확인 필요) | 캠핑장 목록         | (고캠핑 API 명세서 확인 필요) |
-| 상세정보 조회    | (확인 필요) | 상세페이지 기본정보 | (고캠핑 API 명세서 확인 필요) |
-| 키워드 검색      | (확인 필요) | 검색 기능           | (고캠핑 API 명세서 확인 필요) |
+| 여행지 목록 조회 | (확인 필요) | 여행지 목록         | (TourAPI 명세서 확인 필요) |
+| 상세정보 조회    | (확인 필요) | 상세페이지 기본정보 | (TourAPI 명세서 확인 필요) |
+| 키워드 검색      | (확인 필요) | 검색 기능           | (TourAPI 명세서 확인 필요) |
 
 ### 4.2 Base URL
 
-고캠핑 API Base URL 확인 필요
+한국관광공사 TourAPI Base URL 확인 필요
+- 일반적으로: `http://apis.data.go.kr/B551011/KorService1` 또는 `https://apis.data.go.kr/B551011/KorService1`
 
 ### 4.3 공통 파라미터
 
-고캠핑 API 명세서 확인 후 업데이트 필요
+한국관광공사 TourAPI 명세서 확인 후 업데이트 필요
 
 - `serviceKey`: 인증키 (환경변수)
-- `MobileApp`: "PitchCamping"
-- 기타 파라미터는 고캠핑 API 명세서 확인
+- `MobileApp`: "PitchTravel"
+- `MobileOS`: "ETC" (웹의 경우)
+- `_type`: "json" (JSON 응답 형식)
+- 기타 파라미터는 TourAPI 명세서 확인
 
 ---
 
 ## 5. 데이터 구조
 
-### 5.1 캠핑장 목록 응답 예시
+### 5.1 여행지 목록 응답 예시
 
 ```typescript
-interface CampingSite {
-  contentId: string; // 콘텐츠ID
-  facltNm: string; // 캠핑장명
-  lineIntro?: string; // 한줄 소개
-  intro?: string; // 상세 설명
-  addr1: string; // 주소
+interface TravelSite {
+  contentid: string; // 콘텐츠ID
+  contenttypeid: string; // 콘텐츠 타입ID (관광지, 문화시설, 축제 등)
+  title: string; // 여행지명
+  addr1?: string; // 주소
   addr2?: string; // 상세주소
-  mapX: number; // 경도
-  mapY: number; // 위도
-  firstImageUrl?: string; // 대표이미지
+  mapx?: string; // 경도
+  mapy?: string; // 위도
+  firstimage?: string; // 대표이미지
+  firstimage2?: string; // 대표이미지 썸네일
   tel?: string; // 전화번호
   homepage?: string; // 홈페이지
-  induty?: string; // 업종 (일반야영장, 자동차야영장 등)
-  facltDivNm?: string; // 시설 구분
-  operPdCl?: string; // 운영기간
-  operDeCl?: string; // 운영일
-  posblFcltyCl?: string; // 주요시설
-  eqpmnLendCl?: string; // 캠핑장비 대여
-  animalCmgCl?: string; // 반려동물 동반
-  // ... 기타 필드 (고캠핑 API 명세서 확인 필요)
+  cat1?: string; // 대분류
+  cat2?: string; // 중분류
+  cat3?: string; // 소분류
+  areacode?: string; // 지역코드
+  sigungucode?: string; // 시군구코드
+  // ... 기타 필드 (TourAPI 명세서 확인 필요)
 }
 ```
 
 ### 5.2 상세정보 응답 예시
 
 ```typescript
-interface CampingSiteDetail {
-  contentId: string;
-  facltNm: string; // 캠핑장명
-  lineIntro?: string; // 한줄 소개
-  intro?: string; // 상세 설명
-  addr1: string;
+interface TravelSiteDetail {
+  contentid: string;
+  contenttypeid: string;
+  title: string; // 여행지명
+  addr1?: string;
   addr2?: string;
   zipcode?: string;
   tel?: string;
   homepage?: string;
-  mapX: number; // 경도
-  mapY: number; // 위도
-  firstImageUrl?: string;
-  // 시설 정보
-  sbrsCl?: string; // 부대시설
-  posblFcltyCl?: string; // 주요시설
+  mapx?: string; // 경도
+  mapy?: string; // 위도
+  firstimage?: string;
+  overview?: string; // 개요
   // 운영 정보
-  operPdCl?: string; // 운영기간
-  operDeCl?: string; // 운영일
-  lctCl?: string; // 입지 구분
-  // ... 기타 필드 (고캠핑 API 명세서 확인 필요)
+  usetime?: string; // 이용시간
+  restdate?: string; // 휴무일
+  // 시설 정보
+  infocenter?: string; // 문의 및 안내
+  parking?: string; // 주차시설
+  // ... 기타 필드 (TourAPI 명세서 확인 필요)
 }
 ```
 
-### 5.3 시설 정보 응답 예시
+### 5.3 이미지 정보 응답 예시
 
 ```typescript
-interface CampingFacility {
-  contentId: string;
-  // 시설 정보
-  sbrsCl?: string; // 부대시설 (화장실, 샤워장 등)
-  posblFcltyCl?: string; // 주요시설
-  glampInnerFclty?: string; // 글램핑 내부시설
-  caravInnerFclty?: string; // 카라반 내부시설
-  // 운영 정보
-  operPdCl?: string; // 운영기간
-  operDeCl?: string; // 운영일
-  // ... 기타 필드 (고캠핑 API 명세서 확인 필요)
+interface TravelImage {
+  contentid: string;
+  originimgurl?: string; // 원본 이미지 URL
+  smallimageurl?: string; // 썸네일 이미지 URL
+  imgname?: string; // 이미지명
+  // ... 기타 필드 (TourAPI 명세서 확인 필요)
 }
 ```
 
@@ -426,15 +428,15 @@ interface CampingFacility {
 ### 6.1 페이지 목록
 
 ```
-/                          # 홈페이지 (캠핑장 목록 + 필터 + 지도)
-/campings/[contentId]      # 상세페이지
+/                          # 홈페이지 (여행지 목록 + 필터 + 지도)
+/travels/[contentId]       # 상세페이지
 /search?keyword=xxx        # 검색 결과 (홈에서 처리)
 /bookmarks                 # 내 북마크 목록 (선택 사항, 미구현)
 /admin/dashboard           # 관리자 KPI 대시보드
 /admin/analytics           # 관리자 서비스 분석 대시보드
 /feedback                  # 피드백 제출 페이지
-/safety                    # 안전 수칙 목록 페이지
-/safety/[id]               # 안전 수칙 상세 페이지
+/safety                    # 여행 안전 정보 목록 페이지
+/safety/[id]               # 여행 안전 정보 상세 페이지
 ```
 
 ### 6.2 컴포넌트 구조
@@ -442,7 +444,7 @@ interface CampingFacility {
 ```
 app/
 ├── page.tsx                    # 홈 (목록 + 필터 + 지도)
-├── campings/
+├── travels/
 │   └── [contentId]/
 │       └── page.tsx            # 상세페이지
 ├── admin/
@@ -453,32 +455,32 @@ app/
 ├── feedback/
 │   └── page.tsx                # 피드백 제출 페이지
 ├── safety/
-│   ├── page.tsx                # 안전 수칙 목록 페이지
+│   ├── page.tsx                # 여행 안전 정보 목록 페이지
 │   └── [id]/
-│       └── page.tsx            # 안전 수칙 상세 페이지
+│       └── page.tsx            # 여행 안전 정보 상세 페이지
 ├── api/
 │   ├── sync-user/
 │   │   └── route.ts            # 사용자 동기화 API
 │   ├── safety-guidelines/
-│   │   └── route.ts            # 안전 수칙 조회 API
-│   └── campings/
-│       └── route.ts            # 캠핑장 목록 조회 API (CORS 해결)
+│   │   └── route.ts            # 여행 안전 정보 조회 API
+│   └── travels/
+│       └── route.ts            # 여행지 목록 조회 API (CORS 해결)
 ├── not-found.tsx               # 404 페이지
 ├── sitemap.ts                  # 동적 sitemap 생성
 └── robots.ts                   # robots.txt 생성
 
 components/
-├── camping-list.tsx            # 캠핑장 목록
-├── camping-card.tsx           # 캠핑장 카드
-├── camping-filters.tsx        # 필터 (지역/타입/시설)
-├── camping-search.tsx         # 검색창
+├── travel-list.tsx            # 여행지 목록
+├── travel-card.tsx           # 여행지 카드
+├── travel-filters.tsx        # 필터 (지역/타입/카테고리)
+├── travel-search.tsx         # 검색창
 ├── naver-map.tsx               # 네이버 지도
-├── camping-detail/
+├── travel-detail/
 │   ├── detail-gallery.tsx     # 이미지 갤러리
 │   ├── share-button.tsx       # URL 복사 공유 버튼
 │   ├── bookmark-button.tsx   # 북마크 버튼 (별 아이콘)
 │   ├── review-section.tsx     # 리뷰 및 평점 섹션
-│   └── reservation-button.tsx # 예약 버튼
+│   └── contact-button.tsx     # 문의 버튼
 ├── navigation/
 │   ├── global-nav.tsx         # GNB (Global Navigation Bar)
 │   ├── local-nav.tsx          # LNB (Local Navigation Bar)
@@ -505,14 +507,14 @@ components/
 
 lib/
 ├── api/
-│   ├── camping-api.ts          # 고캠핑 API 호출 함수들
+│   ├── travel-api.ts          # TourAPI 호출 함수들
 │   ├── analytics.ts            # 조회수 추적 및 통계
 │   ├── reviews.ts              # 리뷰 및 평점 API
-│   ├── safety-guidelines.ts   # 안전 수칙 API
+│   ├── safety-guidelines.ts   # 여행 안전 정보 API
 │   ├── rate-limit-handler.ts  # Rate Limit 핸들러
 │   └── fallback-handler.ts    # 폴백 로직 핸들러
 ├── utils/
-│   ├── camping.ts              # 캠핑 관련 유틸리티 (normalizeItems 등)
+│   ├── travel.ts              # 여행 관련 유틸리티 (normalizeItems 등)
 │   ├── logger.ts               # 구조화된 로깅
 │   ├── performance.ts          # 성능 모니터링
 │   ├── metrics.ts              # 메트릭 추적
@@ -530,10 +532,10 @@ actions/
 └── submit-feedback.ts          # 피드백 제출 Server Action
 
 types/
-└── camping.ts                  # 캠핑장 타입 정의
+└── travel.ts                  # 여행지 타입 정의
 
 constants/
-└── camping.ts                  # 캠핑 관련 상수 정의
+└── travel.ts                  # 여행 관련 상수 정의
 ```
 
 ---
@@ -553,8 +555,8 @@ constants/
 ### 7.2 컬러 스킴
 
 - 다크/라이트 모드 지원
-- Primary 색상: 캠핑/자연 느낌 (초록색 #22C55E, 갈색 계열)
-- 그린 테마 적용 (#22C55E) - 자연, 산림 느낌
+- Primary 색상: 여행/모험 느낌 (파란색 계열, 또는 보라색 계열)
+- 여행 테마 컬러 적용 - 모험, 탐험 느낌
 - Accent 색상: 활력 있는 액션 버튼용
 
 ### 7.3 로딩 상태
@@ -569,6 +571,7 @@ constants/
 - 네트워크 에러: 오프라인 안내
 - 404: 페이지를 찾을 수 없음
 - CORS 에러: Next.js API Route를 통한 프록시 처리
+- TourAPI Rate Limit: 일일 호출 제한 안내 및 캐싱 전략
 
 ### 7.5 네비게이션 구조
 
@@ -590,9 +593,10 @@ constants/
 
 ### 8.1 API 제약사항
 
-- **Rate Limit**: 고캠핑 API 호출 제한 (확인 필요)
-- **데이터 품질**: 일부 캠핑장은 이미지/정보 누락 가능
+- **Rate Limit**: TourAPI 호출 제한 (일일 1,000건 또는 10,000건, API 키 등급에 따라 다름)
+- **데이터 품질**: 일부 여행지는 이미지/정보 누락 가능
 - **응답 속도**: API 응답 시간 고려 (캐싱 전략 필요)
+- **API 키 발급**: 한국관광공사 TourAPI 키 발급 필요 (공공데이터포털 또는 한국관광공사)
 
 ### 8.2 네이버 지도 제약사항
 
@@ -613,9 +617,10 @@ constants/
 **필수 환경변수**:
 
 ```bash
-# 고캠핑 API
-NEXT_PUBLIC_GOCAMPING_API_KEY=your_gocamping_api_key
-GOCAMPING_API_KEY=your_gocamping_api_key
+# 한국관광공사 TourAPI
+NEXT_PUBLIC_TOUR_API_KEY=your_tour_api_key
+TOUR_API_KEY=your_tour_api_key
+NEXT_PUBLIC_TOUR_API_BASE_URL=http://apis.data.go.kr/B551011/KorService1
 
 # 네이버 지도
 NEXT_PUBLIC_NAVER_MAP_CLIENT_ID=your_naver_map_client_id
@@ -871,7 +876,8 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 
 ### API 문서
 
-- 고캠핑 API: (고캠핑 API 문서 확인 필요)
+- 한국관광공사 TourAPI: https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15082505
+- 한국관광공사 TourAPI 가이드: https://api.visitkorea.or.kr/
 
 ### 기술 문서
 
