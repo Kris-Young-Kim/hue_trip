@@ -24,6 +24,7 @@ import { TravelApiClient } from "@/lib/api/travel-api";
 import { DetailGallery } from "@/components/travel-detail/detail-gallery";
 import { ShareButton } from "@/components/travel-detail/share-button";
 import { BookmarkButton } from "@/components/travel-detail/bookmark-button";
+import { ContactButton } from "@/components/travel-detail/contact-button";
 import { LocalNav } from "@/components/navigation/local-nav";
 import { SideNav } from "@/components/navigation/side-nav";
 import { trackView } from "@/lib/api/analytics";
@@ -224,7 +225,8 @@ export default async function TravelDetailPage({
                     )}
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                  <ContactButton travel={detail} />
                   <ShareButton contentId={contentId} />
                   <BookmarkButton contentId={contentId} />
                 </div>

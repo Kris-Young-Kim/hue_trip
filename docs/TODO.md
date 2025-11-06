@@ -420,7 +420,7 @@
   - 예약, 날씨, 교통, 광고 시스템 연동 전략 문서화
   - API 조사 및 선택 기준 명시
   - 구현 우선순위 정리
-- [ ] 예약/문의 시스템 연동 프로토타입 (`components/travel-detail/contact-button.tsx`)
+- [x] 예약/문의 시스템 연동 프로토타입 (`components/travel-detail/contact-button.tsx`)
   - 홈페이지 링크를 통한 문의 기능
   - 전화번호를 통한 문의 기능
   - 예약 가능 여부 표시 (숙박 시설의 경우)
