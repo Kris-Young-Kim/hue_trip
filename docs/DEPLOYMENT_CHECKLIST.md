@@ -29,8 +29,15 @@
 - [ ] `NEXT_PUBLIC_STORAGE_BUCKET`
 
 #### 고캠핑 API
-- [ ] `NEXT_PUBLIC_GOCAMPING_API_KEY` 또는 `GOCAMPING_API_KEY`
+- [ ] `GOCAMPING_API_KEY` (⚠️ **서버 사이드 전용, `NEXT_PUBLIC_` 접두사 없음**)
 - [ ] `NEXT_PUBLIC_GOCAMPING_API_BASE_URL` (선택 사항)
+
+**⚠️ 중요: 고캠핑 API 키 설정 방법**
+1. Vercel Dashboard → **Settings** → **Environment Variables**
+2. **Key**: `GOCAMPING_API_KEY` (NEXT_PUBLIC_ 없음)
+3. **Value**: 실제 API 키 값
+4. **Environment**: Production, Preview, Development 모두 선택
+5. 자세한 내용은 [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md) 참고
 
 #### 네이버 지도 API
 - [ ] `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID`
@@ -98,9 +105,16 @@ Supabase 프로덕션 데이터베이스:
 - [ ] Rate Limit 확인
 
 #### 네이버 지도 API
-- [ ] NCP Client ID 설정 확인
+- [ ] `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` 설정 확인
+- [ ] Naver Cloud Platform 콘솔에서 배포 URL 등록 확인
+  - 배포 URL: `https://pitch-camping.vercel.app`
+  - [Naver Cloud Platform 콘솔](https://console.ncloud.com/) → Application → 서비스 환경 → Web 서비스 → 도메인 등록
 - [ ] 지도 로드 확인
 - [ ] 사용량 제한 확인
+
+**⚠️ 중요: Naver Map API 401 오류 해결**
+- Naver Cloud Platform 콘솔에서 배포된 URL을 반드시 등록해야 합니다
+- 자세한 내용은 [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md) 참고
 
 ### 6. 기능 동작 확인
 
