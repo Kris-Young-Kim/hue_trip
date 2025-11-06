@@ -90,19 +90,39 @@ export async function GET(request: NextRequest) {
     console.error("[API] 여행지 목록 조회 오류:", error);
     const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류";
     const errorStack = error instanceof Error ? error.stack : undefined;
+    const errorName = error instanceof Error ? error.name : "UnknownError";
+    
+    // 상세 에러 정보 로깅
+    console.error("[API] 에러 상세:", {
+      name: errorName,
+      message: errorMessage,
+      stack: errorStack,
+      apiKeyExists: !!process.env.TOUR_API_KEY,
+      apiKeyLength: process.env.TOUR_API_KEY?.length || 0,
+    });
     
     logError("[API /api/travels] API 요청 실패", error instanceof Error ? error : new Error(String(error)), {
       searchParams: Object.fromEntries(request.nextUrl.searchParams.entries()),
       errorMessage,
       errorStack,
+      errorName,
+      apiKeyExists: !!process.env.TOUR_API_KEY,
     });
     console.groupEnd();
     
+    // 프로덕션에서도 에러 상세 정보 제공 (디버깅용)
     return NextResponse.json(
       { 
         error: errorMessage,
+        errorName,
         message: "여행지 목록을 불러오는데 실패했습니다.",
-        details: process.env.NODE_ENV === "development" ? errorStack : undefined,
+        details: {
+          apiKeyConfigured: !!process.env.TOUR_API_KEY,
+          ...(process.env.NODE_ENV === "development" && {
+            stack: errorStack,
+            fullError: String(error),
+          }),
+        },
       },
       { status: 500 }
     );

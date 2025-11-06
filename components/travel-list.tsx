@@ -84,8 +84,19 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
             status: response.status,
             statusText: response.statusText,
             errorData,
+            errorName: errorData.errorName,
+            details: errorData.details,
           });
-          throw new Error(errorData.message || errorData.error || `API 요청 실패: ${response.status}`);
+          
+          // 에러 상세 정보를 사용자에게 표시
+          const errorMessage = errorData.message || errorData.error || `API 요청 실패: ${response.status}`;
+          const errorDetails = errorData.details;
+          
+          if (errorDetails?.apiKeyConfigured === false) {
+            throw new Error("서버 환경 변수 TOUR_API_KEY가 설정되지 않았습니다. 관리자에게 문의하세요.");
+          }
+          
+          throw new Error(errorMessage);
         }
 
         const data = await response.json();
