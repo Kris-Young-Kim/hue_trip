@@ -318,12 +318,13 @@
 - [x] 핵심 기능 검증 체크리스트 작성(MVP 4개)
 - [x] 즐겨찾기·URL복사·API 응답 성공률·데이터 정확도 측정
 - [x] CS/고객 피드백 수집, 반영 플랜 수립
-- [ ] 투자/사업자 대상 서비스 데모·랜딩페이지 생성 (`app/demo/page.tsx`)
-  - 서비스 소개 및 주요 기능 데모
-  - 통계 섹션 (실제 데이터 연동)
+- [x] 투자/사업자 대상 서비스 데모·랜딩페이지 생성 (`app/demo/page.tsx`)
+  - 서비스 소개 및 주요 기능 데모 (`components/demo/showcase.tsx`)
+  - 통계 섹션 (실제 데이터 연동) (`components/demo/stats-section.tsx`)
   - CTA 버튼 및 연락처 정보
-- [ ] 여행 관련 파트너십/마케팅 협력 구조 논의
-  - 한국관광공사, 지역 관광청 등 파트너십 계획 수립
+  - 히어로 섹션, 서비스 가치 제안, 연락처/문의 섹션 포함
+- [x] 여행 관련 파트너십/마케팅 협력 구조 논의
+  - 한국관광공사, 지역 관광청 등 파트너십 계획 수립 (`docs/PARTNERSHIP_PLAN.md`)
   - 파트너십 제안서 초안 작성 (`docs/PARTNERSHIP_PROPOSAL.md`)
   - 협력 구조 논의
 
@@ -357,10 +358,10 @@
   - API 응답 성공률 및 응답 시간 추적 함수
   - 데이터 정확도 검증 함수
   - 전체 메트릭 계산 함수
-- [ ] 메트릭 추적 통합
-  - `components/travel-detail/share-button.tsx`: URL 복사 성공/실패 추적 추가
-  - `components/travel-detail/bookmark-button.tsx`: 북마크 성공/실패 추적 추가
-  - `lib/api/travel-api.ts`: API 요청 성공/실패 및 응답 시간 추적 추가
+- [x] 메트릭 추적 통합
+  - `components/travel-detail/share-button.tsx`: URL 복사 성공/실패 추적 추가 완료
+  - `components/travel-detail/bookmark-button.tsx`: 북마크 성공/실패 추적 추가 완료
+  - `lib/api/travel-api.ts`: API 요청 성공/실패 및 응답 시간 추적 추가 완료
 - [x] 관리자 분석 페이지 (`app/admin/analytics/page.tsx`)
   - 기능별 성공률 표시 (북마크, URL 복사, API 응답)
   - 평균 API 응답 시간 표시
