@@ -82,10 +82,10 @@ export function GlobalNav() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2",
+                      "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
                       active
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-green-600 dark:hover:text-green-400"
+                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400"
                     )}
                     aria-current={active ? "page" : undefined}
                     role="menuitem"
@@ -113,7 +113,7 @@ export function GlobalNav() {
               </SignInButton>
               <SignUpButton mode="modal">
                 <Button
-                  className="bg-green-600 hover:bg-green-700 text-white hidden sm:inline-flex"
+                  className="bg-blue-600 hover:bg-blue-700 text-white hidden sm:inline-flex"
                   aria-label="회원가입"
                 >
                   회원가입
@@ -161,9 +161,9 @@ export function GlobalNav() {
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-md text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2",
+                      "flex items-center gap-3 px-4 py-3 rounded-md text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
                       active
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                     )}
                     aria-current={active ? "page" : undefined}
@@ -183,7 +183,7 @@ export function GlobalNav() {
                         key={item.href}
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        className="flex items-center gap-3 px-4 py-3 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         role="menuitem"
                       >
                         <Icon className="w-5 h-5" aria-hidden="true" />

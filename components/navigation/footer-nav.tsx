@@ -44,7 +44,7 @@ const footerLinks = {
   support: [
     { href: "/faq", label: "자주 묻는 질문" },
     { href: "/contact", label: "문의하기" },
-    { href: "https://www.gocamping.or.kr", label: "고캠핑 API", external: true },
+    { href: "https://www.visitkorea.or.kr", label: "한국관광공사 TourAPI", external: true },
   ],
 };
 
@@ -52,7 +52,7 @@ const socialLinks = [
   { href: "#", label: "Facebook", icon: Facebook },
   { href: "#", label: "Twitter", icon: Twitter },
   { href: "#", label: "Instagram", icon: Instagram },
-  { href: "mailto:contact@pitchcamping.com", label: "이메일", icon: Mail },
+    { href: "mailto:contact@pitchtravel.com", label: "이메일", icon: Mail },
 ];
 
 export function FooterNav({ className }: FooterNavProps) {
@@ -71,9 +71,9 @@ export function FooterNav({ className }: FooterNavProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* 브랜드 섹션 */}
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Pitch Camping</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Pitch Travel</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              전국의 캠핑장 정보를 한눈에 확인하고, 안전하고 즐거운 캠핑 여행을 계획하세요.
+              전국의 여행지 정보를 한눈에 확인하고, 안전하고 즐거운 여행을 계획하세요.
             </p>
             {/* 소셜 미디어 링크 */}
             <div className="flex items-center gap-3" role="list" aria-label="소셜 미디어 링크">
@@ -85,7 +85,7 @@ export function FooterNav({ className }: FooterNavProps) {
                     href={social.href}
                     target={social.href.startsWith("http") ? "_blank" : undefined}
                     rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     aria-label={social.label}
                     role="listitem"
                   >
@@ -104,7 +104,7 @@ export function FooterNav({ className }: FooterNavProps) {
                 <li key={link.href} role="listitem">
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-md"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md"
                   >
                     {link.label}
                   </Link>
@@ -121,7 +121,7 @@ export function FooterNav({ className }: FooterNavProps) {
                 <li key={link.href} role="listitem">
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-md"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md"
                   >
                     {link.label}
                   </Link>
@@ -140,7 +140,7 @@ export function FooterNav({ className }: FooterNavProps) {
                     href={link.href}
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noopener noreferrer" : undefined}
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-md inline-flex items-center gap-1"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md inline-flex items-center gap-1"
                   >
                     {link.label}
                     {link.external && <ExternalLink className="w-3 h-3" aria-hidden="true" />}
@@ -155,17 +155,17 @@ export function FooterNav({ className }: FooterNavProps) {
         <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 text-center md:text-left">
-              © {currentYear} Pitch Camping. All rights reserved.
+              © {currentYear} Pitch Travel. All rights reserved.
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400 text-center md:text-right">
               데이터 제공:{" "}
               <a
-                href="https://www.gocamping.or.kr"
+                href="https://www.visitkorea.or.kr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-green-600 dark:text-green-400 hover:underline focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-md"
+                className="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md"
               >
-                한국관광공사 고캠핑
+                한국관광공사 TourAPI
               </a>
             </p>
           </div>
