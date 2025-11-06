@@ -78,7 +78,12 @@ export function CampingList({ filter, onCampingClick, onCampingsChange }: Campin
         
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `API 요청 실패: ${response.status}`);
+          console.error("[CampingList] API 오류 응답:", {
+            status: response.status,
+            statusText: response.statusText,
+            errorData,
+          });
+          throw new Error(errorData.message || errorData.error || `API 요청 실패: ${response.status}`);
         }
 
         const data = await response.json();

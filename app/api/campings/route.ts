@@ -19,6 +19,20 @@ export async function GET(request: NextRequest) {
   console.group("[API /api/campings] 캠핑장 목록 조회");
   
   try {
+    // 환경 변수 확인
+    const apiKey = process.env.GOCAMPING_API_KEY;
+    if (!apiKey) {
+      console.error("[API] GOCAMPING_API_KEY 환경 변수가 설정되지 않았습니다.");
+      console.groupEnd();
+      return NextResponse.json(
+        { 
+          error: "API 키가 설정되지 않았습니다.",
+          message: "서버 환경 변수 GOCAMPING_API_KEY를 확인해주세요."
+        },
+        { status: 500 }
+      );
+    }
+    
     const searchParams = request.nextUrl.searchParams;
     
     console.log("[API] 쿼리 파라미터:", Object.fromEntries(searchParams.entries()));
@@ -45,15 +59,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error("[API] 캠핑장 목록 조회 오류:", error);
+    const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류";
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
     logError("[API /api/campings] API 요청 실패", error instanceof Error ? error : new Error(String(error)), {
       searchParams: Object.fromEntries(request.nextUrl.searchParams.entries()),
+      errorMessage,
+      errorStack,
     });
     console.groupEnd();
     
     return NextResponse.json(
       { 
-        error: error instanceof Error ? error.message : "API 요청 실패",
-        message: "캠핑장 목록을 불러오는데 실패했습니다."
+        error: errorMessage,
+        message: "캠핑장 목록을 불러오는데 실패했습니다.",
+        details: process.env.NODE_ENV === "development" ? errorStack : undefined,
       },
       { status: 500 }
     );
