@@ -129,15 +129,27 @@ export async function getAdminStats(): Promise<AdminStats | null> {
     }
 
     // 총 조회 수 조회 (travel_stats 테이블 사용)
+    let totalViews = 0;
     const { data: viewsData, error: viewsError } = await supabase
       .from("travel_stats")
       .select("view_count");
 
-    const totalViews =
-      viewsData?.reduce((sum, stat) => sum + (stat.view_count || 0), 0) || 0;
-
+    // travel_stats 테이블이 없는 경우 조용히 처리
     if (viewsError) {
-      console.error("[AdminStats] 조회 수 조회 실패:", viewsError);
+      const errorMessage = viewsError instanceof Error 
+        ? viewsError.message 
+        : viewsError.message || String(viewsError);
+      
+      // 테이블이 없다는 에러는 무시 (마이그레이션 미적용 가능)
+      if (errorMessage.includes("Could not find the table") || 
+          errorMessage.includes("does not exist") ||
+          errorMessage.includes("relation") && errorMessage.includes("does not exist")) {
+        // 조용히 처리 (totalViews는 이미 0으로 초기화됨)
+      } else {
+        console.error("[AdminStats] 조회 수 조회 실패:", errorMessage);
+      }
+    } else {
+      totalViews = viewsData?.reduce((sum, stat) => sum + (stat.view_count || 0), 0) || 0;
     }
 
     // 총 북마크 수 조회
@@ -146,7 +158,10 @@ export async function getAdminStats(): Promise<AdminStats | null> {
       .select("*", { count: "exact", head: true });
 
     if (bookmarksError) {
-      console.error("[AdminStats] 북마크 수 조회 실패:", bookmarksError);
+      const errorMessage = bookmarksError instanceof Error 
+        ? bookmarksError.message 
+        : bookmarksError.message || String(bookmarksError);
+      console.error("[AdminStats] 북마크 수 조회 실패:", errorMessage);
     }
 
     // 총 리뷰 수 조회
@@ -155,10 +170,20 @@ export async function getAdminStats(): Promise<AdminStats | null> {
       .select("*", { count: "exact", head: true });
 
     if (reviewsError) {
-      console.error("[AdminStats] 리뷰 수 조회 실패:", reviewsError);
+      const errorMessage = reviewsError instanceof Error 
+        ? reviewsError.message 
+        : reviewsError.message || String(reviewsError);
+      console.error("[AdminStats] 리뷰 수 조회 실패:", errorMessage);
     }
 
     // 인기 여행지 TOP 10 조회
+    let popularTravels: {
+      contentId: string;
+      viewCount: number;
+      bookmarkCount: number;
+      shareCount: number;
+    }[] = [];
+    
     const { data: popularData, error: popularError } = await supabase
       .from("travel_stats")
       .select("*")
@@ -167,16 +192,26 @@ export async function getAdminStats(): Promise<AdminStats | null> {
       .limit(10);
 
     if (popularError) {
-      console.error("[AdminStats] 인기 여행지 조회 실패:", popularError);
-    }
-
-    const popularTravels =
-      popularData?.map((stat) => ({
+      const errorMessage = popularError instanceof Error 
+        ? popularError.message 
+        : popularError.message || String(popularError);
+      
+      // 테이블이 없다는 에러는 무시 (마이그레이션 미적용 가능)
+      if (errorMessage.includes("Could not find the table") || 
+          errorMessage.includes("does not exist") ||
+          errorMessage.includes("relation") && errorMessage.includes("does not exist")) {
+        // 조용히 처리 (popularTravels는 이미 빈 배열로 초기화됨)
+      } else {
+        console.error("[AdminStats] 인기 여행지 조회 실패:", errorMessage);
+      }
+    } else {
+      popularTravels = popularData?.map((stat) => ({
         contentId: stat.content_id,
         viewCount: stat.view_count || 0,
         bookmarkCount: stat.bookmark_count || 0,
         shareCount: stat.share_count || 0,
       })) || [];
+    }
 
     const stats: AdminStats = {
       totalUsers: totalUsers || 0,

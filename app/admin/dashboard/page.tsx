@@ -21,7 +21,6 @@ import { getAdminStats } from "@/actions/admin-stats";
 import { StatsCard } from "@/components/admin/stats-card";
 import { PopularTravels } from "@/components/admin/popular-travels";
 import { EnhancedDashboard } from "@/components/admin/enhanced-dashboard";
-import { Users, Eye, Bookmark, MessageSquare } from "lucide-react";
 
 export default async function AdminDashboardPage() {
   console.group("[AdminDashboard] 페이지 로드 시작");
@@ -103,25 +102,25 @@ export default async function AdminDashboardPage() {
             title="총 사용자 수"
             value={stats.totalUsers}
             description="가입한 사용자 수"
-            icon={Users}
+            icon="Users"
           />
           <StatsCard
             title="총 조회 수"
             value={stats.totalViews}
             description="여행지 조회 총합"
-            icon={Eye}
+            icon="Eye"
           />
           <StatsCard
             title="총 북마크 수"
             value={stats.totalBookmarks}
             description="사용자 북마크 총합"
-            icon={Bookmark}
+            icon="Bookmark"
           />
           <StatsCard
             title="총 리뷰 수"
             value={stats.totalReviews}
             description="작성된 리뷰 수"
-            icon={MessageSquare}
+            icon="MessageSquare"
           />
         </div>
 

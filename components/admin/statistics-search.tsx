@@ -36,8 +36,8 @@ interface StatisticsSearchProps {
 export function StatisticsSearch({ onSearch }: StatisticsSearchProps) {
   const [keyword, setKeyword] = useState("");
   const [dateRange, setDateRange] = useState<{ start?: string; end?: string }>({});
-  const [region, setRegion] = useState<string>("");
-  const [type, setType] = useState<string>("");
+  const [region, setRegion] = useState<string>("all");
+  const [type, setType] = useState<string>("all");
   const [presets, setPresets] = useState<FilterPreset[]>([]);
   const [isPending, startTransition] = useTransition();
 
@@ -46,8 +46,8 @@ export function StatisticsSearch({ onSearch }: StatisticsSearchProps) {
     onSearch({
       keyword: keyword.trim() || undefined,
       dateRange: dateRange.start || dateRange.end ? dateRange : undefined,
-      region: region || undefined,
-      type: type || undefined,
+      region: region && region !== "all" ? region : undefined,
+      type: type && type !== "all" ? type : undefined,
     });
     console.groupEnd();
   };
@@ -57,8 +57,8 @@ export function StatisticsSearch({ onSearch }: StatisticsSearchProps) {
     const config = preset.filterConfig;
     if (config.keyword) setKeyword(config.keyword);
     if (config.dateRange) setDateRange(config.dateRange);
-    if (config.region) setRegion(config.region);
-    if (config.type) setType(config.type);
+    setRegion(config.region || "all");
+    setType(config.type || "all");
     onSearch({
       keyword: config.keyword,
       dateRange: config.dateRange,
@@ -78,8 +78,8 @@ export function StatisticsSearch({ onSearch }: StatisticsSearchProps) {
         filterConfig: {
           keyword: keyword.trim() || undefined,
           dateRange: dateRange.start || dateRange.end ? dateRange : undefined,
-          region: region || undefined,
-          type: type || undefined,
+          region: region && region !== "all" ? region : undefined,
+          type: type && type !== "all" ? type : undefined,
         },
       });
 
@@ -156,7 +156,7 @@ export function StatisticsSearch({ onSearch }: StatisticsSearchProps) {
                 <SelectValue placeholder="전체" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">전체</SelectItem>
+                <SelectItem value="all">전체</SelectItem>
                 <SelectItem value="서울">서울</SelectItem>
                 <SelectItem value="부산">부산</SelectItem>
                 <SelectItem value="대구">대구</SelectItem>
@@ -174,7 +174,7 @@ export function StatisticsSearch({ onSearch }: StatisticsSearchProps) {
                 <SelectValue placeholder="전체" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">전체</SelectItem>
+                <SelectItem value="all">전체</SelectItem>
                 <SelectItem value="관광지">관광지</SelectItem>
                 <SelectItem value="문화시설">문화시설</SelectItem>
                 <SelectItem value="축제">축제</SelectItem>

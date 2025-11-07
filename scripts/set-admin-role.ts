@@ -95,17 +95,36 @@ async function setAdminRole(email: string) {
   }
 }
 
-// 스크립트 실행
-const email = process.argv[2];
+// 여러 이메일을 한 번에 처리
+async function setMultipleAdminRoles(emails: string[]) {
+  console.log(`\n📋 총 ${emails.length}개의 계정에 관리자 권한을 부여합니다.\n`);
+  
+  for (let i = 0; i < emails.length; i++) {
+    const email = emails[i];
+    console.log(`\n[${i + 1}/${emails.length}] 처리 중: ${email}`);
+    console.log("─".repeat(50));
+    await setAdminRole(email);
+  }
+  
+  console.log("\n\n✅ 모든 계정에 관리자 권한 부여 완료!");
+}
 
-if (!email) {
+// 스크립트 실행
+const args = process.argv.slice(2);
+
+if (args.length === 0) {
   console.error("❌ 이메일 주소를 입력해주세요.");
   console.log("\n사용법:");
-  console.log("  pnpm tsx scripts/set-admin-role.ts <email>");
+  console.log("  pnpm tsx scripts/set-admin-role.ts <email1> [email2] ...");
   console.log("\n예시:");
   console.log("  pnpm tsx scripts/set-admin-role.ts youngkiss3181@gmail.com");
+  console.log("  pnpm tsx scripts/set-admin-role.ts user1@example.com user2@example.com");
   process.exit(1);
 }
 
-setAdminRole(email);
+if (args.length === 1) {
+  setAdminRole(args[0]);
+} else {
+  setMultipleAdminRoles(args);
+}
 
