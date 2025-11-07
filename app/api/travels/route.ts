@@ -30,12 +30,8 @@ export async function OPTIONS() {
 }
 
 export async function GET(request: NextRequest) {
-  console.group("[API /api/travels] 여행지 목록 조회");
-  
   try {
     const searchParams = request.nextUrl.searchParams;
-    
-    console.log("[API] 쿼리 파라미터:", Object.fromEntries(searchParams.entries()));
     
     const filter: TravelFilter = {
       pageNo: parseInt(searchParams.get("pageNo") || "1", 10),
@@ -51,31 +47,18 @@ export async function GET(request: NextRequest) {
       arrange: searchParams.get("arrange") || undefined,
     };
 
-    console.log("[API] 필터:", filter);
-
     // 1. TourAPI 시도
     try {
-      console.log("[API] TourAPI 조회 시작");
       const travelApi = new TravelApiClient();
       
-      // 키워드 검색이 있는 경우 searchTravel 사용, 없으면 getTravelList 사용
       let response: TravelListResponse;
       
       if (filter.keyword) {
-        console.log("[API] TourAPI 키워드 검색 사용");
         const { keyword, ...restFilter } = filter;
         response = await travelApi.searchTravel(keyword, restFilter);
       } else {
-        console.log("[API] TourAPI 지역기반 조회 사용");
         response = await travelApi.getTravelList(filter);
       }
-
-      console.log("[API] TourAPI 응답 성공:", {
-        itemCount: response.response?.body?.items?.item?.length || 0,
-        totalCount: response.response?.body?.totalCount || 0,
-      });
-
-      console.groupEnd();
       
       // CORS 헤더 추가 및 캐싱 설정
       return NextResponse.json(response, {
@@ -87,15 +70,11 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch (tourApiError) {
-      console.warn("[API] TourAPI 조회 실패, Supabase fallback 시도:", tourApiError);
       logError("[API /api/travels] TourAPI 조회 실패, Supabase fallback", tourApiError instanceof Error ? tourApiError : new Error(String(tourApiError)), {
         filter,
       });
       
       // 2. Supabase fallback
-      console.log("[API] Supabase 조회 시작 (fallback)");
-      
-      // Supabase 서버 클라이언트 생성
       const supabase = createClerkSupabaseClient();
       
       // Supabase 쿼리 빌더 시작
@@ -161,19 +140,11 @@ export async function GET(request: NextRequest) {
       const to = from + numOfRows - 1;
       
       query = query.range(from, to);
-      
-      console.log("[API] Supabase 쿼리 실행");
       const { data, error, count } = await query;
       
       if (error) {
-        console.error("[API] Supabase 오류:", error);
         throw new Error(`Supabase 조회 실패: ${error.message}`);
       }
-      
-      console.log("[API] Supabase 응답 성공:", {
-        itemCount: data?.length || 0,
-        totalCount: count || 0,
-      });
 
       // 반려동물 동반 필터 적용 (TourAPI 응답에는 pet_friendly 필드가 없으므로 클라이언트 사이드 필터링)
       let filteredData = data || [];
@@ -203,8 +174,6 @@ export async function GET(request: NextRequest) {
         },
       };
 
-      console.groupEnd();
-      
       // CORS 헤더 추가 및 캐싱 설정
       return NextResponse.json(response, {
         headers: {
@@ -216,7 +185,6 @@ export async function GET(request: NextRequest) {
       });
     }
   } catch (error) {
-    console.error("[API] 여행지 목록 조회 오류:", error);
     const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류";
     const errorStack = error instanceof Error ? error.stack : undefined;
     const errorName = error instanceof Error ? error.name : "UnknownError";
@@ -227,7 +195,6 @@ export async function GET(request: NextRequest) {
       errorStack,
       errorName,
     });
-    console.groupEnd();
     
     return NextResponse.json(
       { 

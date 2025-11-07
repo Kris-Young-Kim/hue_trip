@@ -52,12 +52,11 @@ function HomeContent() {
 
   // URL 쿼리 파라미터로부터 필터 초기화
   useEffect(() => {
-    console.group("[Home] 필터 초기화");
     const region = searchParams.get("region");
     const type = searchParams.get("type");
     const keyword = searchParams.get("keyword");
     const sort = searchParams.get("sort");
-    const view = searchParams.get("view") as "list" | "map" | null;
+    const petFriendly = searchParams.get("petFriendly") === "true";
 
     const initialFilter: TravelFilter = {};
 
@@ -82,26 +81,20 @@ function HomeContent() {
       setShowPetFriendlyOnly(true);
     }
 
-    console.log("초기 필터:", initialFilter);
     setFilter(initialFilter);
-    console.groupEnd();
   }, [searchParams]);
 
   const handleFilterChange = useCallback((newFilter: TravelFilter) => {
-    console.log("[Home] 필터 변경 콜백:", newFilter);
     setFilter(newFilter);
-    setSelectedTravelId(undefined); // 필터 변경 시 선택 해제
-    // 반려동물 동반 필터 상태 업데이트
+    setSelectedTravelId(undefined);
     setShowPetFriendlyOnly(newFilter.petFriendly === true);
   }, []);
 
-  const handleTravelClick = (travel: TravelSite) => {
-    console.log("[Home] 여행지 클릭:", travel.title);
+  const handleTravelClick = useCallback((travel: TravelSite) => {
     setSelectedTravelId(travel.contentid);
-  };
+  }, []);
 
   const handleTravelListUpdate = useCallback((travels: TravelSite[]) => {
-    console.log("[Home] 여행지 목록 업데이트:", travels.length);
     setTravels(travels);
   }, []);
 
@@ -128,7 +121,6 @@ function HomeContent() {
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-2 border border-gray-200 dark:border-gray-700">
                 <TravelSearch
                   onSearch={(keyword) => {
-                    console.log("[Home] 검색 실행:", keyword);
                     setFilter((prev) => ({
                       ...prev,
                       keyword: keyword || undefined,

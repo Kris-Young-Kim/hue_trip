@@ -111,10 +111,7 @@ export function NaverMap({
     // 반려동물 동반 여행지만 필터링
     if (showPetFriendlyOnlyRef.current) {
       currentTravels = currentTravels.filter((travel) => travel.pet_friendly === true);
-      console.log("[NaverMap] 반려동물 동반 여행지만 표시:", currentTravels.length);
     }
-    
-    console.log("[NaverMap] 마커 추가 시작:", currentTravels.length);
 
     // 기존 마커 제거
     markersRef.current.forEach((marker) => marker.setMap(null));
@@ -127,7 +124,6 @@ export function NaverMap({
         // 좌표 파싱 (TourAPI는 WGS84 좌표계 사용)
         const coords = parseCoordinates(travel.mapx, travel.mapy);
         if (!coords) {
-          console.warn("[NaverMap] 좌표 파싱 실패:", travel);
           return;
         }
 
@@ -336,23 +332,18 @@ export function NaverMap({
         markersRef.current.push(marker);
         infoWindowsRef.current.push(infoWindow);
       } catch (err) {
-        console.error("[NaverMap] 마커 추가 오류:", err, travel);
+        // 마커 추가 실패는 무시 (개별 마커 오류가 전체 지도에 영향을 주지 않도록)
       }
     });
-
-    console.log("[NaverMap] 마커 추가 완료:", markersRef.current.length);
   }, []); // 의존성 제거 - ref를 통해 travels와 onMarkerClick 접근
 
   // 지도 초기화 함수
   const initializeMap = useCallback(() => {
     if (!mapRef.current || !window.naver?.maps) {
-      console.error("[NaverMap] 지도 초기화 실패: 요소 또는 API가 없음");
       return;
     }
 
     try {
-      console.log("[NaverMap] 지도 초기화 시작");
-
       // 기본 중심 좌표 (한국 중심)
       const defaultCenter = center
         ? new window.naver.maps.LatLng(center.lat, center.lng)
@@ -369,7 +360,6 @@ export function NaverMap({
         mapOptions
       );
 
-      console.log("[NaverMap] 지도 생성 완료");
       setIsLoaded(true);
 
       // 마커 표시
@@ -377,27 +367,21 @@ export function NaverMap({
         addMarkers();
       }
     } catch (err) {
-      console.error("[NaverMap] 지도 초기화 오류:", err);
       setError("지도를 초기화하는데 실패했습니다.");
     }
   }, [center, zoom, addMarkers]);
 
   // 네이버 지도 스크립트 로드
   useEffect(() => {
-    console.group("[NaverMap] 네이버 지도 초기화");
-    console.log("여행지 개수:", travels.length);
-
     const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
     if (!clientId) {
-      console.error("[NaverMap] 네이버 지도 Client ID가 설정되지 않았습니다.");
       setError("네이버 지도 서비스를 사용할 수 없습니다.");
       return;
     }
 
     // 스크립트가 이미 로드되어 있는지 확인
     if (window.naver && window.naver.maps) {
-      console.log("[NaverMap] 네이버 지도 API 이미 로드됨");
       initializeMap();
       return;
     }
@@ -407,11 +391,9 @@ export function NaverMap({
     script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}`;
     script.async = true;
     script.onload = () => {
-      console.log("[NaverMap] 네이버 지도 API 로드 완료");
       initializeMap();
     };
     script.onerror = () => {
-      console.error("[NaverMap] 네이버 지도 API 로드 실패");
       setError("네이버 지도를 불러오는데 실패했습니다.");
     };
 
@@ -442,11 +424,8 @@ export function NaverMap({
     );
 
     if (selectedTravel) {
-      console.log("[NaverMap] 선택된 여행지로 이동:", selectedTravel.title);
-
       const coords = parseCoordinates(selectedTravel.mapx, selectedTravel.mapy);
       if (!coords) {
-        console.warn("[NaverMap] 좌표 파싱 실패:", selectedTravel);
         return;
       }
 
@@ -477,7 +456,6 @@ export function NaverMap({
     if (!isLoaded) {
       return;
     }
-    console.log("[NaverMap] showPetFriendlyOnly 변경:", showPetFriendlyOnly);
     addMarkers();
   }, [showPetFriendlyOnly, isLoaded, addMarkers]);
 
@@ -495,8 +473,6 @@ export function NaverMap({
 
     // 실제로 변경된 경우에만 마커 업데이트
     if (currentTravelIds !== prevTravelIds) {
-      console.log("[NaverMap] 여행지 목록 변경 감지, 마커 업데이트");
-      
       // 이전 travels ID 저장
       prevTravelsRef.current = currentTravelIds;
       
@@ -521,7 +497,7 @@ export function NaverMap({
             try {
               mapInstanceRef.current.fitBounds(bounds);
             } catch (err) {
-              console.error("[NaverMap] 지도 범위 조정 실패:", err);
+              // 지도 범위 조정 실패는 무시
             }
           }
         }

@@ -143,7 +143,6 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
-    console.error("[TravelDetailPage] 메타데이터 생성 오류:", error);
     return {
       title: "여행지 상세 정보",
     };
@@ -155,16 +154,12 @@ export default async function TravelDetailPage({
 }: TravelDetailPageProps) {
   const { contentId } = await params;
 
-  console.group(`[TravelDetailPage] 페이지 로드: ${contentId}`);
-
   let detail: TravelSiteDetail | null = null;
   let introInfo: TravelSiteDetail | null = null;
   let petFriendly: boolean = false;
   let error: string | null = null;
 
   try {
-    console.log("[TravelDetailPage] API 호출 시작");
-
     // Supabase에서 반려동물 동반 정보 조회
     try {
       const supabase = createClerkSupabaseClient();
@@ -176,29 +171,20 @@ export default async function TravelDetailPage({
 
       if (travelData?.pet_friendly) {
         petFriendly = true;
-        console.log("[TravelDetailPage] 반려동물 동반 가능 여행지 확인");
       }
     } catch (petErr) {
-      console.warn("[TravelDetailPage] 반려동물 동반 정보 조회 실패 (무시):", petErr);
       // 반려동물 정보 조회 실패는 무시
     }
 
     // 공통정보 조회 (TourAPI 우선, 실패 시 Supabase fallback)
     try {
       const commonResponse = await travelApi.getTravelDetail(contentId);
-      console.log("[TravelDetailPage] 공통정보 API 응답:", commonResponse);
-
       const commonItems = normalizeTravelItems(
         commonResponse.response?.body?.items?.item
       ) as TravelSiteDetail[];
 
       if (commonItems.length > 0) {
         detail = commonItems[0];
-        console.log("[TravelDetailPage] 여행지 정보:", {
-          name: detail.title,
-          address: detail.addr1,
-          contentTypeId: detail.contenttypeid,
-        });
 
         // 소개정보 조회 (contentTypeId가 있는 경우)
         if (detail.contenttypeid) {
@@ -213,12 +199,9 @@ export default async function TravelDetailPage({
 
             if (introItems.length > 0) {
               introInfo = introItems[0];
-              // 소개정보를 detail에 병합
               detail = { ...detail, ...introInfo };
-              console.log("[TravelDetailPage] 소개정보 병합 완료");
             }
           } catch (introErr) {
-            console.warn("[TravelDetailPage] 소개정보 조회 실패 (무시):", introErr);
             // 소개정보 조회 실패는 무시하고 공통정보만 사용
           }
         }
@@ -226,8 +209,6 @@ export default async function TravelDetailPage({
         throw new Error("TourAPI 응답에 데이터가 없습니다.");
       }
     } catch (tourApiError) {
-      console.warn("[TravelDetailPage] TourAPI 조회 실패, Supabase fallback 시도:", tourApiError);
-      
       // Supabase fallback
       try {
         const serviceClient = getServiceRoleClient();
@@ -238,7 +219,6 @@ export default async function TravelDetailPage({
           .single();
 
         if (travelData) {
-          // Supabase 데이터를 TravelSiteDetail 형식으로 변환
           detail = {
             contentid: travelData.contentid,
             contenttypeid: travelData.contenttypeid,
@@ -259,27 +239,18 @@ export default async function TravelDetailPage({
             zipcode: travelData.zipcode,
             overview: travelData.overview,
           } as TravelSiteDetail;
-          
-          console.log("[TravelDetailPage] Supabase fallback 성공:", {
-            name: detail.title,
-            address: detail.addr1,
-          });
         } else {
           error = "여행지 정보를 찾을 수 없습니다.";
         }
       } catch (supabaseError) {
-        console.error("[TravelDetailPage] Supabase fallback 실패:", supabaseError);
         error = "여행지 정보를 불러오는데 실패했습니다.";
       }
     }
   } catch (err) {
-    console.error("[TravelDetailPage] API 호출 오류:", err);
     error =
       err instanceof Error
         ? err.message
         : "여행지 정보를 불러오는데 실패했습니다.";
-  } finally {
-    console.groupEnd();
   }
 
   if (error || !detail) {
@@ -287,8 +258,8 @@ export default async function TravelDetailPage({
   }
 
   // 조회수 추적 (비동기, 에러 발생해도 페이지 렌더링 계속)
-  trackView(contentId).catch((err) => {
-    console.error("[TravelDetailPage] 조회수 추적 오류:", err);
+  trackView(contentId).catch(() => {
+    // 조회수 추적 실패는 무시
   });
 
   return (

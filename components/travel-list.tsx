@@ -54,10 +54,6 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
 
   useEffect(() => {
     const fetchTravels = async () => {
-      console.group("[TravelList] 여행지 목록 조회 시작");
-      console.log("필터:", filter);
-      console.log("페이지:", page);
-
       setLoading(true);
       setError(null);
 
@@ -68,7 +64,6 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
           numOfRows: PAGINATION_DEFAULTS.PAGE_SIZE,
         };
 
-        // Next.js API Route를 통해 서버 사이드에서 호출
         const params = new URLSearchParams();
         if (filterWithPage.pageNo) params.set("pageNo", String(filterWithPage.pageNo));
         if (filterWithPage.numOfRows) params.set("numOfRows", String(filterWithPage.numOfRows));
@@ -81,20 +76,10 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
         if (filterWithPage.keyword) params.set("keyword", filterWithPage.keyword);
         if (filterWithPage.arrange) params.set("arrange", filterWithPage.arrange);
 
-        console.log("[TravelList] API Route 호출 시작:", `/api/travels?${params.toString()}`);
         const response = await fetch(`/api/travels?${params.toString()}`);
         
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          console.error("[TravelList] API 오류 응답:", {
-            status: response.status,
-            statusText: response.statusText,
-            errorData,
-            errorName: errorData.errorName,
-            details: errorData.details,
-          });
-          
-          // 에러 상세 정보를 사용자에게 표시
           const errorMessage = errorData.message || errorData.error || `API 요청 실패: ${response.status}`;
           const errorDetails = errorData.details;
           
@@ -106,48 +91,30 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
         }
 
         const data = await response.json();
-        console.log("[TravelList] API 응답:", data);
-
-        // 응답 데이터 정규화
-        const items = normalizeTravelItems(
-          data.response?.body?.items?.item
-        );
-
-        console.log("[TravelList] 정규화된 데이터:", {
-          count: items.length,
-          totalCount: data.response?.body?.totalCount,
-        });
+        const items = normalizeTravelItems(data.response?.body?.items?.item);
 
         setTravels(items);
         setTotalCount(data.response?.body?.totalCount || 0);
-        
-        // 상위 컴포넌트로 여행지 목록 전달 (ref를 통해 안정적으로 호출)
         onTravelsChangeRef.current?.(items);
       } catch (err) {
-        console.error("[TravelList] API 호출 오류:", err);
         setError(
           err instanceof Error ? err.message : "여행지 목록을 불러오는데 실패했습니다."
         );
         setTravels([]);
       } finally {
         setLoading(false);
-        console.groupEnd();
       }
     };
 
     fetchTravels();
   }, [filter, page]);
 
-  // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
-    console.log("[TravelList] 페이지 변경:", newPage);
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // 재시도 핸들러
   const handleRetry = () => {
-    console.log("[TravelList] 재시도");
     setError(null);
     setPage(1);
   };
