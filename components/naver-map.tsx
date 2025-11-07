@@ -41,6 +41,8 @@ interface NaverMapProps {
   showFilterOverlay?: boolean;
   onFilterChange?: (filter: { keyword?: string; type?: string }) => void;
   currentFilter?: { keyword?: string; type?: string };
+  // 반려동물 동반 여행지 필터링
+  showPetFriendlyOnly?: boolean;
 }
 
 export function NaverMap({
@@ -53,6 +55,7 @@ export function NaverMap({
   showFilterOverlay = false,
   onFilterChange,
   currentFilter,
+  showPetFriendlyOnly = false,
 }: NaverMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -63,6 +66,7 @@ export function NaverMap({
   const travelsRef = useRef<TravelSite[]>([]);
   const prevTravelsRef = useRef<string>(""); // 이전 travels의 contentid 문자열
   const onMarkerClickRef = useRef(onMarkerClick);
+  const showPetFriendlyOnlyRef = useRef(showPetFriendlyOnly);
 
   // travels와 onMarkerClick을 ref로 저장하여 안정화
   useEffect(() => {
@@ -73,13 +77,24 @@ export function NaverMap({
     onMarkerClickRef.current = onMarkerClick;
   }, [onMarkerClick]);
 
+  useEffect(() => {
+    showPetFriendlyOnlyRef.current = showPetFriendlyOnly;
+  }, [showPetFriendlyOnly]);
+
   // 마커 추가 함수 (initializeMap보다 먼저 정의)
   const addMarkers = useCallback(() => {
     if (!mapInstanceRef.current || !window.naver?.maps) {
       return;
     }
 
-    const currentTravels = travelsRef.current;
+    let currentTravels = travelsRef.current;
+    
+    // 반려동물 동반 여행지만 필터링
+    if (showPetFriendlyOnlyRef.current) {
+      currentTravels = currentTravels.filter((travel) => travel.pet_friendly === true);
+      console.log("[NaverMap] 반려동물 동반 여행지만 표시:", currentTravels.length);
+    }
+    
     console.log("[NaverMap] 마커 추가 시작:", currentTravels.length);
 
     // 기존 마커 제거
@@ -99,15 +114,56 @@ export function NaverMap({
 
         const position = new window.naver.maps.LatLng(coords.lat, coords.lng);
 
-        // 마커 생성 (기본 마커 사용)
+        // 반려동물 동반 여행지 여부 확인
+        const isPetFriendly = travel.pet_friendly === true;
+
+        // 마커 아이콘 설정 (반려동물 동반 여행지는 다른 색상/아이콘 사용)
+        const markerIcon = isPetFriendly
+          ? {
+              content: `
+                <div style="
+                  width: 40px;
+                  height: 40px;
+                  background-color: #10b981;
+                  border: 3px solid white;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                  position: relative;
+                ">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </div>
+              `,
+              anchor: new window.naver.maps.Point(20, 20),
+            }
+          : undefined;
+
+        // 마커 생성
         const marker = new window.naver.maps.Marker({
           position: position,
           map: mapInstanceRef.current,
           title: travel.title,
+          icon: markerIcon,
         });
 
         // 인포윈도우 생성
         const overview = travel.overview ? (travel.overview.length > 100 ? travel.overview.substring(0, 100) + "..." : travel.overview) : "";
+        const petFriendlyBadge = isPetFriendly
+          ? `<span style="
+              display: inline-block;
+              padding: 4px 8px;
+              background-color: #10b981;
+              color: white;
+              border-radius: 12px;
+              font-size: 12px;
+              font-weight: 600;
+              margin-bottom: 8px;
+            ">🐾 반려동물 동반 가능</span>`
+          : "";
         const infoWindowContent = `
           <div style="
             padding: 12px;
@@ -120,6 +176,7 @@ export function NaverMap({
               margin-bottom: 8px;
               color: #111;
             ">${travel.title}</h3>
+            ${petFriendlyBadge}
             ${overview ? `<p style="font-size: 14px; color: #666; margin-bottom: 8px;">${overview}</p>` : ""}
             <div style="font-size: 12px; color: #888; margin-bottom: 12px;">
               ${travel.addr1 || ""}
@@ -292,6 +349,15 @@ export function NaverMap({
       }
     }
   }, [selectedTravelId, travels, isLoaded]);
+
+  // showPetFriendlyOnly가 변경되면 마커 업데이트
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+    console.log("[NaverMap] showPetFriendlyOnly 변경:", showPetFriendlyOnly);
+    addMarkers();
+  }, [showPetFriendlyOnly, isLoaded, addMarkers]);
 
   // 여행지 목록이 변경되면 마커 업데이트 (실제 변경 시에만)
   useEffect(() => {

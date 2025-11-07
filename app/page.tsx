@@ -48,6 +48,7 @@ function HomeContent() {
   const [selectedTravelId, setSelectedTravelId] = useState<
     string | undefined
   >();
+  const [showPetFriendlyOnly, setShowPetFriendlyOnly] = useState(false);
 
   // URL 쿼리 파라미터로부터 필터 초기화
   useEffect(() => {
@@ -78,6 +79,7 @@ function HomeContent() {
 
     if (petFriendly) {
       initialFilter.petFriendly = true;
+      setShowPetFriendlyOnly(true);
     }
 
     console.log("초기 필터:", initialFilter);
@@ -89,6 +91,8 @@ function HomeContent() {
     console.log("[Home] 필터 변경 콜백:", newFilter);
     setFilter(newFilter);
     setSelectedTravelId(undefined); // 필터 변경 시 선택 해제
+    // 반려동물 동반 필터 상태 업데이트
+    setShowPetFriendlyOnly(newFilter.petFriendly === true);
   }, []);
 
   const handleTravelClick = (travel: TravelSite) => {
@@ -177,6 +181,7 @@ function HomeContent() {
                 handleFilterChange({ ...filter, keyword: newFilter.keyword });
               }}
               currentFilter={{ keyword: filter.keyword }}
+              showPetFriendlyOnly={showPetFriendlyOnly}
             />
           </div>
         </div>
