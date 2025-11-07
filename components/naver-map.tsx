@@ -288,16 +288,23 @@ export function NaverMap({
       // 모든 마커를 보기 위해 지도 범위 조정
       if (markersRef.current.length > 0 && mapInstanceRef.current) {
         const bounds = new window.naver.maps.LatLngBounds();
+        let hasValidCoords = false;
 
         travels.forEach((travel) => {
           const coords = parseCoordinates(travel.mapx, travel.mapy);
           if (coords) {
             bounds.extend(new window.naver.maps.LatLng(coords.lat, coords.lng));
+            hasValidCoords = true;
           }
         });
 
-        if (!bounds.isEmpty()) {
-          mapInstanceRef.current.fitBounds(bounds);
+        // 유효한 좌표가 있는 경우에만 지도 범위 조정
+        if (hasValidCoords) {
+          try {
+            mapInstanceRef.current.fitBounds(bounds);
+          } catch (err) {
+            console.error("[NaverMap] 지도 범위 조정 실패:", err);
+          }
         }
       }
     }
