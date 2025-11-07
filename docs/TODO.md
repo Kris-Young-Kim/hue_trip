@@ -495,12 +495,14 @@
     - [x] 필터 프리셋 데이터베이스 스키마 (filter_presets 테이블)
     - [x] 고급 필터 UI 컴포넌트 (AdvancedFilters)
     - [x] 통계 검색 UI 컴포넌트 (StatisticsSearch)
-  - [ ] 데이터베이스 스키마 확장
-    - analytics_events 테이블 생성 (사용자 이벤트 추적)
-    - analytics_sessions 테이블 생성 (세션 추적)
-    - analytics_metrics 테이블 생성 (집계된 메트릭 저장)
-    - analytics_reports 테이블 생성 (생성된 리포트 저장)
-    - analytics_alerts 테이블 생성 (알림 설정 및 이력)
+  - [x] 데이터베이스 스키마 확장
+    - [x] analytics_events 테이블 생성 (사용자 이벤트 추적)
+    - [x] analytics_sessions 테이블 생성 (세션 추적)
+    - [x] analytics_metrics 테이블 생성 (집계된 메트릭 저장)
+    - [x] analytics_reports 테이블 생성 (생성된 리포트 저장)
+    - [x] analytics_alerts 테이블 생성 (알림 설정 및 이력)
+    - [x] 인덱스 및 트리거 설정
+    - [x] 데이터 보존 정책 함수 (cleanup_old_analytics_data)
 - [x] 로깅 시스템 (`lib/utils/logger.ts`)
   - 구조화된 로깅 (info, warn, error, debug)
   - 프로덕션 환경 JSON 포맷, 개발 환경 콘솔 출력
