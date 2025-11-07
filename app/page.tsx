@@ -28,8 +28,6 @@ import { TravelFilters } from "@/components/travel-filters";
 import { TravelList } from "@/components/travel-list";
 import { TravelSearch } from "@/components/travel-search";
 import { MapSkeleton } from "@/components/loading/map-skeleton";
-import { LocalNav, LocalNavTabs } from "@/components/navigation/local-nav";
-import { Map, List } from "lucide-react";
 import type { TravelFilter, TravelSite } from "@/types/travel";
 import { REGIONS, TRAVEL_TYPES, REGION_CODES, TRAVEL_TYPE_CODES } from "@/constants/travel";
 
@@ -50,7 +48,6 @@ function HomeContent() {
   const [selectedTravelId, setSelectedTravelId] = useState<
     string | undefined
   >();
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   // URL 쿼리 파라미터로부터 필터 초기화
   useEffect(() => {
@@ -77,10 +74,6 @@ function HomeContent() {
 
     if (sort) {
       initialFilter.arrange = sort;
-    }
-
-    if (view === "map") {
-      setViewMode("map");
     }
 
     console.log("초기 필터:", initialFilter);
@@ -143,107 +136,44 @@ function HomeContent() {
       </section>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        {/* LNB: 모바일 뷰 모드 전환 */}
-        <div className="lg:hidden mb-6">
-          <LocalNav>
-            <LocalNavTabs
-              value={viewMode}
-              onValueChange={(value) => setViewMode(value as "list" | "map")}
-              items={[
-                {
-                  value: "list",
-                  label: "목록",
-                  icon: <List className="w-4 h-4" />,
-                },
-                {
-                  value: "map",
-                  label: "지도",
-                  icon: <Map className="w-4 h-4" />,
-                },
-              ]}
-            />
-          </LocalNav>
+      <div className="max-w-[1920px] mx-auto px-4 py-8 md:py-12">
+        {/* 필터 - 상단 고정 */}
+        <div className="mb-6">
+          <TravelFilters onFilterChange={handleFilterChange} />
         </div>
 
-        {/* 필터 및 콘텐츠 레이아웃 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-          {/* 필터 사이드바 - Sticky */}
-          <aside className="lg:col-span-3 space-y-6">
-            <div className="lg:sticky lg:top-24">
-              <TravelFilters onFilterChange={handleFilterChange} />
-            </div>
-          </aside>
+        {/* 목록 및 지도 레이아웃 - 좌우 분할 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 h-[calc(100vh-280px)] min-h-[600px]">
+          {/* 좌측: 목록 영역 */}
+          <div className="overflow-y-auto pr-2 md:pr-4">
+            <TravelList
+              filter={filter}
+              onTravelClick={handleTravelClick}
+              onTravelsChange={handleTravelListUpdate}
+            />
+          </div>
 
-          {/* 목록 및 지도 영역 */}
-          <div className="lg:col-span-9">
-            {/* 데스크톱: 리스트와 지도 분할 */}
-            <div className="hidden lg:grid lg:grid-cols-2 gap-6">
-              {/* 리스트 영역 */}
-              <div className="space-y-4">
-                <TravelList
-                  filter={filter}
-                  onTravelClick={handleTravelClick}
-                  onTravelsChange={handleTravelListUpdate}
-                />
-              </div>
-
-              {/* 지도 영역 */}
-              <div className="sticky top-24 h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
-                <NaverMap
-                  travels={travels}
-                  onMarkerClick={handleTravelClick}
-                  selectedTravelId={selectedTravelId}
-                  className="h-full"
-                  showFilterOverlay={true}
-                  onFilterChange={(newFilter) => {
-                    // 지도 내 필터 변경 시 URL 업데이트
-                    const params = new URLSearchParams(searchParams.toString());
-                    if (newFilter.keyword) {
-                      params.set("keyword", newFilter.keyword);
-                    } else {
-                      params.delete("keyword");
-                    }
-                    window.history.pushState({}, "", `?${params.toString()}`);
-                    handleFilterChange({ ...filter, keyword: newFilter.keyword });
-                  }}
-                  currentFilter={{ keyword: filter.keyword }}
-                />
-              </div>
-            </div>
-
-            {/* 모바일: 탭 콘텐츠 */}
-            <div className="lg:hidden">
-              {viewMode === "list" ? (
-                <TravelList
-                  filter={filter}
-                  onTravelClick={handleTravelClick}
-                  onTravelsChange={handleTravelListUpdate}
-                />
-              ) : (
-                <div className="h-[600px] md:h-[800px] relative">
-                  <NaverMap
-                    travels={travels}
-                    onMarkerClick={handleTravelClick}
-                    selectedTravelId={selectedTravelId}
-                    className="h-full"
-                    showFilterOverlay={true}
-                    onFilterChange={(newFilter) => {
-                      // 지도 내 필터 변경 시 URL 업데이트
-                      const params = new URLSearchParams(searchParams.toString());
-                      if (newFilter.keyword) {
-                        params.set("keyword", newFilter.keyword);
-                      } else {
-                        params.delete("keyword");
-                      }
-                      window.history.pushState({}, "", `?${params.toString()}`);
-                      handleFilterChange({ ...filter, keyword: newFilter.keyword });
-                    }}
-                    currentFilter={{ keyword: filter.keyword }}
-                  />
-                </div>
-              )}
-            </div>
+          {/* 우측: 지도 영역 */}
+          <div className="sticky top-0 h-full rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+            <NaverMap
+              travels={travels}
+              onMarkerClick={handleTravelClick}
+              selectedTravelId={selectedTravelId}
+              className="h-full"
+              showFilterOverlay={true}
+              onFilterChange={(newFilter) => {
+                // 지도 내 필터 변경 시 URL 업데이트
+                const params = new URLSearchParams(searchParams.toString());
+                if (newFilter.keyword) {
+                  params.set("keyword", newFilter.keyword);
+                } else {
+                  params.delete("keyword");
+                }
+                window.history.pushState({}, "", `?${params.toString()}`);
+                handleFilterChange({ ...filter, keyword: newFilter.keyword });
+              }}
+              currentFilter={{ keyword: filter.keyword }}
+            />
           </div>
         </div>
       </div>
