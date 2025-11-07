@@ -68,11 +68,12 @@ export class WeatherApiClient {
       process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY ||
       "";
 
-    if (!this.apiKey) {
-      logError(
-        "[WeatherApiClient] OpenWeatherMap API 키가 설정되지 않았습니다."
-      );
-    }
+    // 날씨 기능은 추후 개발 예정이므로 API 키가 없어도 에러 로깅하지 않음
+    // if (!this.apiKey) {
+    //   logError(
+    //     "[WeatherApiClient] OpenWeatherMap API 키가 설정되지 않았습니다."
+    //   );
+    // }
   }
 
   /**
@@ -82,6 +83,11 @@ export class WeatherApiClient {
     endpoint: string,
     params: Record<string, string | number> = {}
   ): Promise<T> {
+    // 날씨 기능 비활성화: API 키가 없으면 빈 데이터 반환
+    if (!this.apiKey) {
+      return {} as T;
+    }
+
     const url = new URL(`${this.baseUrl}/${endpoint}`);
     url.searchParams.append("appid", this.apiKey);
     url.searchParams.append("units", "metric"); // 섭씨 온도
@@ -94,7 +100,8 @@ export class WeatherApiClient {
 
     const startTime = Date.now();
     try {
-      logInfo(`[WeatherApiClient] API 요청: ${endpoint}`, { params });
+      // 날씨 기능 비활성화: 로깅 제거
+      // logInfo(`[WeatherApiClient] API 요청: ${endpoint}`, { params });
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.timeout);
@@ -109,27 +116,28 @@ export class WeatherApiClient {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `날씨 API 요청 실패: ${response.status} ${response.statusText} - ${errorText}`
-        );
+        // 날씨 기능 비활성화: 에러를 throw하지 않고 빈 데이터 반환
+        return {} as T;
       }
 
       const data = await response.json();
       const responseTime = Date.now() - startTime;
 
-      logInfo(`[WeatherApiClient] API 응답 성공 (${responseTime}ms)`, {
-        endpoint,
-      });
+      // 날씨 기능 비활성화: 로깅 제거
+      // logInfo(`[WeatherApiClient] API 응답 성공 (${responseTime}ms)`, {
+      //   endpoint,
+      // });
 
       return data as T;
     } catch (error) {
-      const responseTime = Date.now() - startTime;
-      logError(`[WeatherApiClient] API 요청 오류 (${responseTime}ms)`, {
-        endpoint,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      throw error;
+      // 날씨 기능 비활성화: 에러 로깅 및 throw 제거
+      // const responseTime = Date.now() - startTime;
+      // logError(`[WeatherApiClient] API 요청 오류 (${responseTime}ms)`, {
+      //   endpoint,
+      //   error: error instanceof Error ? error.message : String(error),
+      // });
+      // throw error;
+      return {} as T;
     }
   }
 
@@ -164,6 +172,19 @@ export class WeatherApiClient {
         lon,
       });
 
+      // API 키가 없거나 데이터가 없으면 빈 데이터 반환
+      if (!data || !data.weather || !data.weather[0] || !data.main) {
+        return {
+          temperature: 0,
+          feelsLike: 0,
+          humidity: 0,
+          description: "",
+          icon: "",
+          windSpeed: 0,
+          location: { lat, lon },
+        };
+      }
+
       const weather = data.weather[0];
 
       return {
@@ -183,8 +204,20 @@ export class WeatherApiClient {
         },
       };
     } catch (error) {
-      logError("[WeatherApiClient] 현재 날씨 조회 실패", { lat, lon, error });
-      throw error;
+      // 날씨 기능 비활성화: 에러 로깅 및 throw 제거
+      // logError("[WeatherApiClient] 현재 날씨 조회 실패", { lat, lon, error });
+      // throw error;
+      
+      // 빈 데이터 반환
+      return {
+        temperature: 0,
+        feelsLike: 0,
+        humidity: 0,
+        description: "",
+        icon: "",
+        windSpeed: 0,
+        location: { lat, lon },
+      };
     }
   }
 
@@ -265,8 +298,12 @@ export class WeatherApiClient {
 
       return forecastArray;
     } catch (error) {
-      logError("[WeatherApiClient] 일주일 예보 조회 실패", { lat, lon, error });
-      throw error;
+      // 날씨 기능 비활성화: 에러 로깅 및 throw 제거
+      // logError("[WeatherApiClient] 일주일 예보 조회 실패", { lat, lon, error });
+      // throw error;
+      
+      // 빈 배열 반환
+      return [];
     }
   }
 }
