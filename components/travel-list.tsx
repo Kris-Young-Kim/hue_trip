@@ -20,7 +20,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { TravelCard } from "@/components/travel-card";
 import { CardSkeleton } from "@/components/loading/card-skeleton";
@@ -45,6 +45,12 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
     parseInt(searchParams.get("page") || "1", 10)
   );
   const [totalCount, setTotalCount] = useState(0);
+
+  // onTravelsChange를 ref로 저장하여 안정화
+  const onTravelsChangeRef = useRef(onTravelsChange);
+  useEffect(() => {
+    onTravelsChangeRef.current = onTravelsChange;
+  }, [onTravelsChange]);
 
   useEffect(() => {
     const fetchTravels = async () => {
@@ -115,8 +121,8 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
         setTravels(items);
         setTotalCount(data.response?.body?.totalCount || 0);
         
-        // 상위 컴포넌트로 여행지 목록 전달
-        onTravelsChange?.(items);
+        // 상위 컴포넌트로 여행지 목록 전달 (ref를 통해 안정적으로 호출)
+        onTravelsChangeRef.current?.(items);
       } catch (err) {
         console.error("[TravelList] API 호출 오류:", err);
         setError(
@@ -130,7 +136,7 @@ export function TravelList({ filter, onTravelClick, onTravelsChange }: TravelLis
     };
 
     fetchTravels();
-  }, [filter, page, onTravelsChange]);
+  }, [filter, page]);
 
   // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {

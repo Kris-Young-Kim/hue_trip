@@ -92,10 +92,10 @@ function HomeContent() {
     setSelectedTravelId(travel.contentid);
   };
 
-  const handleTravelListUpdate = (travels: TravelSite[]) => {
+  const handleTravelListUpdate = useCallback((travels: TravelSite[]) => {
     console.log("[Home] 여행지 목록 업데이트:", travels.length);
     setTravels(travels);
-  };
+  }, []);
 
   return (
     <main className="min-h-screen">

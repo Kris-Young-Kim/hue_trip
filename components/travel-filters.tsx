@@ -156,13 +156,13 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     keyword.trim() !== "";
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700" role="region" aria-label="여행지 필터">
+    <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700" role="region" aria-label="여행정보검색">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2.5">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
             <Filter className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">필터</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">여행정보검색</h2>
         </div>
         {hasActiveFilters && (
           <Button
@@ -180,26 +180,6 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
 
       {/* 필터 옵션 - 가로 배치 */}
       <div className="flex flex-col md:flex-row gap-4 pt-4">
-        {/* 검색어 입력 */}
-        <div className="flex-1 min-w-0">
-          <Label htmlFor={keywordId} className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">검색어</Label>
-          <Input
-            id={keywordId}
-            type="text"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                applyFilters();
-              }
-            }}
-            placeholder="여행지명, 주소 검색..."
-            className="h-11 w-full"
-            aria-label="검색어 입력"
-          />
-        </div>
-
         {/* 지역 필터 */}
         <div className="flex-1 min-w-0">
           <Label htmlFor={regionId} className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">지역</Label>
@@ -251,6 +231,26 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        {/* 검색어 입력 */}
+        <div className="flex-1 min-w-0">
+          <Label htmlFor={keywordId} className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">검색어</Label>
+          <Input
+            id={keywordId}
+            type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                applyFilters();
+              }
+            }}
+            placeholder="여행지명, 주소 검색..."
+            className="h-11 w-full"
+            aria-label="검색어 입력"
+          />
         </div>
 
         {/* 검색 버튼 */}
