@@ -114,11 +114,24 @@ export async function getTravelSafetyGuidelines(
 
     if (error) {
       // 테이블이 없거나 연결 실패 시 조용히 빈 배열 반환
-      if (error.code === "PGRST116" || error.code === "42P01") {
-        // 테이블이 존재하지 않음
+      const errorMessage = error.message || String(error);
+      const isTableNotFound = 
+        error.code === "PGRST116" || 
+        error.code === "42P01" ||
+        errorMessage.includes("Could not find the table") ||
+        errorMessage.includes("does not exist") ||
+        errorMessage.includes("relation") && errorMessage.includes("does not exist");
+      
+      if (isTableNotFound) {
+        // 테이블이 존재하지 않음 - 조용히 빈 배열 반환
         return [];
       }
-      logError("[TravelSafetyGuidelines] 여행 안전 정보 조회 실패", error, { filter });
+      
+      // 다른 에러는 로깅
+      const errorObj = error instanceof Error 
+        ? error 
+        : new Error(errorMessage);
+      logError("[TravelSafetyGuidelines] 여행 안전 정보 조회 실패", errorObj, { filter });
       return [];
     }
 
@@ -127,7 +140,10 @@ export async function getTravelSafetyGuidelines(
   } catch (error) {
     // 빌드 시점이 아닐 때만 로그 출력
     if (!isBuildTime) {
-      logError("[TravelSafetyGuidelines] 여행 안전 정보 조회 오류", error, { filter });
+      const errorObj = error instanceof Error 
+        ? error 
+        : new Error(error?.message || String(error || "알 수 없는 오류"));
+      logError("[TravelSafetyGuidelines] 여행 안전 정보 조회 오류", errorObj, { filter });
     }
     return [];
   }
@@ -152,17 +168,34 @@ export async function getTravelSafetyGuidelineById(id: string): Promise<TravelSa
       .single();
 
     if (error) {
-      logError("[TravelSafetyGuidelines] 여행 안전 정보 상세 조회 실패", error, { id });
-      if (error.code === "PGRST116") {
-        return null; // 데이터 없음
+      const errorMessage = error.message || String(error);
+      const isTableNotFound = 
+        error.code === "PGRST116" || 
+        error.code === "42P01" ||
+        errorMessage.includes("Could not find the table") ||
+        errorMessage.includes("does not exist") ||
+        errorMessage.includes("relation") && errorMessage.includes("does not exist");
+      
+      if (isTableNotFound) {
+        // 테이블이 존재하지 않음 - 조용히 null 반환
+        return null;
       }
+      
+      // 다른 에러는 로깅
+      const errorObj = error instanceof Error 
+        ? error 
+        : new Error(errorMessage);
+      logError("[TravelSafetyGuidelines] 여행 안전 정보 상세 조회 실패", errorObj, { id });
       throw error;
     }
 
     logInfo("[TravelSafetyGuidelines] 여행 안전 정보 상세 조회 완료", { id, title: data?.title });
     return data as TravelSafetyGuideline;
   } catch (error) {
-    logError("[TravelSafetyGuidelines] 여행 안전 정보 상세 조회 오류", error, { id });
+    const errorObj = error instanceof Error 
+      ? error 
+      : new Error(error?.message || String(error || "알 수 없는 오류"));
+    logError("[TravelSafetyGuidelines] 여행 안전 정보 상세 조회 오류", errorObj, { id });
     return null;
   }
 }
@@ -228,13 +261,19 @@ export async function incrementTravelSafetyGuidelineView(id: string): Promise<vo
     });
 
     if (error) {
-      logError("[TravelSafetyGuidelines] 조회수 증가 실패", error, { id });
+      const errorObj = error instanceof Error 
+        ? error 
+        : new Error(error.message || String(error));
+      logError("[TravelSafetyGuidelines] 조회수 증가 실패", errorObj, { id });
       // 조회수 증가 실패는 치명적이지 않으므로 에러를 던지지 않음
     } else {
       logInfo("[TravelSafetyGuidelines] 조회수 증가 완료", { id });
     }
   } catch (error) {
-    logError("[TravelSafetyGuidelines] 조회수 증가 오류", error, { id });
+    const errorObj = error instanceof Error 
+      ? error 
+      : new Error(error?.message || String(error || "알 수 없는 오류"));
+    logError("[TravelSafetyGuidelines] 조회수 증가 오류", errorObj, { id });
     // 조회수 증가 실패는 치명적이지 않으므로 에러를 던지지 않음
   }
 }

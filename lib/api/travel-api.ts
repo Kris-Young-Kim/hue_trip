@@ -133,15 +133,22 @@ export class TravelApiClient {
           // JSON 파싱 실패 시 무시
         }
         
-        logError(
-          `[TravelApiClient] HTTP ${response.status} ${response.statusText}${errorDetail}`,
-          new Error(`API 요청 실패: ${response.status} ${response.statusText}`),
-          { endpoint, params, status: response.status, statusText: response.statusText }
-        );
+        // 500 에러는 일시적 서버 오류이므로 조용히 처리 (fallback이 있으므로)
+        // 다른 에러는 로깅
+        if (response.status !== 500) {
+          logError(
+            `[TravelApiClient] HTTP ${response.status} ${response.statusText}${errorDetail}`,
+            new Error(`API 요청 실패: ${response.status} ${response.statusText}`),
+            { endpoint, params, status: response.status, statusText: response.statusText }
+          );
+        }
         
-        throw new Error(
+        // 에러 객체에 status 정보 포함 (catch 블록에서 500 에러 판단용)
+        const apiError = new Error(
           `API 요청 실패: ${response.status} ${response.statusText}${errorDetail}`
-        );
+        ) as Error & { status?: number };
+        apiError.status = response.status;
+        throw apiError;
       }
 
       const data = await response.json();
@@ -209,11 +216,19 @@ export class TravelApiClient {
         throw new Error("API 요청 시간이 초과되었습니다.");
       }
 
-      logError(
-        "[TravelApiClient] API 요청 중 오류 발생",
-        error,
-        { endpoint, params }
-      );
+      // 500 에러는 조용히 처리 (fallback이 있으므로)
+      const is500Error = error instanceof Error && 
+        (error.message.includes("500") || 
+         (error as Error & { status?: number }).status === 500);
+      
+      if (!is500Error) {
+        logError(
+          "[TravelApiClient] API 요청 중 오류 발생",
+          error,
+          { endpoint, params }
+        );
+      }
+      
       throw error;
     }
   }

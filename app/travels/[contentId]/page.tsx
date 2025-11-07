@@ -25,19 +25,19 @@ import { DetailGallery } from "@/components/travel-detail/detail-gallery";
 import { ShareButton } from "@/components/travel-detail/share-button";
 import { BookmarkButton } from "@/components/travel-detail/bookmark-button";
 import { ContactButton } from "@/components/travel-detail/contact-button";
-import { WeatherWidget } from "@/components/travel-detail/weather-widget";
+// import { WeatherWidget } from "@/components/travel-detail/weather-widget"; // 추후 개발 예정
 import { TransportInfo } from "@/components/travel-detail/transport-info";
-import { SafetyRecommendations } from "@/components/travel-detail/safety-recommendations";
+// import { SafetyRecommendations } from "@/components/travel-detail/safety-recommendations"; // 추후 개발 예정
 import { PetFriendlyInfo } from "@/components/travel-detail/pet-friendly-info";
 import { PetFriendlyReviewSection } from "@/components/travel-detail/pet-friendly-review-section";
 import { AdSidebar } from "@/components/ads/ad-sidebar";
 import { LocalNav } from "@/components/navigation/local-nav";
-import { SideNav } from "@/components/navigation/side-nav";
+// import { SideNav } from "@/components/navigation/side-nav"; // 추후 개발 예정
 import { trackView } from "@/lib/api/analytics";
 import { getTravelTypeName } from "@/lib/utils/travel";
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 import { getServiceRoleClient } from "@/lib/supabase/service-role";
-import { Home, Shield, MessageSquare } from "lucide-react";
+// import { Home, Shield, MessageSquare } from "lucide-react"; // 추후 개발 예정
 import type { TravelSiteDetail } from "@/types/travel";
 import type { Metadata } from "next";
 
@@ -52,7 +52,6 @@ export async function generateMetadata({
   const { contentId } = await params;
 
   try {
-    console.log("[TravelDetailPage] 메타데이터 생성 시작:", contentId);
     let detail: TravelSiteDetail | null = null;
 
     // 1. TourAPI 시도
@@ -63,9 +62,7 @@ export async function generateMetadata({
       ) as TravelSiteDetail[];
       detail = items[0] || null;
     } catch (tourApiError) {
-      console.warn("[TravelDetailPage] TourAPI 조회 실패, Supabase fallback 시도:", tourApiError);
-      
-      // 2. Supabase fallback
+      // 2. Supabase fallback (에러는 조용히 처리)
       try {
         const serviceClient = getServiceRoleClient();
         const { data: travelData } = await serviceClient
@@ -98,7 +95,7 @@ export async function generateMetadata({
           } as TravelSiteDetail;
         }
       } catch (supabaseError) {
-        console.error("[TravelDetailPage] Supabase fallback 실패:", supabaseError);
+        // Supabase fallback 실패는 무시 (기본 메타데이터 반환)
       }
     }
 
@@ -113,11 +110,6 @@ export async function generateMetadata({
       detail.overview?.substring(0, 100) ||
       "여행지 상세 정보를 확인하세요";
     const image = detail.firstimage || "/og-image.png";
-
-    console.log("[TravelDetailPage] 메타데이터 생성 완료:", {
-      title,
-      description: description.substring(0, 50) + "...",
-    });
 
     return {
       title,
@@ -476,27 +468,27 @@ export default async function TravelDetailPage({
 
           {/* 우측 컬럼 - 사이드바 (1/3) */}
           <div className="lg:col-span-1 space-y-6">
-            {/* 날씨 위젯 */}
-            <WeatherWidget travel={detail} />
+            {/* 날씨 위젯 - 추후 개발 예정 */}
+            {/* <WeatherWidget travel={detail} /> */}
 
             {/* 교통 정보 */}
             <TransportInfo travel={detail} />
 
-            {/* 여행 안전 정보 */}
-            <SafetyRecommendations travel={detail} />
+            {/* 여행 안전 정보 - 추후 개발 예정 */}
+            {/* <SafetyRecommendations travel={detail} /> */}
 
             {/* 사이드바 광고 */}
             <AdSidebar sticky={false} />
 
-            {/* SNB: 빠른 링크 */}
-            <SideNav
+            {/* SNB: 빠른 링크 - 추후 개발 예정 */}
+            {/* <SideNav
               title="빠른 링크"
               items={[
                 { href: "/", label: "홈", icon: <Home className="w-4 h-4" /> },
                 { href: "/safety", label: "안전 수칙", icon: <Shield className="w-4 h-4" /> },
                 { href: "/feedback", label: "피드백", icon: <MessageSquare className="w-4 h-4" /> },
               ]}
-            />
+            /> */}
           </div>
         </div>
       </div>
