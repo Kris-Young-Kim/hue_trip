@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
       }
 
       // 반려동물 동반 필터 적용 (TourAPI 응답에는 pet_friendly 필드가 없으므로 클라이언트 사이드 필터링)
-      let filteredData = data || [];
+      const filteredData = data || [];
       if (filter.petFriendly) {
         // TourAPI 응답에는 pet_friendly 필드가 없으므로, 
         // Supabase fallback에서만 필터링이 적용됨

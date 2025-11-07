@@ -7,7 +7,7 @@
 
 import { getServiceRoleClient } from "@/lib/supabase/service-role";
 import { auth } from "@clerk/nextjs/server";
-import { getTimeSeriesStats } from "./get-time-series-stats";
+import { getTimeSeriesStats, type TimePeriod } from "./get-time-series-stats";
 import { getRegionTypeStats } from "./get-region-type-stats";
 import { getPerformanceMetrics } from "./get-performance-metrics";
 import { getCostAnalysis } from "./get-cost-analysis";
@@ -27,7 +27,7 @@ export interface ExportStatisticsInput {
     | "predictions"
     | "all";
   format: ExportFormat;
-  period?: "7days" | "30days" | "90days";
+  period?: TimePeriod;
 }
 
 export interface ExportStatisticsResult {
@@ -117,10 +117,10 @@ export async function exportStatistics(
       const result = await getUserBehaviorAnalytics();
       if (result.success) {
         exportData.userBehavior = {
-          sessionAnalysis: result.sessionAnalysis,
-          journeyAnalysis: result.journeyAnalysis,
-          segmentAnalysis: result.segmentAnalysis,
-          retentionAnalysis: result.retentionAnalysis,
+          sessionAnalytics: result.sessionAnalytics,
+          userJourney: result.userJourney,
+          userSegments: result.userSegments,
+          retentionAnalytics: result.retentionAnalytics,
           conversionAnalytics: result.conversionAnalytics,
         };
       }
@@ -165,8 +165,8 @@ export async function exportStatistics(
       if (exportData.cost?.monthlyTrends) {
         flatData.push(...flattenArray(exportData.cost.monthlyTrends));
       }
-      if (exportData.userBehavior?.sessionAnalysis) {
-        flatData.push({ ...exportData.userBehavior.sessionAnalysis });
+      if (exportData.userBehavior?.sessionAnalytics) {
+        flatData.push({ ...exportData.userBehavior.sessionAnalytics });
       }
       if (exportData.predictions?.historicalData) {
         flatData.push(...flattenArray(exportData.predictions.historicalData));

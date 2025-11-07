@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Bell, Plus, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import { createAlertRule } from "@/actions/admin-alerts/create-alert-rule";
 import { getAlertRules } from "@/actions/admin-alerts/get-alert-rules";
@@ -169,6 +169,9 @@ export function AlertSystem() {
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>알림 규칙 추가</DialogTitle>
+                    <DialogDescription>
+                      새로운 알림 규칙을 생성하여 시스템 모니터링을 설정합니다.
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="space-y-2">

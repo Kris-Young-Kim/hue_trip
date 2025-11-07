@@ -6,7 +6,7 @@
 
 ### 1.1 프로젝트 목적
 
-한국관광공사 TourAPI를 활용하여 사용자가 전국의 여행지 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스 개발
+한국관광공사 TourAPI를 활용하여 사용자가 전국의 여행지 정보를 쉽게 검색하고, 지도에서 확인하며, 상세 정보를 조회할 수 있는 웹 서비스 개발. 반려동물 동반 여행, 북마크 관리, 통계 분석 등 고급 기능을 제공하는 종합 여행 정보 플랫폼.
 
 ### 1.2 타겟 유저
 
@@ -14,6 +14,9 @@
 - 주변 관광지를 찾는 사용자
 - 특정 지역의 여행 정보가 필요한 사용자
 - 문화시설, 축제, 숙박 등 다양한 여행 정보를 찾는 사용자
+- 반려동물과 함께 여행하는 사용자
+- 여행지를 체계적으로 관리하고 싶은 사용자
+- 서비스 운영 및 분석이 필요한 관리자
 
 ### 1.3 핵심 가치
 
@@ -21,6 +24,8 @@
 - **시각화**: 네이버 지도 연동으로 위치 기반 정보 제공
 - **상세성**: 운영시간, 요금, 시설 정보, 이미지 등 종합 정보 제공
 - **다양성**: 관광지, 문화시설, 축제, 숙박 등 다양한 여행 정보 제공
+- **전문성**: 반려동물 동반 여행, 북마크 관리, 통계 분석 등 고급 기능
+- **확장성**: 역할 기반 권한 관리, 대시보드 커스터마이징, 데이터 내보내기
 
 ---
 
@@ -492,9 +497,23 @@ components/
 │   └── footer-nav.tsx         # FNB (Foot Navigation Bar)
 ├── admin/
 │   ├── stats-card.tsx         # 통계 카드 컴포넌트
-│   ├── popular-travels.tsx    # 인기 여행지 테이블
-│   ├── enhanced-dashboard.tsx # 고도화된 통계 대시보드
-│   └── user-role-manager.tsx  # 사용자 역할 관리 컴포넌트
+│   ├── popular-travels.tsx    # 인기 여행지 목록
+│   ├── enhanced-dashboard.tsx # 고도화된 대시보드
+│   ├── time-series-chart.tsx  # 시간대별 통계 차트
+│   ├── region-type-bar-chart.tsx # 지역/타입별 바 차트
+│   ├── pie-chart.tsx          # 파이 차트
+│   ├── user-behavior-analytics.tsx # 사용자 행동 분석
+│   ├── detailed-region-type-stats.tsx # 상세 지역/타입 통계
+│   ├── performance-monitoring.tsx # 성능 모니터링
+│   ├── cost-analysis.tsx      # 비용 분석
+│   ├── predictions.tsx         # 예측 분석
+│   ├── report-generator.tsx   # 리포트 생성
+│   ├── alert-system.tsx       # 알림 시스템
+│   ├── data-export.tsx        # 데이터 내보내기
+│   ├── dashboard-manager.tsx  # 대시보드 관리
+│   ├── customizable-dashboard.tsx # 커스터마이징 가능한 대시보드
+│   ├── statistics-search.tsx  # 통계 검색
+│   └── user-role-manager.tsx  # 사용자 역할 관리
 ├── safety/
 │   ├── safety-card.tsx        # 안전 수칙 카드
 │   ├── safety-guidelines.tsx  # 안전 수칙 목록 및 필터링
@@ -622,6 +641,7 @@ constants/
 
 - API 키는 환경변수로 관리 (`.env`)
 - `NEXT_PUBLIC_` 접두사로 클라이언트 노출 허용
+- 역할 기반 접근 제어 (RBAC) 구현
 
 **필수 환경변수**:
 
@@ -630,13 +650,17 @@ constants/
 NEXT_PUBLIC_TOUR_API_KEY=your_tour_api_key
 TOUR_API_KEY=your_tour_api_key
 NEXT_PUBLIC_TOUR_API_BASE_URL=http://apis.data.go.kr/B551011/KorService1
+GOCAMPING_API_KEY=your_gocamping_api_key
 
-# 네이버 지도
+# 네이버 지도 (NCP)
 NEXT_PUBLIC_NAVER_MAP_CLIENT_ID=your_naver_map_client_id
 
 # Clerk Authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
 CLERK_SECRET_KEY=your_clerk_secret
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -648,8 +672,15 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 # 개발 환경에서는 환경변수 없이도 모든 로그인 사용자가 관리자 권한
 # 프로덕션에서는 ADMIN_USER_IDS에 Clerk User ID를 쉼표로 구분하여 설정
 # 예: ADMIN_USER_IDS=user_2abc123,user_2def456
+# 또는 Supabase users 테이블의 role 컬럼을 'admin'으로 설정하여 관리자 권한 부여
 ADMIN_USER_IDS=your_clerk_user_ids
 ```
+
+**역할 기반 접근 제어 (RBAC)**:
+
+- **admin**: 모든 관리 기능 접근 가능 (대시보드, 사용자 관리, 통계 등)
+- **editor**: 일부 관리 기능 접근 가능 (콘텐츠 편집 등)
+- **user**: 일반 사용자 (기본값)
 
 ---
 
@@ -833,6 +864,20 @@ ADMIN_USER_IDS=your_clerk_user_ids
     - 역할 기반 권한 체크 (admin > editor > user)
     - 개발 환경에서 권한 체크 완화
     - 프로덕션 환경에서는 role 또는 ADMIN_USER_IDS 확인
+  - [x] `scripts/set-admin-role.ts` (관리자 권한 부여 스크립트)
+- [x] 통계 대시보드 고도화 (`components/admin/enhanced-dashboard.tsx`)
+  - [x] 시간대별/기간별 통계 (일별 사용자, 조회수, 북마크, 리뷰)
+  - [x] 차트/그래프 시각화 (라인, 바, 파이 차트 - recharts)
+  - [x] 사용자 행동 분석 (세션, 여정, 세그먼트, 리텐션, 전환율)
+  - [x] 지역별/타입별 상세 통계 (시군구별, 지역-타입 조합)
+  - [x] 성능 모니터링 (API 응답 시간, 페이지 로드, Web Vitals, 에러율)
+  - [x] 비용 분석 (TourAPI, Naver Map, Vercel, Supabase 사용량 추적)
+  - [x] 예측 분석 (사용자 증가, 인기 여행지, 트래픽, 수익)
+  - [x] 리포트 생성 (일일/주간/월간/커스텀 리포트, JSON 다운로드)
+  - [x] 알림 시스템 (임계값 기반 알림, 웹훅 발송)
+  - [x] 데이터 내보내기 (CSV/Excel/JSON, 백업)
+  - [x] 대시보드 커스터마이징 (위젯 추가/제거/재배치, 여러 대시보드, 공유)
+  - [x] 고급 필터링 및 검색 (다중 필터 조합, 필터 프리셋)
 
 #### 6.2 피드백 시스템 ✅ 완료
 

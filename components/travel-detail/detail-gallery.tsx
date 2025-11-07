@@ -22,7 +22,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { TravelSiteDetail, TravelImage } from "@/types/travel";
@@ -197,6 +197,12 @@ export function DetailGallery({ travel }: DetailGalleryProps) {
       {/* 이미지 슬라이드 모달 */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-black/95">
+          <DialogHeader className="sr-only">
+            <DialogTitle>이미지 갤러리</DialogTitle>
+            <DialogDescription>
+              {travel.title}의 이미지를 전체화면으로 볼 수 있습니다.
+            </DialogDescription>
+          </DialogHeader>
           {selectedImageIndex !== null && (
             <div className="relative w-full h-full flex items-center justify-center">
               {/* 닫기 버튼 */}

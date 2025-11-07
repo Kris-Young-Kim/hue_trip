@@ -138,7 +138,9 @@ export async function getAdminStats(): Promise<AdminStats | null> {
     if (viewsError) {
       const errorMessage = viewsError instanceof Error 
         ? viewsError.message 
-        : viewsError.message || String(viewsError);
+        : (typeof viewsError === "object" && viewsError !== null && "message" in viewsError)
+          ? String((viewsError as { message: unknown }).message)
+          : String(viewsError);
       
       // 테이블이 없다는 에러는 무시 (마이그레이션 미적용 가능)
       if (errorMessage.includes("Could not find the table") || 
@@ -160,7 +162,9 @@ export async function getAdminStats(): Promise<AdminStats | null> {
     if (bookmarksError) {
       const errorMessage = bookmarksError instanceof Error 
         ? bookmarksError.message 
-        : bookmarksError.message || String(bookmarksError);
+        : (typeof bookmarksError === "object" && bookmarksError !== null && "message" in bookmarksError)
+          ? String((bookmarksError as { message: unknown }).message)
+          : String(bookmarksError);
       console.error("[AdminStats] 북마크 수 조회 실패:", errorMessage);
     }
 
@@ -172,7 +176,9 @@ export async function getAdminStats(): Promise<AdminStats | null> {
     if (reviewsError) {
       const errorMessage = reviewsError instanceof Error 
         ? reviewsError.message 
-        : reviewsError.message || String(reviewsError);
+        : (typeof reviewsError === "object" && reviewsError !== null && "message" in reviewsError)
+          ? String((reviewsError as { message: unknown }).message)
+          : String(reviewsError);
       console.error("[AdminStats] 리뷰 수 조회 실패:", errorMessage);
     }
 
@@ -194,7 +200,9 @@ export async function getAdminStats(): Promise<AdminStats | null> {
     if (popularError) {
       const errorMessage = popularError instanceof Error 
         ? popularError.message 
-        : popularError.message || String(popularError);
+        : (typeof popularError === "object" && popularError !== null && "message" in popularError)
+          ? String((popularError as { message: unknown }).message)
+          : String(popularError);
       
       // 테이블이 없다는 에러는 무시 (마이그레이션 미적용 가능)
       if (errorMessage.includes("Could not find the table") || 

@@ -3,6 +3,8 @@
  * @description 대시보드 유틸리티 함수
  */
 
+import { randomBytes } from "crypto";
+
 /**
  * 대시보드 공유 토큰 생성
  * 서버 사이드와 클라이언트 사이드 모두에서 사용 가능
@@ -11,8 +13,7 @@ export function generateDashboardShareToken(): string {
   // 32자리 16진수 문자열 생성
   if (typeof window === "undefined") {
     // 서버 사이드: Node.js crypto 모듈 사용
-    const crypto = require("crypto");
-    return crypto.randomBytes(16).toString("hex");
+    return randomBytes(16).toString("hex");
   } else {
     // 클라이언트 사이드: Web Crypto API 사용
     const bytes = new Uint8Array(16);

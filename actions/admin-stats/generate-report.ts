@@ -205,9 +205,9 @@ export async function generateReport(
       const behaviorResult = await getUserBehaviorAnalytics();
       if (behaviorResult.success) {
         reportData.metrics.userBehavior = {
-          sessionAnalysis: behaviorResult.sessionAnalysis,
-          journeyAnalysis: behaviorResult.journeyAnalysis,
-          segmentAnalysis: behaviorResult.segmentAnalysis,
+          sessionAnalytics: behaviorResult.sessionAnalytics,
+          userJourney: behaviorResult.userJourney,
+          userSegments: behaviorResult.userSegments,
         };
       }
     }

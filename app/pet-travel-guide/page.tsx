@@ -259,7 +259,7 @@ export default function PetTravelGuidePage() {
               </h2>
               <div className="space-y-4">
                 <p className="text-gray-600 dark:text-gray-400">
-                  반려동물과 함께 즐길 수 있는 여행지를 찾아보세요. 필터에서 "반려동물 동반 가능" 옵션을 선택하면
+                  반려동물과 함께 즐길 수 있는 여행지를 찾아보세요. 필터에서 &quot;반려동물 동반 가능&quot; 옵션을 선택하면
                   반려동물 동반이 가능한 여행지만 확인할 수 있습니다.
                 </p>
                 <Link

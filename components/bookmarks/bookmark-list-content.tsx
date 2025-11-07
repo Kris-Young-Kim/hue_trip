@@ -23,6 +23,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { TravelCard } from "@/components/travel-card";
 import { BookmarkCard } from "@/components/bookmarks/bookmark-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,

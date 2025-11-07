@@ -49,9 +49,9 @@ interface TravelDetailPageProps {
 export async function generateMetadata({
   params,
 }: TravelDetailPageProps): Promise<Metadata> {
-  const { contentId } = await params;
-
   try {
+    const { contentId } = await params;
+
     let detail: TravelSiteDetail | null = null;
 
     // 1. TourAPI 시도
@@ -65,11 +65,15 @@ export async function generateMetadata({
       // 2. Supabase fallback (에러는 조용히 처리)
       try {
         const serviceClient = getServiceRoleClient();
-        const { data: travelData } = await serviceClient
+        const { data: travelData, error: supabaseError } = await serviceClient
           .from("travels")
           .select("*")
           .eq("contentid", contentId)
-          .single();
+          .maybeSingle(); // .single() 대신 .maybeSingle() 사용
+
+        if (supabaseError) {
+          console.warn("[generateMetadata] Supabase 조회 오류:", supabaseError);
+        }
 
         if (travelData) {
           // Supabase 데이터를 TravelSiteDetail 형식으로 변환
@@ -96,12 +100,15 @@ export async function generateMetadata({
         }
       } catch (supabaseError) {
         // Supabase fallback 실패는 무시 (기본 메타데이터 반환)
+        console.warn("[generateMetadata] Supabase fallback 실패:", supabaseError);
       }
     }
 
     if (!detail) {
+      // 데이터가 없어도 메타데이터는 반환 (페이지는 렌더링되도록)
       return {
-        title: "여행지를 찾을 수 없습니다",
+        title: `여행지 상세 정보 | Pitch Travel`,
+        description: "여행지 상세 정보를 확인하세요",
       };
     }
 
@@ -135,8 +142,12 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
+    // generateMetadata에서 에러가 발생해도 기본 메타데이터 반환
+    // 이렇게 하면 페이지가 렌더링될 수 있음
+    console.error("[generateMetadata] 메타데이터 생성 실패:", error);
     return {
-      title: "여행지 상세 정보",
+      title: "여행지 상세 정보 | Pitch Travel",
+      description: "여행지 상세 정보를 확인하세요",
     };
   }
 }
@@ -159,7 +170,7 @@ export default async function TravelDetailPage({
         .from("travels")
         .select("pet_friendly")
         .eq("contentid", contentId)
-        .single();
+        .maybeSingle(); // .single() 대신 .maybeSingle() 사용
 
       if (travelData?.pet_friendly) {
         petFriendly = true;
@@ -169,6 +180,7 @@ export default async function TravelDetailPage({
     }
 
     // 공통정보 조회 (TourAPI 우선, 실패 시 Supabase fallback)
+    console.log("[TravelDetailPage] 여행지 상세 조회 시작:", contentId);
     try {
       const commonResponse = await travelApi.getTravelDetail(contentId);
       const commonItems = normalizeTravelItems(
@@ -201,16 +213,30 @@ export default async function TravelDetailPage({
         throw new Error("TourAPI 응답에 데이터가 없습니다.");
       }
     } catch (tourApiError) {
+      // TourAPI 실패 로깅
+      const tourApiErrorObj = tourApiError instanceof Error 
+        ? tourApiError 
+        : new Error(String(tourApiError));
+      console.warn("[TravelDetailPage] TourAPI 조회 실패:", {
+        contentId,
+        error: tourApiErrorObj.message,
+      });
+
       // Supabase fallback
       try {
         const serviceClient = getServiceRoleClient();
-        const { data: travelData } = await serviceClient
+        const { data: travelData, error: supabaseError } = await serviceClient
           .from("travels")
           .select("*")
           .eq("contentid", contentId)
-          .single();
+          .maybeSingle(); // .single() 대신 .maybeSingle() 사용하여 에러 방지
+
+        if (supabaseError) {
+          console.warn("[TravelDetailPage] Supabase 조회 오류:", supabaseError);
+        }
 
         if (travelData) {
+          console.log("[TravelDetailPage] Supabase에서 데이터 조회 성공:", contentId);
           detail = {
             contentid: travelData.contentid,
             contenttypeid: travelData.contenttypeid,
@@ -232,9 +258,17 @@ export default async function TravelDetailPage({
             overview: travelData.overview,
           } as TravelSiteDetail;
         } else {
+          console.warn("[TravelDetailPage] Supabase에서도 데이터를 찾을 수 없음:", contentId);
           error = "여행지 정보를 찾을 수 없습니다.";
         }
       } catch (supabaseError) {
+        const supabaseErrorObj = supabaseError instanceof Error 
+          ? supabaseError 
+          : new Error(String(supabaseError));
+        console.error("[TravelDetailPage] Supabase fallback 실패:", {
+          contentId,
+          error: supabaseErrorObj.message,
+        });
         error = "여행지 정보를 불러오는데 실패했습니다.";
       }
     }
@@ -245,7 +279,13 @@ export default async function TravelDetailPage({
         : "여행지 정보를 불러오는데 실패했습니다.";
   }
 
-  if (error || !detail) {
+  if (!detail) {
+    console.error("[TravelDetailPage] 여행지 데이터 없음:", {
+      contentId,
+      error,
+      tourApiFailed: error?.includes("TourAPI") || false,
+      supabaseFailed: error?.includes("Supabase") || false,
+    });
     notFound();
   }
 
