@@ -27,7 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Folder, Plus, MoreVertical, Edit, Trash2, FolderOpen } from "lucide-react";
+import { Folder, Plus, MoreVertical, Edit, Trash2, FolderOpen, Share2 } from "lucide-react";
 import { getBookmarkFolders, type BookmarkFolder } from "@/actions/bookmarks/folders/get-folders";
 import { deleteBookmarkFolder } from "@/actions/bookmarks/folders/delete-folder";
 import { toast } from "sonner";
@@ -37,12 +37,14 @@ interface FolderListProps {
   selectedFolderId: string | null;
   onFolderSelect: (folderId: string | null) => void;
   onFoldersChange?: () => void;
+  onShareFolder?: (folderId: string, folderName: string) => void;
 }
 
 export function FolderList({
   selectedFolderId,
   onFolderSelect,
   onFoldersChange,
+  onShareFolder,
 }: FolderListProps) {
   const [folders, setFolders] = useState<BookmarkFolder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -195,6 +197,14 @@ export function FolderList({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {onShareFolder && (
+                  <DropdownMenuItem
+                    onClick={() => onShareFolder(folder.id, folder.name)}
+                  >
+                    <Share2 className="w-4 h-4 mr-2" aria-hidden="true" />
+                    공유
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => handleEditFolder(folder)}>
                   <Edit className="w-4 h-4 mr-2" aria-hidden="true" />
                   수정

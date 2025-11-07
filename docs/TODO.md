@@ -236,15 +236,29 @@
     - [x] 북마크 지도 필터링 (폴더/태그별)
     - [x] 북마크 마커 인포윈도우에 폴더/태그 정보 표시
     - [ ] 북마크 지도에서 일정 경로 표시 (추후 구현)
-  - [ ] 북마크 일괄 관리 기능
-    - 다중 선택 (체크박스)
-    - 일괄 삭제
-    - 일괄 폴더 이동
-    - 일괄 태그 추가/제거
-  - [ ] 북마크 공유 기능
-    - 북마크 목록 공유 (URL 생성)
-    - 폴더별 공유
-    - 공유 링크 접근 권한 설정 (공개/비공개)
+  - [x] 북마크 일괄 관리 기능
+    - [x] 다중 선택 (체크박스) (`BookmarkCard`에 체크박스 추가)
+    - [x] 일괄 관리 모드 토글 (`BookmarkListContent`)
+    - [x] 일괄 관리 툴바 (`BulkActionsToolbar`)
+    - [x] 일괄 삭제 (`batchDeleteBookmarks` Server Action)
+    - [x] 일괄 폴더 이동 (`batchUpdateBookmarkFolder` Server Action)
+    - [x] 일괄 태그 추가/제거 (`batchUpdateBookmarkTags` Server Action)
+      - [x] 태그 추가 모드 (기존 태그 유지)
+      - [x] 태그 제거 모드
+      - [x] 태그 교체 모드 (기존 태그 제거 후 새 태그 추가)
+  - [x] 북마크 공유 기능
+    - [x] 데이터베이스 스키마 (`bookmark_share_links` 테이블)
+    - [x] 공유 링크 생성/업데이트 (`createOrUpdateShareLink` Server Action)
+    - [x] 공유 링크 조회 (`getShareLink` Server Action)
+    - [x] 공개/비공개 전환 (`toggleShareLinkVisibility` Server Action)
+    - [x] 공유된 북마크 조회 (`getSharedBookmarks` Server Action)
+    - [x] 북마크 목록 공유 다이얼로그 (`BookmarkShareDialog`)
+    - [x] 북마크 목록 공유 버튼 (`BookmarkListContent`)
+    - [x] 폴더별 공유 기능 (`FolderList`에 공유 메뉴 추가)
+    - [x] 공유 페이지 (`app/bookmarks/share/[token]/page.tsx`)
+    - [x] 공유 링크 복사 기능
+    - [x] 공개/비공개 전환 기능
+    - [x] 공유 링크 재생성 기능
   - [ ] 북마크 내보내기/가져오기
     - JSON 형식으로 북마크 내보내기
     - CSV 형식으로 내보내기 (엑셀 호환)

@@ -32,11 +32,13 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, Bookmark, Search, Filter } from "lucide-react";
+import { AlertCircle, Bookmark, Search, Filter, Share2 } from "lucide-react";
 import { getBookmarks, type BookmarkWithTravel } from "@/actions/bookmarks/get-bookmarks";
 import { REGIONS, REGION_LIST, REGION_CODES, TRAVEL_TYPES, TRAVEL_TYPE_LIST, TRAVEL_TYPE_CODES } from "@/constants/travel";
 import { FolderList } from "@/components/bookmarks/folder-list";
 import { TagList } from "@/components/bookmarks/tag-list";
+import { BulkActionsToolbar } from "@/components/bookmarks/bulk-actions-toolbar";
+import { BookmarkShareDialog } from "@/components/bookmarks/bookmark-share-dialog";
 import { toast } from "sonner";
 
 type SortOption = "created_at" | "title" | "region" | "type";
@@ -68,6 +70,9 @@ export function BookmarkListContent() {
     const tagIdsParam = searchParams.get("tagIds");
     return tagIdsParam ? tagIdsParam.split(",") : [];
   });
+  const [selectedBookmarkIds, setSelectedBookmarkIds] = useState<string[]>([]);
+  const [isBulkMode, setIsBulkMode] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   // 북마크 목록 조회
   useEffect(() => {
@@ -318,6 +323,56 @@ export function BookmarkListContent() {
         </div>
       </div>
 
+      {/* 일괄 관리 모드 토글 */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="bulk-mode"
+            checked={isBulkMode}
+            onCheckedChange={(checked) => {
+              setIsBulkMode(checked === true);
+              if (!checked) {
+                setSelectedBookmarkIds([]);
+              }
+            }}
+          />
+          <Label
+            htmlFor="bulk-mode"
+            className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer"
+          >
+            일괄 관리 모드
+          </Label>
+        </div>
+      </div>
+
+      {/* 일괄 관리 툴바 */}
+      {isBulkMode && (
+        <BulkActionsToolbar
+          selectedBookmarkIds={selectedBookmarkIds}
+          onClearSelection={() => setSelectedBookmarkIds([])}
+          onSuccess={() => {
+            // 북마크 목록 다시 조회
+            const filter = {
+              ...(areaCode && { areaCode }),
+              ...(contentTypeId && { contentTypeId }),
+              ...(keyword && { keyword }),
+              ...(selectedFolderId !== null && { folderId: selectedFolderId }),
+              ...(selectedTagIds.length > 0 && { tagIds: selectedTagIds }),
+            };
+            getBookmarks(sortBy, filter)
+              .then(setBookmarks)
+              .catch((err) => {
+                console.error("[BookmarkListContent] 북마크 목록 조회 오류:", err);
+                setError(
+                  err instanceof Error
+                    ? err.message
+                    : "북마크 목록을 불러오는데 실패했습니다."
+                );
+              });
+          }}
+        />
+      )}
+
       {/* 북마크 목록 */}
       {bookmarks.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
@@ -360,16 +415,56 @@ export function BookmarkListContent() {
               <BookmarkCard
                 key={bookmark.bookmarkId}
                 bookmark={bookmark}
+                selected={selectedBookmarkIds.includes(bookmark.bookmarkId)}
+                onSelect={(bookmarkId, selected) => {
+                  if (selected) {
+                    setSelectedBookmarkIds((prev) => [...prev, bookmarkId]);
+                  } else {
+                    setSelectedBookmarkIds((prev) =>
+                      prev.filter((id) => id !== bookmarkId)
+                    );
+                  }
+                }}
+                showCheckbox={isBulkMode}
                 onUpdate={() => {
-                  // 북마크 목록 새로고침
-                  const params = new URLSearchParams(searchParams.toString());
-                  router.push(`/bookmarks?${params.toString()}`);
+                  // 북마크 목록 다시 조회
+                  const filter = {
+                    ...(areaCode && { areaCode }),
+                    ...(contentTypeId && { contentTypeId }),
+                    ...(keyword && { keyword }),
+                    ...(selectedFolderId !== null && { folderId: selectedFolderId }),
+                    ...(selectedTagIds.length > 0 && { tagIds: selectedTagIds }),
+                  };
+                  getBookmarks(sortBy, filter)
+                    .then(setBookmarks)
+                    .catch((err) => {
+                      console.error("[BookmarkListContent] 북마크 목록 조회 오류:", err);
+                      setError(
+                        err instanceof Error
+                          ? err.message
+                          : "북마크 목록을 불러오는데 실패했습니다."
+                      );
+                    });
                 }}
               />
             ))}
           </div>
         </>
       )}
+
+      {/* 공유 다이얼로그 */}
+      <BookmarkShareDialog
+        open={shareDialogOpen}
+        onOpenChange={(open) => {
+          setShareDialogOpen(open);
+          if (!open) {
+            setShareFolderName(undefined);
+          }
+        }}
+        folderId={selectedFolderId}
+        scope={selectedFolderId ? "folder" : "all"}
+        folderName={shareFolderName}
+      />
     </div>
   );
 }

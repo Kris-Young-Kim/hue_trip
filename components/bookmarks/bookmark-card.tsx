@@ -23,6 +23,7 @@ import { useState } from "react";
 import { TravelCard } from "@/components/travel-card";
 import { BookmarkNoteDialog } from "@/components/bookmarks/bookmark-note-dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FileText, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { BookmarkWithTravel } from "@/actions/bookmarks/get-bookmarks";
@@ -30,18 +31,45 @@ import type { BookmarkWithTravel } from "@/actions/bookmarks/get-bookmarks";
 interface BookmarkCardProps {
   bookmark: BookmarkWithTravel;
   onUpdate?: () => void;
+  selected?: boolean;
+  onSelect?: (bookmarkId: string, selected: boolean) => void;
+  showCheckbox?: boolean;
 }
 
-export function BookmarkCard({ bookmark, onUpdate }: BookmarkCardProps) {
+export function BookmarkCard({
+  bookmark,
+  onUpdate,
+  selected = false,
+  onSelect,
+  showCheckbox = false,
+}: BookmarkCardProps) {
   const [noteDialogOpen, setNoteDialogOpen] = useState(false);
 
   const hasNote = !!bookmark.note;
 
+  const handleCheckboxChange = (checked: boolean) => {
+    onSelect?.(bookmark.bookmarkId, checked);
+  };
+
   return (
     <>
       <div className="relative group">
+        {/* 체크박스 (일괄 관리 모드) */}
+        {showCheckbox && (
+          <div className="absolute top-3 left-3 z-20">
+            <Checkbox
+              checked={selected}
+              onCheckedChange={handleCheckboxChange}
+              className="bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600"
+              aria-label={`${bookmark.title} 선택`}
+            />
+          </div>
+        )}
+
         {/* 여행지 카드 */}
-        <TravelCard travel={bookmark} />
+        <div className={cn(showCheckbox && selected && "ring-2 ring-blue-500 rounded-xl")}>
+          <TravelCard travel={bookmark} />
+        </div>
 
         {/* 북마크 전용 기능 오버레이 */}
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
