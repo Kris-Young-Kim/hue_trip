@@ -100,12 +100,24 @@ export function formatHomepage(homepage?: string): string {
  * @returns 유효한 이미지 URL 또는 기본 이미지 URL
  */
 export function getImageUrl(imageUrl?: string): string {
-  if (!imageUrl) {
+  // 빈 문자열이나 공백만 있는 경우 처리
+  if (!imageUrl || imageUrl.trim() === "") {
     // 기본 이미지 URL (나중에 프로젝트에 맞게 수정)
     return "/placeholder-travel.jpg";
   }
 
-  return imageUrl;
+  // 유효한 URL인지 확인 (http:// 또는 https://로 시작)
+  const trimmedUrl = imageUrl.trim();
+  if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
+    // 상대 경로인 경우 그대로 반환
+    if (trimmedUrl.startsWith("/")) {
+      return trimmedUrl;
+    }
+    // 잘못된 형식인 경우 기본 이미지 반환
+    return "/placeholder-travel.jpg";
+  }
+
+  return trimmedUrl;
 }
 
 /**

@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: "img.clerk.com" },
+      // Unsplash 이미지 도메인 (샘플 데이터용)
+      { 
+        hostname: "images.unsplash.com",
+        protocol: "https",
+        pathname: "/**",
+      },
       // 한국관광공사 TourAPI 이미지 도메인
       { 
         hostname: "tong.visitkorea.or.kr",

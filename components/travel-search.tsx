@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,8 @@ export function TravelSearch({
 }: TravelSearchProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const searchInputId = useId();
+  const searchLoadingId = useId();
   const [keyword, setKeyword] = useState(
     searchParams.get("keyword") || ""
   );
@@ -99,13 +101,13 @@ export function TravelSearch({
 
   return (
     <div className="relative w-full">
-      <label htmlFor="travel-search-input" className="sr-only">
+      <label htmlFor={searchInputId} className="sr-only">
         여행지 검색
       </label>
       <div className="relative flex items-center">
         <Search className="absolute left-4 w-5 h-5 text-gray-400 dark:text-gray-500 pointer-events-none z-10" aria-hidden="true" />
         <Input
-          id="travel-search-input"
+          id={searchInputId}
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
@@ -114,7 +116,7 @@ export function TravelSearch({
           className="pl-12 pr-12 h-14 text-base bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
           disabled={isSearching}
           aria-label="여행지 검색"
-          aria-describedby={isSearching ? "search-loading" : undefined}
+          aria-describedby={isSearching ? searchLoadingId : undefined}
           aria-busy={isSearching}
         />
         {keyword && (
@@ -131,7 +133,7 @@ export function TravelSearch({
           </Button>
         )}
         {isSearching && !keyword && (
-          <div id="search-loading" className="absolute right-4 top-1/2 -translate-y-1/2" role="status" aria-live="polite">
+          <div id={searchLoadingId} className="absolute right-4 top-1/2 -translate-y-1/2" role="status" aria-live="polite">
             <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent" aria-hidden="true"></div>
             <span className="sr-only">검색 중...</span>
           </div>

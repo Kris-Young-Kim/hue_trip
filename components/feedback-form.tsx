@@ -22,7 +22,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -58,6 +58,13 @@ interface FeedbackFormProps {
 
 export function FeedbackForm({ defaultType, defaultPageUrl }: FeedbackFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const titleId = useId();
+  const descriptionId = useId();
+  const emailId = useId();
+  const typeId = useId();
+  const titleErrorId = useId();
+  const descriptionErrorId = useId();
+  const emailErrorId = useId();
 
   const {
     register,
@@ -132,12 +139,12 @@ export function FeedbackForm({ defaultType, defaultPageUrl }: FeedbackFormProps)
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* 피드백 유형 */}
           <div className="space-y-2">
-            <Label htmlFor="feedback-type">피드백 유형 *</Label>
+            <Label htmlFor={typeId}>피드백 유형 *</Label>
             <Select
               value={selectedType}
               onValueChange={(value) => setValue("type", value as FeedbackFormData["type"])}
             >
-              <SelectTrigger id="feedback-type" aria-label="피드백 유형 선택">
+              <SelectTrigger id={typeId} aria-label="피드백 유형 선택">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -156,18 +163,18 @@ export function FeedbackForm({ defaultType, defaultPageUrl }: FeedbackFormProps)
 
           {/* 제목 */}
           <div className="space-y-2">
-            <Label htmlFor="feedback-title">제목 *</Label>
+            <Label htmlFor={titleId}>제목 *</Label>
             <Input
-              id="feedback-title"
+              id={titleId}
               {...register("title")}
               placeholder="피드백 제목을 입력하세요"
               aria-label="피드백 제목"
-              aria-describedby={errors.title ? "title-error" : undefined}
+              aria-describedby={errors.title ? titleErrorId : undefined}
               aria-invalid={!!errors.title}
               className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
             />
             {errors.title && (
-              <p id="title-error" className="text-sm text-red-500" role="alert">
+              <p id={titleErrorId} className="text-sm text-red-500" role="alert">
                 {errors.title.message}
               </p>
             )}
@@ -175,19 +182,19 @@ export function FeedbackForm({ defaultType, defaultPageUrl }: FeedbackFormProps)
 
           {/* 상세 설명 */}
           <div className="space-y-2">
-            <Label htmlFor="feedback-description">상세 설명 *</Label>
+            <Label htmlFor={descriptionId}>상세 설명 *</Label>
             <Textarea
-              id="feedback-description"
+              id={descriptionId}
               {...register("description")}
               placeholder="피드백 내용을 자세히 입력해주세요 (최소 10자)"
               rows={6}
               aria-label="피드백 상세 설명"
-              aria-describedby={errors.description ? "description-error" : undefined}
+              aria-describedby={errors.description ? descriptionErrorId : undefined}
               aria-invalid={!!errors.description}
               className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
             />
             {errors.description && (
-              <p id="description-error" className="text-sm text-red-500" role="alert">
+              <p id={descriptionErrorId} className="text-sm text-red-500" role="alert">
                 {errors.description.message}
               </p>
             )}
@@ -195,19 +202,19 @@ export function FeedbackForm({ defaultType, defaultPageUrl }: FeedbackFormProps)
 
           {/* 연락처 이메일 (선택 사항) */}
           <div className="space-y-2">
-            <Label htmlFor="feedback-email">연락처 이메일 (선택 사항)</Label>
+            <Label htmlFor={emailId}>연락처 이메일 (선택 사항)</Label>
             <Input
-              id="feedback-email"
+              id={emailId}
               type="email"
               {...register("contactEmail")}
               placeholder="답변을 받을 이메일 주소 (선택 사항)"
               aria-label="연락처 이메일"
-              aria-describedby={errors.contactEmail ? "email-error" : undefined}
+              aria-describedby={errors.contactEmail ? emailErrorId : undefined}
               aria-invalid={!!errors.contactEmail}
               className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
             />
             {errors.contactEmail && (
-              <p id="email-error" className="text-sm text-red-500" role="alert">
+              <p id={emailErrorId} className="text-sm text-red-500" role="alert">
                 {errors.contactEmail.message}
               </p>
             )}

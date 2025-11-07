@@ -11,7 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { createClerkSupabaseClient } from "@/lib/supabase/server";
 import type { TravelFilter, TravelListResponse } from "@/types/travel";
 import { logError } from "@/lib/utils/logger";
 
@@ -50,6 +50,9 @@ export async function GET(request: NextRequest) {
 
     console.log("[API] 필터:", filter);
     console.log("[API] Supabase 조회 시작");
+    
+    // Supabase 서버 클라이언트 생성
+    const supabase = createClerkSupabaseClient();
     
     // Supabase 쿼리 빌더 시작
     let query = supabase.from("travels").select("*", { count: "exact" });

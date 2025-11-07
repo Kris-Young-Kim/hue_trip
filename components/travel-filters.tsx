@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useId } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { X, Filter, Search } from "lucide-react";
 import type { TravelFilter } from "@/types/travel";
 import {
@@ -49,6 +50,10 @@ interface TravelFiltersProps {
 export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const regionId = useId();
+  const typeId = useId();
+  const sortId = useId();
+  const keywordId = useId();
   
   // onFilterChange를 ref로 저장하여 안정화
   const onFilterChangeRef = useRef(onFilterChange);
@@ -66,6 +71,9 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
   const [sortOrder, setSortOrder] = useState<string>(
     searchParams.get("sort") || SORT_OPTIONS.TITLE
   );
+  const [keyword, setKeyword] = useState<string>(
+    searchParams.get("keyword") || ""
+  );
 
   // 필터 적용 함수 (검색 버튼 클릭 시 또는 자동 적용)
   const applyFilters = useCallback(() => {
@@ -73,6 +81,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     console.log("지역:", region);
     console.log("여행지 타입:", travelType);
     console.log("정렬:", sortOrder);
+    console.log("검색어:", keyword);
 
     // 여행지 타입을 코드로 변환
     const getTravelTypeCode = (type: string): string | undefined => {
@@ -91,6 +100,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
       areaCode: region !== REGIONS.ALL ? REGION_CODES[region] : undefined,
       contentTypeId: travelType !== TRAVEL_TYPES.ALL ? getTravelTypeCode(travelType) : undefined,
       arrange: sortOrder as TravelFilter["arrange"],
+      keyword: keyword.trim() || undefined,
       pageNo: 1, // 필터 변경 시 첫 페이지로 리셋
     };
 
@@ -99,9 +109,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     if (region !== REGIONS.ALL) params.set("region", region);
     if (travelType !== TRAVEL_TYPES.ALL) params.set("type", travelType);
     if (sortOrder !== SORT_OPTIONS.TITLE) params.set("sort", sortOrder);
-
-    const keyword = searchParams.get("keyword");
-    if (keyword) params.set("keyword", keyword);
+    if (keyword.trim()) params.set("keyword", keyword.trim());
 
     router.replace(`/?${params.toString()}`, { scroll: false });
 
@@ -109,7 +117,15 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     onFilterChangeRef.current?.(filter);
 
     console.groupEnd();
-  }, [region, travelType, sortOrder, router, searchParams, onFilterChangeRef]);
+  }, [region, travelType, sortOrder, keyword, router, onFilterChangeRef]);
+
+  // URL 쿼리 파라미터와 검색어 동기화
+  useEffect(() => {
+    const urlKeyword = searchParams.get("keyword") || "";
+    if (urlKeyword !== keyword) {
+      setKeyword(urlKeyword);
+    }
+  }, [searchParams, keyword]);
 
   // 필터 변경 시 자동 적용 (정렬은 즉시 적용, 지역/타입은 검색 버튼 필요)
   useEffect(() => {
@@ -126,20 +142,18 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     setRegion(REGIONS.ALL);
     setTravelType(TRAVEL_TYPES.ALL);
     setSortOrder(SORT_OPTIONS.TITLE);
+    setKeyword("");
 
-    // URL도 초기화 (키워드는 유지)
-    const params = new URLSearchParams();
-    const keyword = searchParams.get("keyword");
-    if (keyword) params.set("keyword", keyword);
-
-    router.replace(`/?${params.toString()}`, { scroll: false });
+    // URL도 초기화
+    router.replace("/", { scroll: false });
   };
 
   // 필터가 적용되어 있는지 확인
   const hasActiveFilters =
     region !== REGIONS.ALL ||
     travelType !== TRAVEL_TYPES.ALL ||
-    sortOrder !== SORT_OPTIONS.TITLE;
+    sortOrder !== SORT_OPTIONS.TITLE ||
+    keyword.trim() !== "";
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700" role="region" aria-label="여행지 필터">
@@ -166,11 +180,31 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
 
       {/* 필터 옵션 - 가로 배치 */}
       <div className="flex flex-col md:flex-row gap-4 pt-4">
+        {/* 검색어 입력 */}
+        <div className="flex-1 min-w-0">
+          <Label htmlFor={keywordId} className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">검색어</Label>
+          <Input
+            id={keywordId}
+            type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                applyFilters();
+              }
+            }}
+            placeholder="여행지명, 주소 검색..."
+            className="h-11 w-full"
+            aria-label="검색어 입력"
+          />
+        </div>
+
         {/* 지역 필터 */}
         <div className="flex-1 min-w-0">
-          <Label htmlFor="region" className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">지역</Label>
+          <Label htmlFor={regionId} className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">지역</Label>
           <Select value={region} onValueChange={setRegion}>
-            <SelectTrigger id="region" className="h-11 w-full">
+            <SelectTrigger id={regionId} className="h-11 w-full">
               <SelectValue placeholder="지역 선택" />
             </SelectTrigger>
             <SelectContent>
@@ -186,9 +220,9 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
 
         {/* 여행지 타입 필터 */}
         <div className="flex-1 min-w-0">
-          <Label htmlFor="type" className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">여행지 타입</Label>
+          <Label htmlFor={typeId} className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">여행지 타입</Label>
           <Select value={travelType} onValueChange={setTravelType}>
-            <SelectTrigger id="type" className="h-11 w-full">
+            <SelectTrigger id={typeId} className="h-11 w-full">
               <SelectValue placeholder="여행지 타입 선택" />
             </SelectTrigger>
             <SelectContent>
@@ -204,9 +238,9 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
 
         {/* 정렬 옵션 */}
         <div className="flex-1 min-w-0">
-          <Label htmlFor="sort" className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">정렬</Label>
+          <Label htmlFor={sortId} className="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">정렬</Label>
           <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger id="sort" className="h-11 w-full">
+            <SelectTrigger id={sortId} className="h-11 w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -248,6 +282,11 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
           {sortOrder !== SORT_OPTIONS.TITLE && (
             <span className="px-3 py-1.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full border border-blue-200 dark:border-blue-800">
               {SORT_OPTION_LABELS[sortOrder as keyof typeof SORT_OPTION_LABELS]}
+            </span>
+          )}
+          {keyword.trim() && (
+            <span className="px-3 py-1.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full border border-blue-200 dark:border-blue-800">
+              검색어: {keyword}
             </span>
           )}
         </div>
