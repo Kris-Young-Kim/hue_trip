@@ -283,7 +283,7 @@
     - [x] 공유 링크(bookmark_share_links) 및 기타 트리거/함수 문서화
 - [x] 상세페이지 통합 (`app/travels/[contentId]/page.tsx`)
   - 이미지 갤러리, 공유 버튼, 북마크 버튼 통합
-- [ ] 반려동물 동반 여행 기능 구현 (Phase 2)
+- [x] 반려동물 동반 여행 기능 구현 (Phase 2)
   - [x] 반려동물 동반 여행지 필터 컴포넌트 (`components/travel-filters.tsx`)
     - [x] "반려동물 동반 가능" 필터 옵션 추가 (체크박스)
     - [x] 필터 상태 URL 쿼리 파라미터 연동
@@ -291,11 +291,11 @@
   - [x] 반려동물 동반 여행지 뱃지 (`components/travel-card.tsx`, `components/travel-detail/pet-friendly-badge.tsx`)
     - [x] PetFriendlyBadge 컴포넌트 생성
     - [x] 여행지 카드에 반려동물 동반 가능 뱃지 표시
-    - [ ] 상세페이지에 반려동물 동반 정보 섹션 추가
-  - [ ] 반려동물 동반 여행지 정보 컴포넌트 (`components/travel-detail/pet-friendly-info.tsx`)
-    - 반려동물 시설 정보 표시 (펜션, 호텔, 카페 등)
-    - 반려동물 규정 및 주의사항 표시
-    - 반려동물 동반 만족도 표시
+    - [x] 상세페이지에 반려동물 동반 정보 섹션 추가 (`app/travels/[contentId]/page.tsx`에 PetFriendlyInfo 통합)
+  - [x] 반려동물 동반 여행지 정보 컴포넌트 (`components/travel-detail/pet-friendly-info.tsx`)
+    - [x] 반려동물 시설 정보 표시 (펜션, 호텔, 카페 등)
+    - [x] 반려동물 규정 및 주의사항 표시
+    - [x] 반려동물 동반 만족도 표시 (PetFriendlyReviewSection 컴포넌트로 구현)
   - [x] 반려동물 동반 여행 가이드 페이지 (`app/pet-travel-guide/page.tsx`)
     - [x] 반려동물 동반 여행 가이드 콘텐츠
     - [x] 주의사항 및 체크리스트
@@ -310,10 +310,11 @@
     - [x] TourAPI 키워드 검색에 반려동물 관련 키워드 자동 포함 (petFriendly 필터 활성화 시)
     - [x] Supabase에서 반려동물 동반 여행지 필터링 (pet_friendly = true)
     - [x] 반려동물 동반 여행지 상세 정보 조회 (pet_friendly_info 테이블)
-  - [ ] 반려동물 동반 여행지 지도 연동 (`components/naver-map.tsx`)
-    - 반려동물 동반 가능 여행지 마커 색상 구분
-    - 반려동물 동반 여행지 필터링 옵션
-    - 반려동물 동반 여행 경로 표시
+  - [x] 반려동물 동반 여행지 지도 연동 (`components/naver-map.tsx`)
+    - [x] 반려동물 동반 가능 여행지 마커 색상 구분 (초록색 하트 아이콘)
+    - [x] 반려동물 동반 여행지 필터링 옵션 (`showPetFriendlyOnly` prop)
+    - [x] 반려동물 동반 여행지 인포윈도우 뱃지 표시
+    - [x] 홈페이지에서 반려동물 동반 필터 상태와 지도 연동 (`app/page.tsx`)
 
 ---
 
