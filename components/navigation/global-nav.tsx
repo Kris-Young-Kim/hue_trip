@@ -42,6 +42,7 @@ const mainMenuItems = [
 const userMenuItems = [
   { href: "/bookmarks", label: "북마크", icon: Bookmark, requireAuth: true },
   { href: "/admin/dashboard", label: "관리자", icon: BarChart3, requireAuth: true, adminOnly: true },
+  { href: "/admin/users", label: "사용자 관리", icon: Users, requireAuth: true, adminOnly: true },
 ];
 
 export function GlobalNav() {

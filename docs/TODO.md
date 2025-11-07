@@ -391,10 +391,34 @@
   - 오프라인 상태 감지
   - 사용자 친화적 에러 메시지
 - [x] 관리자 KPI 대시보드 (`app/admin/dashboard/page.tsx`)
-  - 관리자 권한 확인 (환경변수 ADMIN_USER_IDS)
+  - 관리자 권한 확인 (환경변수 ADMIN_USER_IDS + 역할 기반 권한 체크)
   - 주요 지표 표시 (사용자 수, 조회 수, 북마크 수, 리뷰 수)
   - 인기 여행지 TOP 10 테이블 (`components/admin/popular-travels.tsx`)
   - 통계 카드 컴포넌트 (재사용 가능, `components/admin/stats-card.tsx`)
+- [x] 사용자 역할 관리 시스템
+  - [x] users 테이블에 role 컬럼 추가 (`supabase/migrations/20250108000016_add_user_roles.sql`)
+    - 역할: 'admin' (관리자), 'editor' (편집자), 'user' (일반 사용자, 기본값)
+    - 역할별 권한 계층 구조 (admin > editor > user)
+  - [x] 권한 체크 로직 개선 (`actions/admin-stats.ts`)
+    - `checkUserRole()` 함수로 역할 기반 권한 체크
+    - 개발 환경에서 환경변수 없이 모든 로그인 사용자 허용
+    - 프로덕션 환경에서는 role 또는 ADMIN_USER_IDS 확인
+  - [x] 사용자 역할 관리 페이지 (`app/admin/users/page.tsx`)
+    - 이메일로 사용자 검색 기능
+    - 사용자 목록 조회 및 역할 변경
+    - 역할별 뱃지 표시 (관리자/편집자/일반 사용자)
+  - [x] 사용자 역할 관리 UI 컴포넌트 (`components/admin/user-role-manager.tsx`)
+    - 사용자 검색 및 추가
+    - 역할 변경 드롭다운 (관리자/편집자/일반 사용자)
+    - 사용자 목록 테이블 (이름, 이메일, 현재 역할, 역할 변경)
+  - [x] 사용자 역할 관리 Server Actions (`actions/admin-users/`)
+    - `getUserByEmail`: 이메일로 Clerk 사용자 찾기
+    - `setUserRole`: 사용자에게 역할 부여
+    - `getUsers`: 모든 사용자 목록 조회 (역할 포함)
+  - [x] 네비게이션에 사용자 관리 메뉴 추가 (`components/navigation/global-nav.tsx`)
+    - 관리자 전용 "사용자 관리" 메뉴 추가 (`/admin/users`)
+  - [x] sync-user API 개선 (`app/api/sync-user/route.ts`)
+    - 기존 사용자의 역할 유지, 새 사용자는 기본값 'user'로 설정
 - [x] 통계 대시보드 고도화 (Phase 3)
   - [x] 실시간 통계 업데이트
     - [x] 자동 새로고침 옵션 (5초, 10초, 30초, 1분 간격) (폴링 방식)
@@ -503,6 +527,12 @@
     - [x] analytics_alerts 테이블 생성 (알림 설정 및 이력)
     - [x] 인덱스 및 트리거 설정
     - [x] 데이터 보존 정책 함수 (cleanup_old_analytics_data)
+  - [x] 사용자 역할 관리 시스템
+    - [x] users 테이블에 role 컬럼 추가 (admin, editor, user)
+    - [x] 역할 기반 권한 체크 시스템 (`checkUserRole` 함수)
+    - [x] 사용자 역할 관리 페이지 및 UI 컴포넌트
+    - [x] 이메일로 사용자 검색 및 역할 부여 기능
+    - [x] 네비게이션에 사용자 관리 메뉴 추가
 - [x] 로깅 시스템 (`lib/utils/logger.ts`)
   - 구조화된 로깅 (info, warn, error, debug)
   - 프로덕션 환경 JSON 포맷, 개발 환경 콘솔 출력

@@ -42,35 +42,64 @@ export interface AdminStats {
 }
 
 /**
- * 관리자 권한 확인
- * @returns 관리자 여부
+ * 사용자 역할 확인
+ * @param requiredRole 필요한 최소 역할 ('admin' | 'editor' | 'user')
+ * @returns 권한 여부
  */
-async function checkAdminPermission(): Promise<boolean> {
+export async function checkUserRole(requiredRole: "admin" | "editor" | "user" = "admin"): Promise<boolean> {
   try {
-    const { userId, orgRole } = await auth();
+    const { userId } = await auth();
 
     if (!userId) {
       return false;
     }
 
-    // Clerk Organization에서 관리자 역할 확인
-    // 또는 환경변수로 관리자 ID 목록 관리
-    const adminUserIds = process.env.ADMIN_USER_IDS?.split(",") || [];
+    // 개발 환경: ADMIN_USER_IDS가 설정되지 않았으면 모든 로그인 사용자 허용
+    const adminUserIds = process.env.ADMIN_USER_IDS?.split(",").map((id) => id.trim()).filter(Boolean) || [];
+    const isDevelopment = process.env.NODE_ENV === "development";
+    
+    if (adminUserIds.length === 0 && isDevelopment) {
+      return true; // 개발 환경에서 환경변수가 없으면 모든 사용자 허용
+    }
 
+    // 환경변수에 명시된 사용자는 관리자 권한
     if (adminUserIds.includes(userId)) {
       return true;
     }
 
-    // orgRole이 org:admin인 경우
-    if (orgRole === "org:admin") {
-      return true;
+    // Supabase에서 사용자 역할 확인
+    const supabase = getServiceRoleClient();
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("role")
+      .eq("clerk_id", userId)
+      .single();
+
+    if (error || !user) {
+      // 사용자가 없으면 기본적으로 권한 없음
+      return false;
     }
 
-    return false;
+    const userRole = (user.role as "admin" | "editor" | "user") || "user";
+
+    // 역할 권한 체크
+    const roleHierarchy = { admin: 3, editor: 2, user: 1 };
+    const requiredLevel = roleHierarchy[requiredRole];
+    const userLevel = roleHierarchy[userRole];
+
+    return userLevel >= requiredLevel;
   } catch (error) {
-    console.error("[AdminStats] 권한 확인 오류:", error);
+    console.error("[checkUserRole] 권한 확인 오류:", error);
     return false;
   }
+}
+
+/**
+ * 관리자 권한 확인 (하위 호환성)
+ * @returns 관리자 여부
+ */
+async function checkAdminPermission(): Promise<boolean> {
+  return checkUserRole("admin");
 }
 
 /**

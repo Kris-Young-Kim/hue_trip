@@ -334,8 +334,8 @@
 
 한국관광공사 TourAPI 명세서 확인 후 업데이트 필요
 
-| API              | 엔드포인트  | 용도                | 필수 파라미터                 |
-| ---------------- | ----------- | ------------------- | ----------------------------- |
+| API              | 엔드포인트  | 용도                | 필수 파라미터              |
+| ---------------- | ----------- | ------------------- | -------------------------- |
 | 여행지 목록 조회 | (확인 필요) | 여행지 목록         | (TourAPI 명세서 확인 필요) |
 | 상세정보 조회    | (확인 필요) | 상세페이지 기본정보 | (TourAPI 명세서 확인 필요) |
 | 키워드 검색      | (확인 필요) | 검색 기능           | (TourAPI 명세서 확인 필요) |
@@ -343,6 +343,7 @@
 ### 4.2 Base URL
 
 한국관광공사 TourAPI Base URL 확인 필요
+
 - 일반적으로: `http://apis.data.go.kr/B551011/KorService1` 또는 `https://apis.data.go.kr/B551011/KorService1`
 
 ### 4.3 공통 파라미터
@@ -431,9 +432,10 @@ interface TravelImage {
 /                          # 홈페이지 (여행지 목록 + 필터 + 지도)
 /travels/[contentId]       # 상세페이지
 /search?keyword=xxx        # 검색 결과 (홈에서 처리)
-/bookmarks                 # 내 북마크 목록 (선택 사항, 미구현)
+/bookmarks                 # 내 북마크 목록
 /admin/dashboard           # 관리자 KPI 대시보드
 /admin/analytics           # 관리자 서비스 분석 대시보드
+/admin/users               # 사용자 역할 관리 페이지 (관리자 전용)
 /feedback                  # 피드백 제출 페이지
 /safety                    # 여행 안전 정보 목록 페이지
 /safety/[id]               # 여행 안전 정보 상세 페이지
@@ -450,8 +452,10 @@ app/
 ├── admin/
 │   ├── dashboard/
 │   │   └── page.tsx            # 관리자 KPI 대시보드
-│   └── analytics/
-│       └── page.tsx            # 관리자 서비스 분석 대시보드
+│   ├── analytics/
+│   │   └── page.tsx            # 관리자 서비스 분석 대시보드
+│   └── users/
+│       └── page.tsx            # 사용자 역할 관리 페이지
 ├── feedback/
 │   └── page.tsx                # 피드백 제출 페이지
 ├── safety/
@@ -488,7 +492,9 @@ components/
 │   └── footer-nav.tsx         # FNB (Foot Navigation Bar)
 ├── admin/
 │   ├── stats-card.tsx         # 통계 카드 컴포넌트
-│   └── popular-campings.tsx   # 인기 캠핑장 테이블
+│   ├── popular-travels.tsx    # 인기 여행지 테이블
+│   ├── enhanced-dashboard.tsx # 고도화된 통계 대시보드
+│   └── user-role-manager.tsx  # 사용자 역할 관리 컴포넌트
 ├── safety/
 │   ├── safety-card.tsx        # 안전 수칙 카드
 │   ├── safety-guidelines.tsx  # 안전 수칙 목록 및 필터링
@@ -527,7 +533,10 @@ lib/
     └── client.ts               # 공개 데이터용 Supabase
 
 actions/
-├── admin-stats.ts              # 관리자 통계 Server Action
+├── admin-stats.ts              # 관리자 통계 Server Action (권한 체크 포함)
+├── admin-users/
+│   ├── get-user-by-email.ts    # 이메일로 사용자 찾기 및 역할 부여
+│   └── get-users.ts            # 사용자 목록 조회
 ├── get-analytics.ts            # 분석 데이터 조회 Server Action
 └── submit-feedback.ts          # 피드백 제출 Server Action
 
@@ -634,6 +643,12 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 NEXT_PUBLIC_STORAGE_BUCKET=uploads
+
+# 관리자 권한 (선택 사항, 프로덕션 환경)
+# 개발 환경에서는 환경변수 없이도 모든 로그인 사용자가 관리자 권한
+# 프로덕션에서는 ADMIN_USER_IDS에 Clerk User ID를 쉼표로 구분하여 설정
+# 예: ADMIN_USER_IDS=user_2abc123,user_2def456
+ADMIN_USER_IDS=your_clerk_user_ids
 ```
 
 ---
@@ -807,7 +822,17 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [x] `app/admin/dashboard/page.tsx` (KPI 대시보드)
 - [x] `app/admin/analytics/page.tsx` (서비스 분석 대시보드)
 - [x] `components/admin/stats-card.tsx`
-- [x] `components/admin/popular-campings.tsx`
+- [x] `components/admin/popular-travels.tsx`
+- [x] 사용자 역할 관리 시스템
+  - [x] `app/admin/users/page.tsx` (사용자 역할 관리 페이지)
+  - [x] `components/admin/user-role-manager.tsx` (역할 관리 UI)
+  - [x] `actions/admin-users/get-user-by-email.ts` (이메일 검색 및 역할 부여)
+  - [x] `actions/admin-users/get-users.ts` (사용자 목록 조회)
+  - [x] `supabase/migrations/20250108000016_add_user_roles.sql` (role 컬럼 추가)
+  - [x] 권한 체크 로직 개선 (`checkUserRole` 함수)
+    - 역할 기반 권한 체크 (admin > editor > user)
+    - 개발 환경에서 권한 체크 완화
+    - 프로덕션 환경에서는 role 또는 ADMIN_USER_IDS 확인
 
 #### 6.2 피드백 시스템 ✅ 완료
 

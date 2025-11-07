@@ -28,6 +28,13 @@ export async function POST() {
     // Supabase에 사용자 정보 동기화
     const supabase = getServiceRoleClient();
 
+    // 기존 사용자 확인 (역할 유지)
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("role")
+      .eq("clerk_id", clerkUser.id)
+      .single();
+
     const { data, error } = await supabase
       .from("users")
       .upsert(
@@ -38,6 +45,8 @@ export async function POST() {
             clerkUser.username ||
             clerkUser.emailAddresses[0]?.emailAddress ||
             "Unknown",
+          // 기존 사용자는 역할 유지, 새 사용자는 기본값 'user'
+          role: existingUser?.role || "user",
         },
         {
           onConflict: "clerk_id",

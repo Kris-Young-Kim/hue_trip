@@ -35,10 +35,22 @@ export default async function AdminDashboardPage() {
   }
 
   // 관리자 권한 확인 (환경변수에서 관리자 ID 목록 확인)
-  const adminUserIds = process.env.ADMIN_USER_IDS?.split(",") || [];
+  const adminUserIds = process.env.ADMIN_USER_IDS?.split(",").map((id) => id.trim()).filter(Boolean) || [];
+  
+  // 개발 환경: ADMIN_USER_IDS가 설정되지 않았으면 모든 로그인 사용자 허용
+  // 프로덕션 환경: ADMIN_USER_IDS에 명시된 사용자만 허용
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const hasAdminAccess = adminUserIds.length === 0 
+    ? isDevelopment  // 개발 환경에서 환경변수가 없으면 모든 사용자 허용
+    : adminUserIds.includes(userId);  // 환경변수가 있으면 목록 확인
 
-  if (!adminUserIds.includes(userId)) {
-    console.warn("[AdminDashboard] 관리자 권한 없음:", userId);
+  if (!hasAdminAccess) {
+    console.warn("[AdminDashboard] 관리자 권한 없음:", {
+      userId,
+      adminUserIds,
+      isDevelopment,
+      hasAdminAccess,
+    });
     redirect("/");
   }
 
