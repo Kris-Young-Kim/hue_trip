@@ -259,26 +259,28 @@
     - [x] 공유 링크 복사 기능
     - [x] 공개/비공개 전환 기능
     - [x] 공유 링크 재생성 기능
-  - [ ] 북마크 내보내기/가져오기
-    - JSON 형식으로 북마크 내보내기
-    - CSV 형식으로 내보내기 (엑셀 호환)
-    - 북마크 가져오기 기능
-    - 다른 서비스에서 북마크 마이그레이션
-  - [ ] 북마크 알림 기능
-    - 여행지 정보 업데이트 시 알림
-    - 여행지 이벤트/프로모션 알림
-    - 북마크한 여행지 주변 날씨 알림
-  - [ ] 북마크 통계/분석 기능
-    - 북마크한 여행지 통계 (지역별, 타입별)
-    - 가장 많이 북마크한 지역/타입
-    - 북마크 트렌드 분석
-    - 개인 여행 취향 분석
-  - [ ] 북마크 데이터베이스 스키마 확장
-    - bookmarks 테이블에 폴더, 태그, 메모 필드 추가
-    - bookmark_folders 테이블 생성
-    - bookmark_tags 테이블 생성
-    - bookmark_notes 테이블 생성
-    - 북마크 일정 관련 테이블 생성
+  - [x] 북마크 내보내기/가져오기
+    - [x] JSON 형식으로 북마크 내보내기 (`exportBookmarks` Server Action + `BookmarkExportDialog`)
+    - [x] CSV 형식으로 내보내기 (엑셀 호환)
+    - [x] 북마크 가져오기 기능 (`importBookmarks` Server Action + `BookmarkImportDialog`)
+    - [x] 다른 서비스에서 북마크 마이그레이션 (폴더/태그 자동 생성, 중복 검사, 요약 결과 제공)
+  - [x] 북마크 알림 기능
+    - [x] 여행지 정보 업데이트 시 알림 데이터 구조 (bookmark_notifications.notification_type = 'travel_update')
+    - [x] 여행지 이벤트/프로모션 알림 ('event')
+    - [x] 북마크한 여행지 주변 날씨 알림 ('weather')
+    - [x] 알림 센터 UI (`BookmarkNotificationPanel`) + 알림 설정 다이얼로그 (`BookmarkNotificationSettingsDialog`)
+  - [x] 북마크 통계/분석 기능
+    - [x] 북마크한 여행지 통계 (지역별, 타입별 집계)
+    - [x] 가장 많이 북마크한 지역/타입 하이라이트
+    - [x] 북마크 트렌드 분석 (월별 추이)
+    - [x] 개인 여행 취향 분석 문구 생성 (`favoriteSummary`)
+    - [x] 전용 페이지 `app/bookmarks/analytics/page.tsx` + `BookmarkAnalyticsContent`
+  - [x] 북마크 데이터베이스 스키마 확장
+    - [x] bookmarks 테이블에 폴더, 태그, 메모, 공유, 알림 관련 필드 반영 (기 구현 확인)
+    - [x] bookmark_folders / bookmark_tags / bookmark_tag_relations 테이블 운영 중 (문서 최신화)
+    - [x] bookmark_notifications / bookmark_notification_preferences 테이블 추가
+    - [x] travel_plans / travel_plan_items 테이블 (일정 기능) 유지보수
+    - [x] 공유 링크(bookmark_share_links) 및 기타 트리거/함수 문서화
 - [x] 상세페이지 통합 (`app/travels/[contentId]/page.tsx`)
   - 이미지 갤러리, 공유 버튼, 북마크 버튼 통합
 - [ ] 반려동물 동반 여행 기능 구현 (Phase 2)

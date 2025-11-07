@@ -32,14 +32,30 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, Bookmark, Search, Filter, Share2 } from "lucide-react";
+import {
+  AlertCircle,
+  Bookmark,
+  Search,
+  Filter,
+  Share2,
+  Upload,
+  Download,
+  Bell,
+  Settings,
+  BarChart3,
+} from "lucide-react";
 import { getBookmarks, type BookmarkWithTravel } from "@/actions/bookmarks/get-bookmarks";
 import { REGIONS, REGION_LIST, REGION_CODES, TRAVEL_TYPES, TRAVEL_TYPE_LIST, TRAVEL_TYPE_CODES } from "@/constants/travel";
 import { FolderList } from "@/components/bookmarks/folder-list";
 import { TagList } from "@/components/bookmarks/tag-list";
 import { BulkActionsToolbar } from "@/components/bookmarks/bulk-actions-toolbar";
 import { BookmarkShareDialog } from "@/components/bookmarks/bookmark-share-dialog";
+import { BookmarkExportDialog } from "@/components/bookmarks/bookmark-export-dialog";
+import { BookmarkImportDialog } from "@/components/bookmarks/bookmark-import-dialog";
+import { BookmarkNotificationPanel } from "@/components/bookmarks/bookmark-notification-panel";
+import { BookmarkNotificationSettingsDialog } from "@/components/bookmarks/bookmark-notification-settings-dialog";
 import { toast } from "sonner";
+import { getBookmarkNotifications } from "@/actions/notifications/get-bookmark-notifications";
 
 type SortOption = "created_at" | "title" | "region" | "type";
 
@@ -73,6 +89,12 @@ export function BookmarkListContent() {
   const [selectedBookmarkIds, setSelectedBookmarkIds] = useState<string[]>([]);
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [shareFolderName, setShareFolderName] = useState<string | undefined>();
+  const [notificationPanelOpen, setNotificationPanelOpen] = useState(false);
+  const [notificationSettingsOpen, setNotificationSettingsOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
 
   // 북마크 목록 조회
   useEffect(() => {
@@ -146,6 +168,20 @@ export function BookmarkListContent() {
 
   const hasActiveFilters = areaCode || contentTypeId || keyword || selectedFolderId !== null || selectedTagIds.length > 0;
 
+  useEffect(() => {
+    const fetchNotificationCount = async () => {
+      console.group("[BookmarkListContent] 알림 개수 초기 로드");
+      const result = await getBookmarkNotifications();
+      if (result.success && result.notifications) {
+        const unread = result.notifications.filter((notification) => !notification.isRead).length;
+        setUnreadNotificationCount(unread);
+      }
+      console.groupEnd();
+    };
+
+    fetchNotificationCount();
+  }, []);
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -198,6 +234,11 @@ export function BookmarkListContent() {
             console.error("[BookmarkListContent] 북마크 목록 조회 오류:", err);
             setError(err instanceof Error ? err.message : "북마크 목록을 불러오는데 실패했습니다.");
           });
+        }}
+        onShareFolder={(folderId, folderName) => {
+          setShareFolderName(folderName);
+          setSelectedFolderId(folderId);
+          setShareDialogOpen(true);
         }}
       />
 
@@ -324,7 +365,7 @@ export function BookmarkListContent() {
       </div>
 
       {/* 일괄 관리 모드 토글 */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
         <div className="flex items-center gap-2">
           <Checkbox
             id="bulk-mode"
@@ -342,6 +383,65 @@ export function BookmarkListContent() {
           >
             일괄 관리 모드
           </Label>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push("/bookmarks/analytics")}
+          >
+            <BarChart3 className="w-4 h-4 mr-2" />
+            통계 보기
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setNotificationPanelOpen(true)}
+            className="relative"
+          >
+            <Bell className="w-4 h-4 mr-2" />
+            알림
+            {unreadNotificationCount > 0 && (
+              <span className="absolute -top-2 -right-2 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-red-600 text-[11px] font-semibold text-white px-1">
+                {unreadNotificationCount}
+              </span>
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setNotificationSettingsOpen(true)}
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            알림 설정
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setImportDialogOpen(true)}
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            가져오기
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setExportDialogOpen(true)}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            내보내기
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setShareFolderName(undefined);
+              setShareDialogOpen(true);
+            }}
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            공유
+          </Button>
         </div>
       </div>
 
@@ -464,6 +564,49 @@ export function BookmarkListContent() {
         folderId={selectedFolderId}
         scope={selectedFolderId ? "folder" : "all"}
         folderName={shareFolderName}
+      />
+      <BookmarkExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        folderId={selectedFolderId}
+      />
+      <BookmarkImportDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onSuccess={() => {
+          const filter = {
+            ...(areaCode && { areaCode }),
+            ...(contentTypeId && { contentTypeId }),
+            ...(keyword && { keyword }),
+            ...(selectedFolderId !== null && { folderId: selectedFolderId }),
+            ...(selectedTagIds.length > 0 && { tagIds: selectedTagIds }),
+          };
+          getBookmarks(sortBy, filter)
+            .then(setBookmarks)
+            .catch((err) => {
+              console.error("[BookmarkListContent] 북마크 목록 조회 오류:", err);
+              setError(
+                err instanceof Error
+                  ? err.message
+                  : "북마크 목록을 불러오는데 실패했습니다."
+              );
+            });
+        }}
+      />
+      <BookmarkNotificationPanel
+        open={notificationPanelOpen}
+        onOpenChange={(open) => setNotificationPanelOpen(open)}
+        onNotificationsLoaded={(items) => {
+          const unread = items.filter((item) => !item.isRead).length;
+          setUnreadNotificationCount(unread);
+        }}
+        onNotificationRead={() => {
+          setUnreadNotificationCount((prev) => Math.max(prev - 1, 0));
+        }}
+      />
+      <BookmarkNotificationSettingsDialog
+        open={notificationSettingsOpen}
+        onOpenChange={setNotificationSettingsOpen}
       />
     </div>
   );

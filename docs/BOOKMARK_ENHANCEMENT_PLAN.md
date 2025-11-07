@@ -13,25 +13,32 @@
 - ✅ 북마크 상태 표시 (별 아이콘)
 - ✅ 북마크 통계 추적 (travel_stats 테이블)
 
-### 현재 데이터베이스 스키마
+### 현재 데이터베이스 스키마 (업데이트)
 ```sql
--- bookmarks 테이블 (현재)
-CREATE TABLE public.bookmarks (
-    id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(id),
-    content_id TEXT NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT now(),
-    UNIQUE(user_id, content_id)
-);
+-- 핵심 테이블
+bookmarks                  -- 북마크 기본 정보 (folder_id, note, note_updated_at 포함)
+bookmark_folders           -- 폴더 관리
+bookmark_tags              -- 태그 (색상 포함)
+bookmark_tag_relations     -- 북마크 ↔ 태그 N:M 관계
+bookmark_share_links       -- 공유 링크 관리
+travel_plans               -- 일정 계획 (Phase 3)
+travel_plan_items          -- 일정 상세 항목
+bookmark_notifications     -- 알림 데이터 (여행지 업데이트/이벤트/날씨)
+bookmark_notification_preferences -- 알림 수신 설정
+
+-- 보조 뷰 및 트리거
+set_updated_at()           -- updated_at 자동 갱신
+generate_bookmark_share_token() -- 공유 토큰 생성
+trigger_ensure_bookmark_notification_preferences -- 사용자 생성 시 기본 알림 설정 보장
 ```
 
-### 제약사항
-- 북마크를 단순 목록으로만 관리
-- 폴더/카테고리 분류 불가
-- 태그 기능 없음
-- 메모/노트 기능 없음
-- 일정 계획 연동 불가
-- 공유 기능 없음
+### 제약사항 (해결 현황)
+- ✅ 폴더/카테고리 분류
+- ✅ 태그 시스템 및 자동완성
+- ✅ 노트/메모 보관
+- ✅ 일정 계획 연동
+- ✅ 공유 기능 (전체/폴더)
+- ✅ 알림 기능 기본 구조
 
 ---
 
