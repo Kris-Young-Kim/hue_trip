@@ -28,11 +28,13 @@ import { ContactButton } from "@/components/travel-detail/contact-button";
 import { WeatherWidget } from "@/components/travel-detail/weather-widget";
 import { TransportInfo } from "@/components/travel-detail/transport-info";
 import { SafetyRecommendations } from "@/components/travel-detail/safety-recommendations";
+import { PetFriendlyInfo } from "@/components/travel-detail/pet-friendly-info";
 import { AdSidebar } from "@/components/ads/ad-sidebar";
 import { LocalNav } from "@/components/navigation/local-nav";
 import { SideNav } from "@/components/navigation/side-nav";
 import { trackView } from "@/lib/api/analytics";
 import { getTravelTypeName } from "@/lib/utils/travel";
+import { createClerkSupabaseClient } from "@/lib/supabase/server";
 import { Home, Shield, MessageSquare } from "lucide-react";
 import type { TravelSiteDetail } from "@/types/travel";
 import type { Metadata } from "next";
@@ -112,10 +114,29 @@ export default async function TravelDetailPage({
 
   let detail: TravelSiteDetail | null = null;
   let introInfo: TravelSiteDetail | null = null;
+  let petFriendly: boolean = false;
   let error: string | null = null;
 
   try {
     console.log("[TravelDetailPage] API 호출 시작");
+
+    // Supabase에서 반려동물 동반 정보 조회
+    try {
+      const supabase = createClerkSupabaseClient();
+      const { data: travelData } = await supabase
+        .from("travels")
+        .select("pet_friendly")
+        .eq("contentid", contentId)
+        .single();
+
+      if (travelData?.pet_friendly) {
+        petFriendly = true;
+        console.log("[TravelDetailPage] 반려동물 동반 가능 여행지 확인");
+      }
+    } catch (petErr) {
+      console.warn("[TravelDetailPage] 반려동물 동반 정보 조회 실패 (무시):", petErr);
+      // 반려동물 정보 조회 실패는 무시
+    }
 
     // 공통정보 조회
     const commonResponse = await travelApi.getTravelDetail(contentId);
@@ -380,6 +401,11 @@ export default async function TravelDetailPage({
                 )}
               </div>
             </div>
+
+            {/* 반려동물 동반 정보 */}
+            {petFriendly && (
+              <PetFriendlyInfo contentId={contentId} petFriendly={petFriendly} />
+            )}
           </div>
 
           {/* 우측 컬럼 - 사이드바 (1/3) */}

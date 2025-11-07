@@ -76,6 +76,10 @@ function HomeContent() {
       initialFilter.arrange = sort;
     }
 
+    if (petFriendly) {
+      initialFilter.petFriendly = true;
+    }
+
     console.log("초기 필터:", initialFilter);
     setFilter(initialFilter);
     console.groupEnd();

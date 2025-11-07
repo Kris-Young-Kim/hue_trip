@@ -29,6 +29,7 @@ export interface TravelSite {
   sigungucode?: string; // 시군구코드
   zipcode?: string; // 우편번호
   overview?: string; // 개요
+  pet_friendly?: boolean; // 반려동물 동반 가능 여부
   // 기타 필드 (TourAPI 명세서에 따라 추가 가능)
   [key: string]: unknown;
 }
@@ -108,6 +109,9 @@ export interface TravelFilter {
   
   // 검색 키워드
   keyword?: string;
+  
+  // 반려동물 동반 여행 필터
+  petFriendly?: boolean; // 반려동물 동반 가능 여부
   
   // 정렬 옵션
   arrange?: string; // 정렬 (A:제목순, B:조회순, C:수정일순, D:생성일순)

@@ -74,6 +74,9 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
   const [keyword, setKeyword] = useState<string>(
     searchParams.get("keyword") || ""
   );
+  const [petFriendly, setPetFriendly] = useState<boolean>(
+    searchParams.get("petFriendly") === "true"
+  );
 
   // 필터 적용 함수 (검색 버튼 클릭 시 또는 자동 적용)
   const applyFilters = useCallback(() => {
@@ -82,6 +85,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     console.log("여행지 타입:", travelType);
     console.log("정렬:", sortOrder);
     console.log("검색어:", keyword);
+    console.log("반려동물 동반:", petFriendly);
 
     // 여행지 타입을 코드로 변환
     const getTravelTypeCode = (type: string): string | undefined => {
@@ -101,6 +105,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
       contentTypeId: travelType !== TRAVEL_TYPES.ALL ? getTravelTypeCode(travelType) : undefined,
       arrange: sortOrder as TravelFilter["arrange"],
       keyword: keyword.trim() || undefined,
+      petFriendly: petFriendly || undefined,
       pageNo: 1, // 필터 변경 시 첫 페이지로 리셋
     };
 
@@ -110,6 +115,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     if (travelType !== TRAVEL_TYPES.ALL) params.set("type", travelType);
     if (sortOrder !== SORT_OPTIONS.TITLE) params.set("sort", sortOrder);
     if (keyword.trim()) params.set("keyword", keyword.trim());
+    if (petFriendly) params.set("petFriendly", "true");
 
     router.replace(`/?${params.toString()}`, { scroll: false });
 
@@ -117,7 +123,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     onFilterChangeRef.current?.(filter);
 
     console.groupEnd();
-  }, [region, travelType, sortOrder, keyword, router, onFilterChangeRef]);
+  }, [region, travelType, sortOrder, keyword, petFriendly, router, onFilterChangeRef]);
 
   // URL 쿼리 파라미터와 검색어 동기화
   useEffect(() => {
@@ -143,6 +149,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     setTravelType(TRAVEL_TYPES.ALL);
     setSortOrder(SORT_OPTIONS.TITLE);
     setKeyword("");
+    setPetFriendly(false);
 
     // URL도 초기화
     router.replace("/", { scroll: false });
@@ -153,7 +160,8 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     region !== REGIONS.ALL ||
     travelType !== TRAVEL_TYPES.ALL ||
     sortOrder !== SORT_OPTIONS.TITLE ||
-    keyword.trim() !== "";
+    keyword.trim() !== "" ||
+    petFriendly;
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700" role="region" aria-label="여행정보검색">
@@ -253,6 +261,26 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
           />
         </div>
 
+        {/* 반려동물 동반 여행 필터 */}
+        <div className="flex items-end">
+          <div className="flex items-center gap-2 h-11 px-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800">
+            <input
+              type="checkbox"
+              id="petFriendly"
+              checked={petFriendly}
+              onChange={(e) => setPetFriendly(e.target.checked)}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+              aria-label="반려동물 동반 가능 여행지 필터"
+            />
+            <Label
+              htmlFor="petFriendly"
+              className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap"
+            >
+              반려동물 동반 가능
+            </Label>
+          </div>
+        </div>
+
         {/* 검색 버튼 */}
         <div className="flex items-end">
           <Button
@@ -287,6 +315,11 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
           {keyword.trim() && (
             <span className="px-3 py-1.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full border border-blue-200 dark:border-blue-800">
               검색어: {keyword}
+            </span>
+          )}
+          {petFriendly && (
+            <span className="px-3 py-1.5 text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full border border-green-200 dark:border-green-800">
+              반려동물 동반 가능
             </span>
           )}
         </div>

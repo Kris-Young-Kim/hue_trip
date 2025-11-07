@@ -24,6 +24,7 @@ import Image from "next/image";
 import { MapPin, Phone, Home } from "lucide-react";
 import type { TravelSite } from "@/types/travel";
 import { getImageUrl, formatAddress, getTravelTypeName } from "@/lib/utils/travel";
+import { PetFriendlyBadge } from "@/components/travel-detail/pet-friendly-badge";
 
 interface TravelCardProps {
   travel: TravelSite;
@@ -62,14 +63,17 @@ export function TravelCard({ travel, onCardClick }: TravelCardProps) {
         {/* 그라데이션 오버레이 */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
-        {/* 여행지 타입 뱃지 */}
-        {travel.contenttypeid && (
-          <div className="absolute top-3 left-3 z-10">
+        {/* 여행지 타입 뱃지 및 반려동물 동반 뱃지 */}
+        <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+          {travel.contenttypeid && (
             <span className="px-3 py-1.5 text-xs font-semibold bg-blue-600/95 backdrop-blur-sm text-white rounded-full shadow-lg" aria-label={`여행지 타입: ${getTravelTypeName(travel.contenttypeid)}`}>
               {getTravelTypeName(travel.contenttypeid)}
             </span>
-          </div>
-        )}
+          )}
+          {travel.pet_friendly && (
+            <PetFriendlyBadge size="sm" />
+          )}
+        </div>
       </div>
 
       {/* 내용 영역 */}
