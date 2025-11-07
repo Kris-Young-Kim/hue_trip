@@ -30,8 +30,15 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { X, Filter, Search } from "lucide-react";
+import { X, Filter, Search, Settings } from "lucide-react";
 import type { TravelFilter } from "@/types/travel";
+import { AdvancedFilters } from "@/components/travel/advanced-filters";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   REGIONS,
   REGION_LIST,
@@ -78,6 +85,25 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     searchParams.get("petFriendly") === "true"
   );
 
+  // 현재 필터 상태를 객체로 구성
+  const filter: TravelFilter = {
+    areaCode: region !== REGIONS.ALL ? REGION_CODES[region] : undefined,
+    contentTypeId: travelType !== TRAVEL_TYPES.ALL ? (() => {
+      const typeMap: Record<string, string> = {
+        [TRAVEL_TYPES.TOURIST_SPOT]: TRAVEL_TYPE_CODES.TOURIST_SPOT,
+        [TRAVEL_TYPES.CULTURAL_FACILITY]: TRAVEL_TYPE_CODES.CULTURAL_FACILITY,
+        [TRAVEL_TYPES.FESTIVAL]: TRAVEL_TYPE_CODES.FESTIVAL,
+        [TRAVEL_TYPES.ACCOMMODATION]: TRAVEL_TYPE_CODES.ACCOMMODATION,
+        [TRAVEL_TYPES.SHOPPING]: TRAVEL_TYPE_CODES.SHOPPING,
+        [TRAVEL_TYPES.RESTAURANT]: TRAVEL_TYPE_CODES.RESTAURANT,
+      };
+      return typeMap[travelType];
+    })() : undefined,
+    arrange: sortOrder as TravelFilter["arrange"],
+    keyword: keyword.trim() || undefined,
+    petFriendly: petFriendly || undefined,
+  };
+
   // 필터 적용 함수 (검색 버튼 클릭 시 또는 자동 적용)
   const applyFilters = useCallback(() => {
     console.group("[TravelFilters] 필터 적용");
@@ -100,7 +126,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
       return typeMap[type];
     };
 
-    const filter: TravelFilter = {
+    const appliedFilter: TravelFilter = {
       areaCode: region !== REGIONS.ALL ? REGION_CODES[region] : undefined,
       contentTypeId: travelType !== TRAVEL_TYPES.ALL ? getTravelTypeCode(travelType) : undefined,
       arrange: sortOrder as TravelFilter["arrange"],
@@ -120,7 +146,7 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
     router.replace(`/?${params.toString()}`, { scroll: false });
 
     // 콜백 호출 (ref를 통해 안정적으로 호출)
-    onFilterChangeRef.current?.(filter);
+    onFilterChangeRef.current?.(appliedFilter);
 
     console.groupEnd();
   }, [region, travelType, sortOrder, keyword, petFriendly, router, onFilterChangeRef]);
@@ -293,6 +319,21 @@ export function TravelFilters({ onFilterChange }: TravelFiltersProps) {
           </Button>
         </div>
       </div>
+
+      {/* 고급 필터 */}
+      <Accordion type="single" collapsible className="mt-4">
+        <AccordionItem value="advanced">
+          <AccordionTrigger className="text-sm font-medium">
+            <div className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              고급 필터
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <AdvancedFilters currentFilter={filter} onFilterChange={onFilterChangeRef.current || (() => {})} />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* 활성 필터 표시 */}
       {hasActiveFilters && (

@@ -479,15 +479,22 @@
     - [x] 대량 데이터 다운로드 (백업용) (exportBackup)
     - [x] 데이터 내보내기 UI 컴포넌트 (DataExport)
     - [ ] 통계 데이터 API 형식으로 내보내기 (추후 구현)
-  - [ ] 대시보드 커스터마이징
-    - 위젯 추가/제거/재배치
-    - 대시보드 레이아웃 저장
-    - 여러 대시보드 생성 (예: "일일 모니터링", "주간 리포트", "비용 분석")
-    - 대시보드 공유 (팀원과 공유)
-  - [ ] 고급 필터링 및 검색
-    - 다중 필터 조합 (지역 + 타입 + 기간)
-    - 통계 데이터 검색
-    - 필터 프리셋 저장
+  - [x] 대시보드 커스터마이징
+    - [x] 위젯 추가/제거/재배치 (updateDashboardWidgets)
+    - [x] 대시보드 레이아웃 저장 (dashboard_configs 테이블)
+    - [x] 여러 대시보드 생성 (createDashboard, getDashboards)
+    - [x] 대시보드 공유 (shareDashboard, share_token)
+    - [x] 대시보드 관리 UI 컴포넌트 (DashboardManager)
+    - [x] 커스터마이징 가능한 대시보드 컴포넌트 (CustomizableDashboard)
+    - [ ] 드래그 앤 드롭으로 위젯 재배치 (추후 구현)
+    - [ ] 위젯 크기 조절 (추후 구현)
+  - [x] 고급 필터링 및 검색
+    - [x] 다중 필터 조합 (지역 + 타입 + 기간) (AdvancedFilters)
+    - [x] 통계 데이터 검색 (StatisticsSearch)
+    - [x] 필터 프리셋 저장 (createFilterPreset, getFilterPresets, deleteFilterPreset)
+    - [x] 필터 프리셋 데이터베이스 스키마 (filter_presets 테이블)
+    - [x] 고급 필터 UI 컴포넌트 (AdvancedFilters)
+    - [x] 통계 검색 UI 컴포넌트 (StatisticsSearch)
   - [ ] 데이터베이스 스키마 확장
     - analytics_events 테이블 생성 (사용자 이벤트 추적)
     - analytics_sessions 테이블 생성 (세션 추적)

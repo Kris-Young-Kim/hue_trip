@@ -23,6 +23,8 @@ import { Predictions } from "@/components/admin/predictions";
 import { ReportGenerator } from "@/components/admin/report-generator";
 import { AlertSystem } from "@/components/admin/alert-system";
 import { DataExport } from "@/components/admin/data-export";
+import { DashboardManager } from "@/components/admin/dashboard-manager";
+import { StatisticsSearch } from "@/components/admin/statistics-search";
 import { getTimeSeriesStats, type TimePeriod } from "@/actions/admin-stats/get-time-series-stats";
 import { getRegionTypeStats } from "@/actions/admin-stats/get-region-type-stats";
 import { toast } from "sonner";
@@ -235,6 +237,20 @@ export function EnhancedDashboard() {
 
       {/* 데이터 내보내기 */}
       <DataExport />
+
+      {/* 대시보드 커스터마이징 */}
+      <DashboardManager />
+
+      {/* 통계 데이터 검색 */}
+      <StatisticsSearch
+        onSearch={(query) => {
+          console.group("[EnhancedDashboard] 통계 검색");
+          console.log("검색 쿼리:", query);
+          // 검색 결과를 필터링하여 표시 (추후 구현)
+          toast.info("통계 검색 기능은 추후 구현 예정입니다.");
+          console.groupEnd();
+        }}
+      />
     </div>
   );
 }
