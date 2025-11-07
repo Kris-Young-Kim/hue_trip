@@ -136,16 +136,16 @@ function HomeContent() {
       </section>
 
       {/* Main Content */}
-      <div className="max-w-[1920px] mx-auto px-4 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* 필터 - 상단 고정 */}
         <div className="mb-6">
           <TravelFilters onFilterChange={handleFilterChange} />
         </div>
 
-        {/* 목록 및 지도 레이아웃 - 좌우 분할 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 h-[calc(100vh-280px)] min-h-[600px]">
-          {/* 좌측: 목록 영역 */}
-          <div className="overflow-y-auto pr-2 md:pr-4">
+        {/* 목록 및 지도 레이아웃 - 세로 배치 */}
+        <div className="space-y-6">
+          {/* 상단: 목록 영역 */}
+          <div>
             <TravelList
               filter={filter}
               onTravelClick={handleTravelClick}
@@ -153,8 +153,8 @@ function HomeContent() {
             />
           </div>
 
-          {/* 우측: 지도 영역 */}
-          <div className="sticky top-0 h-full rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+          {/* 하단: 지도 영역 */}
+          <div className="h-[600px] md:h-[800px] rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
             <NaverMap
               travels={travels}
               onMarkerClick={handleTravelClick}

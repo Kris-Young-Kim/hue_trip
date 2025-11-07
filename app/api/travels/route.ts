@@ -2,17 +2,17 @@
  * @file route.ts
  * @description 여행지 목록 조회 API Route
  *
- * 서버 사이드에서 TourAPI를 호출하여 CORS 문제를 해결
- * 클라이언트는 이 API Route를 통해 여행지 목록을 조회
+ * Supabase에서 여행지 목록을 조회하는 API Route
+ * TourAPI 응답 형식과 호환되도록 데이터 변환
  *
  * @dependencies
- * - lib/api/travel-api.ts: TravelApiClient
+ * - lib/supabase/client.ts: Supabase 클라이언트
  * - types/travel.ts: TravelFilter, TravelListResponse
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { travelApi } from "@/lib/api/travel-api";
-import type { TravelFilter } from "@/types/travel";
+import { supabase } from "@/lib/supabase/client";
+import type { TravelFilter, TravelListResponse } from "@/types/travel";
 import { logError } from "@/lib/utils/logger";
 
 // OPTIONS 요청 처리 (CORS preflight)
@@ -28,23 +28,9 @@ export async function OPTIONS() {
 }
 
 export async function GET(request: NextRequest) {
-  console.group("[API /api/travels] 여행지 목록 조회");
+  console.group("[API /api/travels] 여행지 목록 조회 (Supabase)");
   
   try {
-    // 환경 변수 확인
-    const apiKey = process.env.TOUR_API_KEY;
-    if (!apiKey) {
-      console.error("[API] TOUR_API_KEY 환경 변수가 설정되지 않았습니다.");
-      console.groupEnd();
-      return NextResponse.json(
-        { 
-          error: "API 키가 설정되지 않았습니다.",
-          message: "서버 환경 변수 TOUR_API_KEY를 확인해주세요."
-        },
-        { status: 500 }
-      );
-    }
-    
     const searchParams = request.nextUrl.searchParams;
     
     console.log("[API] 쿼리 파라미터:", Object.fromEntries(searchParams.entries()));
@@ -63,37 +49,97 @@ export async function GET(request: NextRequest) {
     };
 
     console.log("[API] 필터:", filter);
-    console.log("[API] API 키 존재 여부:", !!apiKey);
-    console.log("[API] API 키 길이:", apiKey?.length || 0);
-    console.log("[API] TourAPI 호출 시작");
+    console.log("[API] Supabase 조회 시작");
     
-    // 키워드가 있으면 검색, 없으면 목록 조회
-    let response;
-    try {
-      if (filter.keyword) {
-        const { keyword, ...searchFilter } = filter;
-        response = await travelApi.searchTravel(keyword, searchFilter);
-      } else {
-        response = await travelApi.getTravelList(filter);
-      }
-      console.log("[API] TourAPI 응답 성공");
-      console.log("[API] 응답 데이터 구조:", {
-        hasResponse: !!response,
-        hasBody: !!response?.response,
-        hasHeader: !!response?.response?.header,
-        resultCode: response?.response?.header?.resultCode,
-        resultMsg: response?.response?.header?.resultMsg,
-        itemCount: response?.response?.body?.items?.item?.length || 0,
-      });
-    } catch (apiError) {
-      console.error("[API] TourAPI 호출 중 오류:", apiError);
-      console.error("[API] TourAPI 오류 상세:", {
-        message: apiError instanceof Error ? apiError.message : String(apiError),
-        stack: apiError instanceof Error ? apiError.stack : undefined,
-        name: apiError instanceof Error ? apiError.name : "UnknownError",
-      });
-      throw apiError;
+    // Supabase 쿼리 빌더 시작
+    let query = supabase.from("travels").select("*", { count: "exact" });
+    
+    // 필터 적용
+    if (filter.areaCode) {
+      query = query.eq("areacode", filter.areaCode);
     }
+    
+    if (filter.sigunguCode) {
+      query = query.eq("sigungucode", filter.sigunguCode);
+    }
+    
+    if (filter.contentTypeId) {
+      query = query.eq("contenttypeid", filter.contentTypeId);
+    }
+    
+    if (filter.cat1) {
+      query = query.eq("cat1", filter.cat1);
+    }
+    
+    if (filter.cat2) {
+      query = query.eq("cat2", filter.cat2);
+    }
+    
+    if (filter.cat3) {
+      query = query.eq("cat3", filter.cat3);
+    }
+    
+    // 키워드 검색 (제목 또는 개요에서 검색)
+    if (filter.keyword) {
+      query = query.or(`title.ilike.%${filter.keyword}%,overview.ilike.%${filter.keyword}%`);
+    }
+    
+    // 정렬
+    if (filter.arrange === "A") {
+      // 제목순
+      query = query.order("title", { ascending: true });
+    } else if (filter.arrange === "B") {
+      // 조회순 (travel_stats와 조인 필요하지만 일단 생성일순으로 대체)
+      query = query.order("created_at", { ascending: false });
+    } else if (filter.arrange === "C") {
+      // 수정일순
+      query = query.order("updated_at", { ascending: false });
+    } else if (filter.arrange === "D") {
+      // 생성일순
+      query = query.order("created_at", { ascending: false });
+    } else {
+      // 기본: 생성일순
+      query = query.order("created_at", { ascending: false });
+    }
+    
+    // 페이지네이션
+    const pageNo = filter.pageNo || 1;
+    const numOfRows = filter.numOfRows || 20;
+    const from = (pageNo - 1) * numOfRows;
+    const to = from + numOfRows - 1;
+    
+    query = query.range(from, to);
+    
+    console.log("[API] Supabase 쿼리 실행");
+    const { data, error, count } = await query;
+    
+    if (error) {
+      console.error("[API] Supabase 오류:", error);
+      throw new Error(`Supabase 조회 실패: ${error.message}`);
+    }
+    
+    console.log("[API] Supabase 응답 성공:", {
+      itemCount: data?.length || 0,
+      totalCount: count || 0,
+    });
+    
+    // TourAPI 응답 형식으로 변환
+    const response: TravelListResponse = {
+      response: {
+        header: {
+          resultCode: "0000",
+          resultMsg: "OK",
+        },
+        body: {
+          items: {
+            item: data || [],
+          },
+          numOfRows: numOfRows,
+          pageNo: pageNo,
+          totalCount: count || 0,
+        },
+      },
+    };
     
     console.groupEnd();
     
@@ -103,7 +149,7 @@ export async function GET(request: NextRequest) {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600", // 5분 캐시, 10분 stale-while-revalidate
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       },
     });
   } catch (error) {
@@ -112,32 +158,20 @@ export async function GET(request: NextRequest) {
     const errorStack = error instanceof Error ? error.stack : undefined;
     const errorName = error instanceof Error ? error.name : "UnknownError";
     
-    // 상세 에러 정보 로깅
-    console.error("[API] 에러 상세:", {
-      name: errorName,
-      message: errorMessage,
-      stack: errorStack,
-      apiKeyExists: !!process.env.TOUR_API_KEY,
-      apiKeyLength: process.env.TOUR_API_KEY?.length || 0,
-    });
-    
-    logError("[API /api/travels] API 요청 실패", error instanceof Error ? error : new Error(String(error)), {
+    logError("[API /api/travels] Supabase 조회 실패", error instanceof Error ? error : new Error(String(error)), {
       searchParams: Object.fromEntries(request.nextUrl.searchParams.entries()),
       errorMessage,
       errorStack,
       errorName,
-      apiKeyExists: !!process.env.TOUR_API_KEY,
     });
     console.groupEnd();
     
-    // 프로덕션에서도 에러 상세 정보 제공 (디버깅용)
     return NextResponse.json(
       { 
         error: errorMessage,
         errorName,
         message: "여행지 목록을 불러오는데 실패했습니다.",
         details: {
-          apiKeyConfigured: !!process.env.TOUR_API_KEY,
           ...(process.env.NODE_ENV === "development" && {
             stack: errorStack,
             fullError: String(error),
